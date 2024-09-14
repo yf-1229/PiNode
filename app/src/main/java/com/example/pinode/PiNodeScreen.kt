@@ -13,15 +13,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.pinode.ui.DrawGridWithDots
+import com.example.pinode.ui.DrawDots
+import com.example.pinode.ui.DrawGrid
 
 
 @Composable
-fun PiNodeScreen() {
-    val verticalLineCount = 5
-    val horizontalLineCount = 20
-    val strokeWidth = 3f
-    DrawGridWithDots(verticalLineCount, horizontalLineCount, strokeWidth)
+fun PiNodeScreen(
+    modifier: Modifier = Modifier
+) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        val verticalLineCount = 5
+        val horizontalLineCount = 20
+        val strokeWidth = 3f
+
+    }
 }
 
 

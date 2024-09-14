@@ -9,39 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun DrawGridWithDots(
+fun DrawDots(
     verticalLineCount: Int,
     horizontalLineCount: Int,
-    strokeWidth: Float,
-    modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = Modifier
-        .background(Color.LightGray)
-        .fillMaxSize()
-    ) {
+    Canvas(modifier = Modifier) {
         val gridSpacing = size.width / (verticalLineCount + 1)
-
-        // 縦線を描画
-        for (i in 1..verticalLineCount) {
-            val x = i * gridSpacing
-            drawLine(
-                color = Color.Black,
-                start = androidx.compose.ui.geometry.Offset(x, 0f),
-                end = androidx.compose.ui.geometry.Offset(x, size.height),
-                strokeWidth = strokeWidth,
-            )
-        }
-
-        // 横線を描画
-        for (i in 1..horizontalLineCount) {
-            val y = i * gridSpacing
-            drawLine(
-                color = Color.Black,
-                start = androidx.compose.ui.geometry.Offset(0f, y),
-                end = androidx.compose.ui.geometry.Offset(size.width, y),
-                strokeWidth = strokeWidth,
-            )
-        }
         for (i in 1..verticalLineCount) {
             for (j in 1..horizontalLineCount) {
                 val x = i * gridSpacing
@@ -54,4 +27,9 @@ fun DrawGridWithDots(
             }
         }
     }
+}
+
+@Composable
+fun NodeItem() {
+
 }
