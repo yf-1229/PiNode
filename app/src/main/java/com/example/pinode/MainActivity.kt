@@ -1,6 +1,6 @@
 package com.example.pinode
 
-import DrawGridWithDots
+import PiNodeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PiNodeTheme {
-                DrawGridWithDots()
+                PiNodeScreen()
             }
         }
     }
@@ -24,5 +24,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun LineCrossingsPreview() {
-    DrawGridWithDots()
+    PiNodeScreen()
 }
