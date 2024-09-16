@@ -26,7 +26,7 @@ fun PiNodeScreen(
         val horizontalLineCount = 20
         val strokeWidth = 3f
         DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-        DrawDots(verticalLineCount, horizontalLineCount)
+        DrawDots(verticalLineCount, horizontalLineCount) // TODO: DrawDotsはforループをこっちでつくる？
 
     }
 }
