@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PiNode</string>
+    <string name="navigation_back">Back</string>
 </resources>

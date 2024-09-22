@@ -9,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 fun DrawDots(
     verticalLineCount: Int,
     horizontalLineCount: Int,
+    modifier: Modifier = Modifier
 ) {
+    color = // TODO
     Canvas(modifier = Modifier) {
         val gridSpacing = size.width / (verticalLineCount + 1)
         for (i in 1..verticalLineCount) {
@@ -17,7 +19,7 @@ fun DrawDots(
                 val x = i * gridSpacing
                 val y = j * gridSpacing
                 drawCircle(
-                    color = Color.Red,
+                    color = Color.Red, // TODO
                     radius = 8f,
                     center = androidx.compose.ui.geometry.Offset(x, y)
                 )
