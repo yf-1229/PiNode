@@ -1,10 +1,6 @@
-package com.example.pinode.ui
+package com.example.pinode.compose.item
 
-import android.util.EventLogTags.Description
-import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.pinode.R
 import com.example.pinode.data.Node
+import com.example.pinode.viewmodels.UiState
 
 @Composable
 fun NodeItemScreen(@DrawableRes taskIcon: Int, modifier: Modifier = Modifier) {

@@ -7,22 +7,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pinode.data.Node
-import com.example.pinode.ui.DrawDots
-import com.example.pinode.ui.DrawGrid
+import com.example.pinode.compose.home.DrawDots
+import com.example.pinode.compose.home.DrawGrid
 
 
 @Composable
 fun PiNodeScreen(
     modifier: Modifier = Modifier
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        val verticalLineCount = 5
-        val horizontalLineCount = 20
-        val strokeWidth = 3f
-        DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-        DrawDots(verticalLineCount, horizontalLineCount, Node.Red)
 
-    }
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.pinode.ui
+package com.example.pinode.compose.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
