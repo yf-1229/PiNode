@@ -35,6 +35,7 @@ class NodeListViewModel(private val nodesRepository: NodesRepository): ViewModel
 data class NodeUiState(
     val nodeDetails: NodeDetails = NodeDetails(),
     val isEntryValid: Boolean = false,
+    val onDismissRequest: Boolean = false,
 )
 
 data class NodeDetails(
