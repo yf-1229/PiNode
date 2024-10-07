@@ -34,4 +34,4 @@ class HomeViewModel(itemsRepository: NodesRepository) : ViewModel() {
 /**
  * Ui State for HomeScreen
  */
-data class HomeUiState(val itemList: List<Node> = listOf())
+data class HomeUiState(val nodeList: List<Node> = listOf())
