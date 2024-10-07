@@ -4,14 +4,17 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.pinode.compose.item.NodeUiState
+import com.example.pinode.data.NodeStatus
 
 @Composable
 fun DrawDots(
     verticalLineCount: Int,
     horizontalLineCount: Int,
+    color: String,
     modifier: Modifier = Modifier
 ) {
-    color = // TODO
+    color = color
     Canvas(modifier = Modifier) {
         val gridSpacing = size.width / (verticalLineCount + 1)
         for (i in 1..verticalLineCount) {

@@ -11,6 +11,9 @@ import com.example.inventory.ui.home.HomeViewModel
 import com.example.inventory.ui.item.ItemDetailsViewModel
 import com.example.inventory.ui.item.ItemEditViewModel
 import com.example.inventory.ui.item.ItemEntryViewModel
+import com.example.pinode.NodeApplication
+import com.example.pinode.compose.home.HomeViewModel
+import com.example.pinode.data.Node
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -18,26 +21,10 @@ import com.example.inventory.ui.item.ItemEntryViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         // Initializer for ItemEditViewModel
-        initializer {
-            ItemEditViewModel(
-                this.createSavedStateHandle()
-            )
-        }
-        // Initializer for ItemEntryViewModel
-        initializer {
-            ItemEntryViewModel(inventoryApplication().container.itemsRepository)
-        }
-
-        // Initializer for ItemDetailsViewModel
-        initializer {
-            ItemDetailsViewModel(
-                this.createSavedStateHandle()
-            )
-        }
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel()
+            HomeViewModel(nodeApplication().container.nodesRepository)
         }
     }
 }
@@ -46,5 +33,5 @@ object AppViewModelProvider {
  * Extension function to queries for [Application] object and returns an instance of
  * [InventoryApplication].
  */
-fun CreationExtras.inventoryApplication(): InventoryApplication =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as InventoryApplication)
+fun CreationExtras.nodeApplication(): NodeApplication =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as NodeApplication)
