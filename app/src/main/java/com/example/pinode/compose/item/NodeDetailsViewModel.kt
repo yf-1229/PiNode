@@ -40,6 +40,8 @@ data class NodeUiState(
 
 data class NodeDetails(
     val id: Int = 0,
+    val geoX: Int = 0,
+    val geoY: Int = 0,
     val status: NodeStatus = NodeStatus.Gray,
     val icon: Int = 0,
     val title: String = "",
@@ -48,6 +50,8 @@ data class NodeDetails(
 
 fun NodeDetails.toNode(): Node = Node(
     id = id,
+    geoX = geoX,
+    geoY = geoY,
     status = status,
     icon = icon,
     title = title,
@@ -65,6 +69,8 @@ fun Node.toNodeUiState(isEntryValid: Boolean = false): NodeUiState = NodeUiState
 
 fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     id = id,
+    geoX = geoX,
+    geoY = geoY,
     status = status,
     icon = icon,
     title = title.toString(),

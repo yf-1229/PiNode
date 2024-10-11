@@ -4,16 +4,23 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Updater
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.R
 import com.example.pinode.data.Node
+import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
 
@@ -24,14 +31,23 @@ object HomeDestination : NavigationDestination {
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    navigateToNodeEntry: () -> Unit,
+    navigateToNodeUpdate: (Int) -> Unit,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     // TODO scroll?
-    Surface(modifier = Modifier.fillMaxSize()) {
-
-
+    Scaffold(
+        modifier = modifier.padding(16.dp),
+        topBar = {
+            // TODO
+        },
+        floatingActionButton = {
+            // TODO
+        },
+    ) { innerPadding ->
+        HomeBody(nodeList = homeUiState.nodeList, onItemClick = navigateToNodeUpdate, modifier = modifier.fillMaxSize(), contentPadding = innerPadding)
     }
 }
 
@@ -45,9 +61,8 @@ private fun HomeBody(
     val verticalLineCount = 5
     val horizontalLineCount = 20
     val strokeWidth = 3f
-    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-    DrawDots(verticalLineCount, horizontalLineCount, )
-
+    val color = NodeStatus.Red
+    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color)
 }
 
 @Composable
@@ -55,6 +70,7 @@ private fun DrawGrid(
     verticalLineCount: Int,
     horizontalLineCount: Int,
     strokeWidth: Float,
+    color: NodeStatus,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = Modifier
@@ -62,26 +78,34 @@ private fun DrawGrid(
         .fillMaxSize()
     ) {
         val gridSpacing = size.width / (verticalLineCount + 1)
-        // 縦線を描画
-        for (i in 1..verticalLineCount) {
-            val x = i * gridSpacing
-            drawLine(
-                color = Color.Black,
-                start = androidx.compose.ui.geometry.Offset(x, 0f),
-                end = androidx.compose.ui.geometry.Offset(x, size.height),
-                strokeWidth = strokeWidth,
-            )
-        }
 
-        // 横線を描画
-        for (i in 1..horizontalLineCount) {
-            val y = i * gridSpacing
-            drawLine(
-                color = Color.Black,
-                start = androidx.compose.ui.geometry.Offset(0f, y),
-                end = androidx.compose.ui.geometry.Offset(size.width, y),
-                strokeWidth = strokeWidth,
-            )
+        for (i in 1..verticalLineCount) {
+            for (j in 1..horizontalLineCount) {
+                val x = i * gridSpacing
+                val y = j * gridSpacing
+                drawLine( // 縦線を描画
+                    color = Color.Black,
+                    start = androidx.compose.ui.geometry.Offset(x, 0f),
+                    end = androidx.compose.ui.geometry.Offset(x, size.height),
+                    strokeWidth = strokeWidth,
+                )
+                drawLine( // 横線を描画
+                    color = Color.Black,
+                    start = androidx.compose.ui.geometry.Offset(0f, y),
+                    end = androidx.compose.ui.geometry.Offset(size.width, y),
+                    strokeWidth = strokeWidth,
+                )
+            }
         }
     }
+}
+
+@Composable
+@Preview
+fun DrawGridPreview() {
+    val verticalLineCount = 5
+    val horizontalLineCount = 20
+    val strokeWidth = 3f
+    val color = NodeStatus.Red
+    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color, modifier = Modifier)
 }

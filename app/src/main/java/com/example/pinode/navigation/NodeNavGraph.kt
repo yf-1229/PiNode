@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pinode.compose.home.HomeDestination
-import com.example.pinode.compose.home.NodeListScreen
+import com.example.pinode.compose.home.HomeScreen
 
 @Composable
 fun NodeNavHost(
@@ -22,7 +22,12 @@ fun NodeNavHost(
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
-            NodeListScreen()
+            HomeScreen(
+                navigateToNodeEntry = { navController.navigate()} // TODO
+                navigateToNodeUpdate = {
+                    navController.navigate("${NodeDetailsDestination.route}/${it}")
+                }
+            )
         }
     }
 

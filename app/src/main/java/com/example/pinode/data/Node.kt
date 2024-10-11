@@ -15,6 +15,8 @@ data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val status: NodeStatus,
+    val geoX: Int,
+    val geoY: Int,
     val icon: Int,
     val title: String,
     val description: String,

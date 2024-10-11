@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.pinode.R
 import com.example.pinode.data.Node
-import com.example.pinode.viewmodels.UiState
 
 @Composable
 fun NodeItemScreen(nodeUiState: NodeUiState, modifier: Modifier) {
@@ -55,10 +54,5 @@ private fun NodeItemDialog(nodeUiState: NodeUiState, modifier: Modifier) {
             }
         }
     }
-}
-
-@Preview
-fun NodeItemScreenPreview() {
-    NodeItemScreen(nodeUiState, )
 }
 
