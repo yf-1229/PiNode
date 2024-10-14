@@ -2,19 +2,18 @@ package com.example.pinode.compose.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Updater
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,13 +22,13 @@ import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
-import org.w3c.dom.NodeList
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.app_name
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
@@ -65,15 +64,32 @@ private fun HomeBody(
     val color = NodeStatus.Red
 
     DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color)
+
+    Box(
+        modifier = modifier,
+    ) {
+        if (nodeList.isEmpty()) {   // TODO うざかったら削除
+
+        } else  {
+            NodeList(
+                nodeList = nodeList,
+                onItemClick = { onItemClick(it.id) },
+                contentPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+            )
+        }
+    }
 }
 
 private fun NodeList(
     nodeList: List<Node>,
     onItemClick: (Int) -> Unit,
-    contentPadding: PaddingValues,
+    contentPadding: Modifier,
     modifier: Modifier = Modifier
 ) {
-    Canvas() { }
+    Box(
+        modifier =
+    )
 }
 
 @Composable
