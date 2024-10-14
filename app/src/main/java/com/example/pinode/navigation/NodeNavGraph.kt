@@ -23,7 +23,7 @@ fun NodeNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToNodeEntry = { navController.navigate()} // TODO
+                navigateToNodeEntry = { navController.navigate()}, // TODO
                 navigateToNodeUpdate = {
                     navController.navigate("${NodeDetailsDestination.route}/${it}")
                 }

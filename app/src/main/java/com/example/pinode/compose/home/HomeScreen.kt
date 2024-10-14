@@ -23,6 +23,7 @@ import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
+import org.w3c.dom.NodeList
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -62,7 +63,17 @@ private fun HomeBody(
     val horizontalLineCount = 20
     val strokeWidth = 3f
     val color = NodeStatus.Red
+
     DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color)
+}
+
+private fun NodeList(
+    nodeList: List<Node>,
+    onItemClick: (Int) -> Unit,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Canvas() { }
 }
 
 @Composable
@@ -70,7 +81,7 @@ private fun DrawGrid(
     verticalLineCount: Int,
     horizontalLineCount: Int,
     strokeWidth: Float,
-    color: NodeStatus,
+    node: Node,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = Modifier
@@ -97,6 +108,10 @@ private fun DrawGrid(
                 )
             }
         }
+        drawCircle(
+            color = node.color
+
+        )
     }
 }
 
