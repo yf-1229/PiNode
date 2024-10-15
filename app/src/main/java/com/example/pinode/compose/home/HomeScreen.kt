@@ -2,10 +2,12 @@ package com.example.pinode.compose.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
+import androidx.compose.foundation.layout.Column as Column
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -63,9 +66,9 @@ private fun HomeBody(
     val strokeWidth = 3f
     val color = NodeStatus.Red
 
-    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color)
+    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
 
-    Box(
+    Row (
         modifier = modifier,
     ) {
         if (nodeList.isEmpty()) {   // TODO うざかったら削除
@@ -81,24 +84,52 @@ private fun HomeBody(
     }
 }
 
+@Composable
 private fun NodeList(
     nodeList: List<Node>,
     onItemClick: (Int) -> Unit,
     contentPadding: Modifier,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier =
-    )
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) {
+        items(items = nodeList, key = {it.id}) { item ->
+            // TODO Item
+        }
+    }
 }
+
+@Composable
+private fun NodeItem(
+    node: Node,
+    verticalLineCount: Int,
+    horizontalLineCount: Int,
+    strokeWidth: Float,
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = Modifier) {
+        val gridSpacing = size.width / (verticalLineCount + 1)
+        Column(modifier = Modifier) {
+            drawCircle(
+                color = Color.Red, // TODO
+                radius = 8f,
+                center = androidx.compose.ui.geometry.Offset(x, y)
+            )
+        }
+    }
+}
+
+
+
 
 @Composable
 private fun DrawGrid(
     verticalLineCount: Int,
     horizontalLineCount: Int,
     strokeWidth: Float,
-    node: Node,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = Modifier
         .background(Color.LightGray)
@@ -124,10 +155,6 @@ private fun DrawGrid(
                 )
             }
         }
-        drawCircle(
-            color = node.color
-
-        )
     }
 }
 
