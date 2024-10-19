@@ -1,30 +1,53 @@
 package com.example.pinode.compose.home
 
+import android.graphics.Matrix
+import android.graphics.Outline
+import android.util.Size
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.R
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
-import androidx.compose.foundation.layout.Column as Column
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.graphics.shapes.toPath
+import kotlin.math.max
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -88,7 +111,7 @@ private fun HomeBody(
 private fun NodeList(
     nodeList: List<Node>,
     onItemClick: (Int) -> Unit,
-    contentPadding: Modifier,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -109,15 +132,18 @@ private fun NodeItem(
     strokeWidth: Float,
     modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = Modifier) {
-        val gridSpacing = size.width / (verticalLineCount + 1)
-        Column(modifier = Modifier) {
-            drawCircle(
-                color = Color.Red, // TODO
-                radius = 8f,
-                center = androidx.compose.ui.geometry.Offset(x, y)
-            )
-        }
+    var color = NodeStatus
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.secondary)
+            .size(40.dp)
+    ) {
+        Text(
+            "Hello Compose",
+            color = Color(node.status.rgb),
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 

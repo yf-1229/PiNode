@@ -1,5 +1,6 @@
 package com.example.pinode.data
 
+import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -20,8 +21,8 @@ data class Node(
     val description: String,
 )
 
-enum class NodeStatus { // Node's color
-    Red, Yellow, Green, Gray,
+enum class NodeStatus(val rgb: Int){ // Node's color
+    RED(0xFF0000), YELLOW(0xFFF00), GREEN(0x008000), GRAY(0x808080),
 }
 
 @Dao
