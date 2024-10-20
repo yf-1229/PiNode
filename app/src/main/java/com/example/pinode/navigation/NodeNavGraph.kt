@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pinode.compose.home.HomeDestination
 import com.example.pinode.compose.home.HomeScreen
+import com.example.pinode.compose.item.NodeDetails
 
 @Composable
 fun NodeNavHost(
@@ -28,6 +29,13 @@ fun NodeNavHost(
                     navController.navigate("${NodeDetailsDestination.route}/${it}")
                 }
             )
+        }
+        composable(
+            route = NodeDetailsDestination.routeWithArgs,
+            arguments = listOf(navArgument(NodeDetailsDestination.nodeIdArg) {
+                type = NavType.IntType
+            }) {
+
         }
     }
 

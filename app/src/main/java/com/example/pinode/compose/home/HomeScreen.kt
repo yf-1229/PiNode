@@ -5,6 +5,7 @@ import android.graphics.Outline
 import android.util.Size
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,6 +48,8 @@ import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.graphics.shapes.toPath
+import kotlin.collections.EmptyList.size
+import kotlin.collections.EmptySet.size
 import kotlin.math.max
 
 object HomeDestination : NavigationDestination {
@@ -73,7 +76,12 @@ fun HomeScreen(
             // TODO
         },
     ) { innerPadding ->
-        HomeBody(nodeList = homeUiState.nodeList, onItemClick = navigateToNodeUpdate, modifier = modifier.fillMaxSize(), contentPadding = innerPadding)
+        HomeBody(
+            nodeList = homeUiState.nodeList,
+            onItemClick = navigateToNodeUpdate,
+            modifier = modifier.fillMaxSize(),
+            contentPadding = innerPadding
+        )
     }
 }
 
@@ -87,22 +95,13 @@ private fun HomeBody(
     val verticalLineCount = 5
     val horizontalLineCount = 20
     val strokeWidth = 3f
-    val color = NodeStatus.Red
-
     DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
 
     Row (
         modifier = modifier,
     ) {
-        if (nodeList.isEmpty()) {   // TODO うざかったら削除
+        for (i in 1..horizontalLineCount) {
 
-        } else  {
-            NodeList(
-                nodeList = nodeList,
-                onItemClick = { onItemClick(it.id) },
-                contentPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
-            )
         }
     }
 }
@@ -118,8 +117,11 @@ private fun NodeList(
         modifier = modifier,
         contentPadding = contentPadding,
     ) {
-        items(items = nodeList, key = {it.id}) { item ->
-            // TODO Item
+        items(items = nodeList, key = {it.id}) { node ->
+            NodeItem(node = node,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .clickable { onItemClick(node) })
         }
     }
 }
@@ -127,12 +129,10 @@ private fun NodeList(
 @Composable
 private fun NodeItem(
     node: Node,
-    verticalLineCount: Int,
-    horizontalLineCount: Int,
-    strokeWidth: Float,
     modifier: Modifier = Modifier
 ) {
-    var color = NodeStatus
+    val title = node.title
+    val color = node.status.rgb
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -140,8 +140,8 @@ private fun NodeItem(
             .size(40.dp)
     ) {
         Text(
-            "Hello Compose",
-            color = Color(node.status.rgb),
+            title,
+            color = Color(color),
             modifier = Modifier.align(Alignment.Center)
         )
     }
