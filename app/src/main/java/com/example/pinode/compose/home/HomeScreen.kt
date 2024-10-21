@@ -109,26 +109,26 @@ private fun HomeBody(
 @Composable
 private fun NodeList(
     nodeList: List<Node>,
+    node: Node,
     onItemClick: (Int) -> Unit,
+    verticalLineCount: Int,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
+    Row(
         modifier = modifier,
         contentPadding = contentPadding,
     ) {
-        items(items = nodeList, key = {it.id}) { node ->
-            NodeItem(node = node,
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.padding_small))
-                    .clickable { onItemClick(node) })
+        for (i in 1..verticalLineCount) {
+            NodeItem(node = node)
         }
     }
-}
 
+}
 @Composable
 private fun NodeItem(
     node: Node,
+    nodePadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val title = node.title
@@ -161,7 +161,7 @@ private fun DrawGrid(
         .background(Color.LightGray)
         .fillMaxSize()
     ) {
-        val gridSpacing = size.width / (verticalLineCount + 1)
+        val gridSpacing = size.width / (verticalLineCount + 1) // TODO uiStateから今のid数を取得　
 
         for (i in 1..verticalLineCount) {
             for (j in 1..horizontalLineCount) {
