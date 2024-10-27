@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val
     val status: NodeStatus,
     val icon: Int,
     val title: String,

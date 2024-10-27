@@ -96,39 +96,36 @@ private fun HomeBody(
     val horizontalLineCount = 20
     val strokeWidth = 3f
     DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-
-    Row (
+    Row(
         modifier = modifier,
     ) {
-        for (i in 1..horizontalLineCount) {
-
-        }
+        NodeList(nodeList[0..10], onItemClick, contentPadding)
     }
 }
 
 @Composable
 private fun NodeList(
-    nodeList: List<Node>,
-    node: Node,
+    verticalList: List<Node>,
     onItemClick: (Int) -> Unit,
-    verticalLineCount: Int,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    LazyColumn(
         modifier = modifier,
-        contentPadding = contentPadding,
+        contentPadding = contentPadding
     ) {
-        for (i in 1..verticalLineCount) {
-            NodeItem(node = node)
+        items(items = verticalList, key = { it.id }) { item ->
+            NodeItem(node = item,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .clickable { onItemClick(item) })
         }
     }
-
 }
+
 @Composable
 private fun NodeItem(
     node: Node,
-    nodePadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val title = node.title
