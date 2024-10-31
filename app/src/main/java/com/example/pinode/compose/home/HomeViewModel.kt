@@ -1,5 +1,6 @@
 package com.example.pinode.compose.home
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pinode.data.Node
@@ -28,6 +29,16 @@ class HomeViewModel(itemsRepository: NodesRepository) : ViewModel() {
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
+    }
+
+    private val _nodes = mutableStateListOf<Node>()
+    val nodes: List<Node> get() = _nodes
+    fun completeNode(nodeId: String) {
+        val nodeIndex = _nodes.indexOfFirst { it.id == taskId }
+        if (taskIndex != -1) {
+            val task = _tasks[taskIndex].copy(isDeleted = true)
+            _tasks[taskIndex] = task // タスクを更新して削除フラグを立てる
+        }
     }
 }
 

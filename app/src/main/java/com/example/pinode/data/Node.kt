@@ -15,15 +15,16 @@ import kotlinx.coroutines.flow.Flow
 data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val
     val status: NodeStatus,
+    val isCompleted: Boolean = false,
+    val isDeleted: Boolean = false,
     val icon: Int,
     val title: String,
     val description: String,
 )
 
 enum class NodeStatus(val rgb: Int){ // Node's color
-    RED(0xFF0000), YELLOW(0xFFF00), GREEN(0x008000), GRAY(0x808080),
+    RED(0xFF0000), YELLOW(0xFFF00), GREEN(0x008000), GRAY(0x808080), BLACK(0x000000)
 }
 
 @Dao
