@@ -40,7 +40,7 @@ data class NodeUiState(
 
 data class NodeDetails(
     val id: Int = 0,
-    val status: NodeStatus = NodeStatus.Gray,
+    val status: NodeStatus = NodeStatus.GRAY,
     val icon: Int = 0,
     val title: String = "",
     val description: String = "",

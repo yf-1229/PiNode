@@ -1,9 +1,16 @@
 package com.example.pinode.compose.home
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pinode.compose.item.NodeDetails
+import com.example.pinode.compose.item.NodeUiState
+import com.example.pinode.compose.item.toNode
 import com.example.pinode.data.Node
+import com.example.pinode.data.NodeStatus
 import com.example.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,14 +20,14 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel to retrieve all items in the Room database.
  */
-class HomeViewModel(itemsRepository: NodesRepository) : ViewModel() {
+class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() {
 
     /**
      * Holds home ui state. The list of items are retrieved from [ItemsRepository] and mapped to
      * [HomeUiState]
      */
     val homeUiState: StateFlow<HomeUiState> =
-        itemsRepository.getAllNodesStream().map { HomeUiState(it) }
+        nodesRepository.getAllNodesStream().map { HomeUiState(it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -31,18 +38,33 @@ class HomeViewModel(itemsRepository: NodesRepository) : ViewModel() {
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    private val _nodes = mutableStateListOf<Node>()
-    val nodes: List<Node> get() = _nodes
-    fun completeNode(nodeId: String) {
-        val nodeIndex = _nodes.indexOfFirst { it.id == taskId }
-        if (taskIndex != -1) {
-            val task = _tasks[taskIndex].copy(isDeleted = true)
-            _tasks[taskIndex] = task // タスクを更新して削除フラグを立てる
-        }
+    var nodeUiState by mutableStateOf(NodeUiState())
+        private set
+
+    fun updateUiState(nodeDetails: NodeDetails) {
+        nodeUiState = NodeUiState(nodeDetails = nodeDetails)
+    }
+
+    suspend fun saveNode() {
+        nodesRepository.insertNode(nodeUiState.nodeDetails.toNode())
     }
 }
 
 /**
  * Ui State for HomeScreen
  */
-data class HomeUiState(val nodeList: List<Node> = listOf())
+data class HomeUiState(
+    val nodeList: List<Node> = listOf(),
+)
+
+data class NodeUiState(
+    val nodeDetails: NodeDetails = NodeDetails(),
+)
+
+data class NodeDetails(
+    val id: Int = 0,
+    val status: NodeStatus = NodeStatus.GRAY,
+    val icon: Int = 0,
+    val title: String = "",
+    val description: String = "",
+)
