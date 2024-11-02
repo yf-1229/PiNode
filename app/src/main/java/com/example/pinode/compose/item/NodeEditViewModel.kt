@@ -1,7 +1,7 @@
 package com.example.pinode.compose.item
 
 class NodeEditViewModel savedStateHandle: SavedStateHandle,
-    private val itemsRepository: ItemsRepository
+    private val nodesRepository: NodesRepository
 ) : ViewModel(){
 
     suspend fun deleteNode() {
