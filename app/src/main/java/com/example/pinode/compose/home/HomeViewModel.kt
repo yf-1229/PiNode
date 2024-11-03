@@ -37,17 +37,6 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-
-    var nodeUiState by mutableStateOf(NodeUiState())
-        private set
-
-    fun updateUiState(nodeDetails: NodeDetails) {
-        nodeUiState = NodeUiState(nodeDetails = nodeDetails)
-    }
-
-    suspend fun saveNode() {
-        nodesRepository.insertNode(nodeUiState.nodeDetails.toNode())
-    }
 }
 
 /**
@@ -55,16 +44,4 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
  */
 data class HomeUiState(
     val nodeList: List<Node> = listOf(),
-)
-
-data class NodeUiState(
-    val nodeDetails: NodeDetails = NodeDetails(),
-)
-
-data class NodeDetails(
-    val id: Int = 0,
-    val status: NodeStatus = NodeStatus.GRAY,
-    val icon: Int = 0,
-    val title: String = "",
-    val description: String = "",
 )

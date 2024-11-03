@@ -16,8 +16,6 @@ data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val status: NodeStatus,
-    val isCompleted: Boolean = false,
-    val isDeleted: Boolean = false,
     val icon: Int,
     val title: String,
     val description: String,

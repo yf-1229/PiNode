@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.pinode.compose.home.HomeDestination
 import com.example.pinode.compose.home.HomeScreen
 import com.example.pinode.compose.item.NodeDetails
+import com.example.pinode.compose.item.NodeEditDestination
 
 @Composable
 fun NodeNavHost(
@@ -27,7 +28,8 @@ fun NodeNavHost(
                 navigateToNodeEntry = { navController.navigate()}, // TODO
                 navigateToNodeUpdate = {
                     navController.navigate("${NodeDetailsDestination.route}/${it}")
-                }
+                },
+                navigateToNodeComplete = { navController.navigate("${NodeEditDestination.route}/${it}")},
             )
         }
         composable(
