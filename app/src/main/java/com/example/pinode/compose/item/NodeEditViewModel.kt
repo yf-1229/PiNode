@@ -38,17 +38,27 @@ class NodeEditViewModel(
         }
     }
 
-    suspend fun deleteNode() {
-        nodesRepository.deleteNode(uiState.value.itemDetails.toItem())
-    }
-
-    fun completeNode() {
-
+    fun updateUiState(nodeDetails: NodeDetails) {
+        nodeUiState = NodeUiState(
+                nodeDetails = nodeDetails,
+                isEntryValid = validateInput(nodeDetails),
+                isCompleted = ,
+                isDeleted =  ,
+                onDismissRequest =
+        )
     }
 
     private fun validateInput(uiState: NodeDetails = nodeUiState.nodeDetails): Boolean {
         return with(uiState) {
-            name.isNotBlank() && price.isNotBlank() && quantity.isNotBlank()
+            title.isNotBlank() && description.isNotBlank()
         }
+    }
+
+    private fun completedNode() {
+
+    }
+
+    private fun deletedNode() {
+
     }
 }

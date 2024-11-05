@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.pinode.NodeApplication
 import com.example.pinode.compose.home.HomeViewModel
+import com.example.pinode.compose.item.NodeEditViewModel
 import com.example.pinode.data.Node
 
 /**
@@ -16,7 +17,12 @@ import com.example.pinode.data.Node
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         // Initializer for ItemEditViewModel
-
+        initializer {
+            NodeEditViewModel(
+                this.createSavedStateHandle(),
+                nodeApplication().container.nodesRepository
+            )
+        }
         // Initializer for HomeViewModel
         initializer {
             HomeViewModel(nodeApplication().container.nodesRepository)

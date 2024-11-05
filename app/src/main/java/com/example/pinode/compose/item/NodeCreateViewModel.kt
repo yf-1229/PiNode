@@ -37,6 +37,7 @@ data class NodeUiState(
     val isEntryValid: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
+    val onDismissRequest: Boolean = false, // TODO ?
 )
 
 data class NodeDetails(
