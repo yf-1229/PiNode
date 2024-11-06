@@ -42,8 +42,8 @@ class NodeEditViewModel(
         nodeUiState = NodeUiState(
                 nodeDetails = nodeDetails,
                 isEntryValid = validateInput(nodeDetails),
-                isCompleted = ,
-                isDeleted =  ,
+                isCompleted = isCompleted,
+                isDeleted =  isDeleted,
                 onDismissRequest =
         )
     }

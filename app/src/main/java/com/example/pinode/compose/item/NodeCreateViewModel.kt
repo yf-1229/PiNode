@@ -15,7 +15,7 @@ class NodeCreateViewModel(private val nodesRepository: NodesRepository): ViewMod
 
     // Update UiState
     fun updateUiState(nodeDetails: NodeDetails) {
-        nodeUiState = NodeUiState(nodeDetails = nodeDetails, isEntryValid = validateInput(nodeDetails), isCompleted = isComplete, isDeleted = isDeleted)
+        nodeUiState = NodeUiState(nodeDetails = nodeDetails, isEntryValid = validateInput(nodeDetails), isCompleted = isCompleted, isDeleted = isDeleted)
     }
 
     suspend fun saveNode() {
