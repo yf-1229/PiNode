@@ -50,13 +50,4 @@ class NodeEditViewModel(
             title.isNotBlank() && description.isNotBlank()
         }
     }
-
-    private fun completedNode() {
-
-
-    }
-
-    private fun deletedNode() {
-
-    }
 }
