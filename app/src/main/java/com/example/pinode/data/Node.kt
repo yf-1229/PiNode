@@ -19,6 +19,8 @@ data class Node(
     val icon: Int,
     val title: String,
     val description: String,
+    val isCompleted: Boolean,
+    val isDeleted: Boolean
 )
 
 enum class NodeStatus(val rgb: Int){ // Node's color

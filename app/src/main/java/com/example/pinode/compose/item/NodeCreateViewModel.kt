@@ -15,7 +15,10 @@ class NodeCreateViewModel(private val nodesRepository: NodesRepository): ViewMod
 
     // Update UiState
     fun updateUiState(nodeDetails: NodeDetails) {
-        nodeUiState = NodeUiState(nodeDetails = nodeDetails, isEntryValid = validateInput(nodeDetails), isCompleted = isCompleted, isDeleted = isDeleted)
+        nodeUiState = NodeUiState(
+            nodeDetails = nodeDetails,
+            isEntryValid = validateInput(nodeDetails),
+        )
     }
 
     suspend fun saveNode() {
@@ -35,9 +38,6 @@ class NodeCreateViewModel(private val nodesRepository: NodesRepository): ViewMod
 data class NodeUiState(
     val nodeDetails: NodeDetails = NodeDetails(),
     val isEntryValid: Boolean = false,
-    val isCompleted: Boolean = false,
-    val isDeleted: Boolean = false,
-    val onDismissRequest: Boolean = false, // TODO ?
 )
 
 data class NodeDetails(
@@ -46,6 +46,8 @@ data class NodeDetails(
     val icon: Int = 0,
     val title: String = "",
     val description: String = "",
+    val isCompleted: Boolean = false,
+    val isDeleted: Boolean = false,
 )
 
 fun NodeDetails.toNode(): Node = Node(
@@ -54,6 +56,8 @@ fun NodeDetails.toNode(): Node = Node(
     icon = icon,
     title = title,
     description = description,
+    isCompleted = isCompleted,
+    isDeleted = isDeleted
 )
 
 fun Node.formatedColor(): String {
@@ -70,5 +74,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     status = status,
     icon = icon,
     title = title.toString(),
-    description = description.toString()
+    description = description.toString(),
+    isCompleted = isCompleted,
+    isDeleted = isDeleted
 )

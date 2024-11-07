@@ -41,10 +41,7 @@ class NodeEditViewModel(
     fun updateUiState(nodeDetails: NodeDetails) {
         nodeUiState = NodeUiState(
                 nodeDetails = nodeDetails,
-                isEntryValid = validateInput(nodeDetails),
-                isCompleted = isCompleted,
-                isDeleted =  isDeleted,
-                onDismissRequest =
+                isEntryValid = validateInput(nodeDetails)
         )
     }
 
@@ -55,6 +52,7 @@ class NodeEditViewModel(
     }
 
     private fun completedNode() {
+
 
     }
 
