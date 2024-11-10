@@ -32,6 +32,10 @@ class NodeCreateViewModel(private val nodesRepository: NodesRepository): ViewMod
             title.isNotBlank() && description.isNotBlank()
         }
     }
+
+    suspend fun completeNode() {
+
+    }
 }
 
 
