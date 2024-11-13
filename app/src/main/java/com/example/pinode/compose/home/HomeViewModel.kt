@@ -44,4 +44,5 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
  */
 data class HomeUiState(
     val nodeList: List<Node> = listOf(),
+    val nodeDetails: NodeDetails = NodeDetails()
 )

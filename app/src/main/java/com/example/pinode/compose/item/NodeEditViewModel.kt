@@ -48,4 +48,6 @@ class NodeEditViewModel(
             title.isNotBlank() && description.isNotBlank()
         }
     }
+
+    fun completeNode()
 }

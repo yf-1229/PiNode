@@ -1,11 +1,9 @@
 package com.example.pinode.compose.home
 
-import android.graphics.Matrix
-import android.graphics.Outline
-import android.util.Size
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,7 +49,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
-    navigateToNodeUpdate: (Int) -> Unit,
+    navigateToNodeUpdate: (Node) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -66,6 +67,7 @@ fun HomeScreen(
         HomeBody(
             nodeList = homeUiState.nodeList,
             onItemClick = navigateToNodeUpdate,
+            onItemLongClick = viewModel.completeNode, // TODO
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
@@ -75,7 +77,8 @@ fun HomeScreen(
 @Composable
 private fun HomeBody(
     nodeList: List<Node>,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (Node) -> Unit,
+    onItemLongClick: (Node) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -86,49 +89,53 @@ private fun HomeBody(
     Row(
         modifier = modifier,
     ) {
-        NodeList(nodeList[0..10], onItemClick, contentPadding)
+        PiNodeList(nodeList[0..10], onItemClick, onItemLongClick, contentPadding)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun NodeList(
-    verticalList: List<Node>,
-    onItemClick: (Int) -> Unit,
+private fun PiNodeList(
+    itemList: List<Node>,
+    onItemClick: (Node) -> Unit,
+    onItemLongClick : (Node) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val haptics = LocalHapticFeedback.current
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding
     ) {
-        items(items = verticalList, key = { it.id }) { item ->
-            NodeItem(node = item,
+        items(items = itemList, { it.id }) { item ->
+            PiNodeItem(
+                item = item,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
-                    .clickable { onItemClick(item) })
+                    .combinedClickable {
+                        onItemClick = { onItemClick(item) }
+                        onItemLongClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onItemLongClick(item)
+                        }
+                    }
+            )
         }
     }
 }
 
 @Composable
-private fun NodeItem(
-    node: Node,
+private fun PiNodeItem(
+    item: Node,
     modifier: Modifier = Modifier
 ) {
-    val title = node.title
-    val color = node.status.rgb
+    val color = item.status.rgb
     Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.secondary)
-            .size(40.dp)
-    ) {
-        Text(
-            title,
-            color = Color(color),
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
+        modifier = modifier
+            .size(20.dp) // 丸のサイズ
+            .background(Color.Red) // TODO
+            .clip(CircleShape) // 丸い形状にクリップ
+    )
 }
 
 
