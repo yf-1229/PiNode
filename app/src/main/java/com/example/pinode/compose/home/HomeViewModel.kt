@@ -37,6 +37,13 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
+
+    var nodeUiState by mutableStateOf(NodeUiState())
+        private set
+
+    fun completeNode(nodeDetails: NodeDetails) {
+
+    }
 }
 
 /**
@@ -44,5 +51,4 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
  */
 data class HomeUiState(
     val nodeList: List<Node> = listOf(),
-    val nodeDetails: NodeDetails = NodeDetails()
 )

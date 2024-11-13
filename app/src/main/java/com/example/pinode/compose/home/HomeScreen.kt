@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.R
+import com.example.pinode.compose.item.NodeDetails
+import com.example.pinode.compose.item.NodeUiState
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
@@ -64,10 +66,11 @@ fun HomeScreen(
             // TODO
         },
     ) { innerPadding ->
+        val value = nodeDetails.title,
         HomeBody(
             nodeList = homeUiState.nodeList,
             onItemClick = navigateToNodeUpdate,
-            onItemLongClick = viewModel.completeNode, // TODO
+            onStatusChange = viewModel.completeNode, // TODO
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
@@ -78,7 +81,7 @@ fun HomeScreen(
 private fun HomeBody(
     nodeList: List<Node>,
     onItemClick: (Node) -> Unit,
-    onItemLongClick: (Node) -> Unit,
+    onStatusChange: (Node) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -89,7 +92,7 @@ private fun HomeBody(
     Row(
         modifier = modifier,
     ) {
-        PiNodeList(nodeList[0..10], onItemClick, onItemLongClick, contentPadding)
+        PiNodeList(nodeList, onItemClick, onStatusChange, contentPadding)
     }
 }
 
@@ -98,7 +101,7 @@ private fun HomeBody(
 private fun PiNodeList(
     itemList: List<Node>,
     onItemClick: (Node) -> Unit,
-    onItemLongClick : (Node) -> Unit,
+    onStatusChange: (Node) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -114,9 +117,9 @@ private fun PiNodeList(
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .combinedClickable {
                         onItemClick = { onItemClick(item) }
-                        onItemLongClick = {
+                        onStatusChange = {
                             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                            onItemLongClick(item)
+                            onStatusChange(item)
                         }
                     }
             )
