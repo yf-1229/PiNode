@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import java.lang.Thread.State
+
 
 class NodeDetailsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -19,7 +18,7 @@ class NodeDetailsViewModel(
     private val nodeId: Int = checkNotNull(savedStateHandle[NodeDetailsDestination.nodeIdArg])
 
     val uiState: StateFlow<NodeDetailsUiState> =
-        nodesRepository.getAllNodesStream(nodeId)
+        nodesRepository.getNodeStream(nodeId)
             .filterNotNull()
             .map {
                 NodeDetailsUiState(nodeDetails = it.toNodeDetails())
@@ -30,7 +29,7 @@ class NodeDetailsViewModel(
             )
 
     suspend fun deleteNode() {
-        nodesRepository.deleteItem(uiState.value.nodeDetails.toItem())
+        nodesRepository.deleteNode(uiState.value.nodeDetails.toNode())
     }
 
     companion object {

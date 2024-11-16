@@ -1,5 +1,6 @@
 package com.example.pinode.compose.home
 
+import android.adservices.adid.AdId
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -22,6 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,7 +106,7 @@ private fun HomeBody(
 private fun PiNodeList(
     itemList: List<Node>,
     onItemClick: (Node) -> Unit,
-    onStatusChange: (Node) -> Unit,
+    completeNodeId: Int,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -116,10 +121,10 @@ private fun PiNodeList(
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .combinedClickable {
-                        onItemClick = { onItemClick(item) }
-                        onStatusChange = {
+                        onClick = { onItemClick(item) }
+                        onLongClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                            onStatusChange(item)
+                            completeNodeId = item.id
                         }
                     }
             )

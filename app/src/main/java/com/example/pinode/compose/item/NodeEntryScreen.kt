@@ -33,7 +33,7 @@ fun NodeItemScreen(nodeUiState: NodeUiState, modifier: Modifier) {
 
 @Composable
 private fun NodeItemDialog(nodeUiState: NodeUiState, modifier: Modifier) {
-    Dialog(onDismissRequest = { nodeUiState.onDismissRequest }) {
+    Dialog(onDismissRequest = { nodeUiState.onDismissRequest }) { // scaffoldに変更
         Card(
             modifier = Modifier
                 .fillMaxWidth()
