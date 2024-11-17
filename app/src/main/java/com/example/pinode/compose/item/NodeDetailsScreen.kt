@@ -1,8 +1,9 @@
 package com.example.pinode.compose.item
 
-import android.window.BackEvent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -32,11 +33,11 @@ import com.example.pinode.data.Node
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.ApiStatus.Experimental
+
 
 object NodeDetailsDestination : NavigationDestination {
     override val route = "node_details"
-    override val titleRes = R.string.node_details_title
+    override val titleRes = R.string.node_detail_title
     const val nodeIdArg = "nodeId"
     val routeWithArgs = "$route/{$nodeIdArg}"
 }
@@ -77,7 +78,7 @@ fun NodeDetailsScreen(
             },
             modifier = Modifier
                 .padding(
-                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    start = innerPadding.calculateStartPadding(layoutDirection = LocalLayoutDirection.current),
                     top = innerPadding.calculateTopPadding(),
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                 )
@@ -98,6 +99,7 @@ private fun NodeDetailsBody(
        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
    ) {
        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+       var completeConfirmationRequired by rememberSaveable { mutableStateOf(false) }
        NodeDetails(
            node = nodeDetailsUiState.nodeDetails.toNode(), modifier = Modifier.fillMaxWidth()
        )
@@ -115,6 +117,16 @@ private fun NodeDetailsBody(
                    onDelete()
                },
                onDeleteCancel = { deleteConfirmationRequired = false },
+               modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+           )
+       }
+       if (completeConfirmationRequired) {
+           CompleteConfirmationDialog(
+               onCompleteConfirm = {
+                   completeConfirmationRequired = false
+                   onComplete()
+               },
+               onCompleteCancel = { deleteConfirmationRequired = false },
                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
            )
        }
@@ -137,7 +149,7 @@ fun NodeDetails(
                 .padding(dimensionResource(id = R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
         ) {
-            ItemDetailsRow(
+            NodeDetailsRow(
                 labelResID = R.string.item,
                 itemDetail = item.name,
                 modifier = Modifier.padding(
@@ -147,7 +159,7 @@ fun NodeDetails(
                     )
                 )
             )
-            ItemDetailsRow(
+            NodeDetailsRow(
                 labelResID = R.string.quantity_in_stock,
                 itemDetail = item.quantity.toString(),
                 modifier = Modifier.padding(
@@ -157,7 +169,7 @@ fun NodeDetails(
                     )
                 )
             )
-            ItemDetailsRow(
+            NodeDetailsRow(
                 labelResID = R.string.price,
                 itemDetail = item.formatedPrice(),
                 modifier = Modifier.padding(
