@@ -1,16 +1,13 @@
 package com.example.pinode.compose.home
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pinode.compose.item.NodeDetails
 import com.example.pinode.compose.item.NodeUiState
-import com.example.pinode.compose.item.toNode
 import com.example.pinode.data.Node
-import com.example.pinode.data.NodeStatus
 import com.example.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
