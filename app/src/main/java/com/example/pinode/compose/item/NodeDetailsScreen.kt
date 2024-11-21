@@ -1,7 +1,10 @@
 package com.example.pinode.compose.item
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Button
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Delete
 import com.example.pinode.R
@@ -57,7 +63,7 @@ fun NodeDetailsScreen(
 
     Scaffold(
         topBar = {
-            InventoryTopAppBar(
+            PiNodeTopAppBar(
                 title = stringResource(NodeDetailsDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateBack
@@ -67,12 +73,13 @@ fun NodeDetailsScreen(
     ) { innerPadding ->
         NodeDetailsBody(
             nodeDetailsUiState = uiState.value,
-            onComplete = { viewModel.reduceQuantityByOne() },
+            onComplete = {
+                coroutineScope.launch {
+                    viewModel.completeNode()
+                    navigateBack()
+                }
+            },
             onDelete = {
-                // Note: If the user rotates the screen very fast, the operation may get cancelled
-                // and the item may not be deleted from the Database. This is because when config
-                // change occurs, the Activity will be recreated and the rememberCoroutineScope will
-                // be cancelled - since the scope is bound to composition.
                 coroutineScope.launch {
                     viewModel.deleteNode()
                     navigateBack()
@@ -105,6 +112,13 @@ private fun NodeDetailsBody(
        NodeDetails(
            node = nodeDetailsUiState.nodeDetails.toNode(), modifier = Modifier.fillMaxWidth()
        )
+       Button(
+           onClick = onComplete,
+           modifier = Modifier.fillMaxWidth(),
+           shape = MaterialTheme.shapes.small,
+       ) {
+           Text(stringResource(R.string.complete))
+       }
        OutlinedButton(
            onClick = { deleteConfirmationRequired = true },
            shape = MaterialTheme.shapes.small,
@@ -119,16 +133,6 @@ private fun NodeDetailsBody(
                    onDelete()
                },
                onDeleteCancel = { deleteConfirmationRequired = false },
-               modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
-           )
-       }
-       if (completeConfirmationRequired) {
-           CompleteConfirmationDialog(
-               onCompleteConfirm = {
-                   completeConfirmationRequired = false
-                   onComplete()
-               },
-               onCompleteCancel = { deleteConfirmationRequired = false },
                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
            )
        }
@@ -173,7 +177,7 @@ fun NodeDetails(
             )
             NodeDetailsRow(
                 labelResID = R.string.price,
-                itemDetail = item.formatedPrice(),
+                itemDetail = node.formatedPrice(),
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
@@ -183,6 +187,18 @@ fun NodeDetails(
             )
         }
 
+    }
+}
+
+
+@Composable
+private fun NodeDetailsRow(
+    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        Text(text = stringResource(labelResID))
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = itemDetail, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -204,5 +220,6 @@ private fun DeleteConfirmationDialog(
             TextButton(onClick = onDeleteConfirm) {
                 Text(text = stringResource(R.string.yes))
             }
-        })
+        }
+    )
 }

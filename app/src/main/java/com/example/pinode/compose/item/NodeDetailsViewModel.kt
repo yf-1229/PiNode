@@ -3,12 +3,14 @@ package com.example.pinode.compose.item
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pinode.data.NodeStatus
 import com.example.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 
 class NodeDetailsViewModel(
@@ -16,7 +18,6 @@ class NodeDetailsViewModel(
     private val nodesRepository: NodesRepository
 ) : ViewModel() {
     private val nodeId: Int = checkNotNull(savedStateHandle[NodeDetailsDestination.nodeIdArg])
-
     val uiState: StateFlow<NodeDetailsUiState> =
         nodesRepository.getNodeStream(nodeId)
             .filterNotNull()
@@ -27,6 +28,15 @@ class NodeDetailsViewModel(
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = NodeDetailsUiState()
             )
+
+    fun completeNode() {
+        viewModelScope.launch {
+            val currentItem = uiState.value.nodeDetails.toNode()
+            if (!currentItem.isCompleted) {
+                nodesRepository.updateNode(currentItem.copy(isCompleted = true)) // TODO
+            }
+        }
+    }
 
     suspend fun deleteNode() {
         nodesRepository.deleteNode(uiState.value.nodeDetails.toNode())

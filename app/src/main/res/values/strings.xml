@@ -20,4 +20,5 @@
     <string name="sell">Sell</string>
     <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
+    <string name="complete">Complete</string>
 </resources>
