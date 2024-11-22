@@ -1,6 +1,8 @@
 package com.example.pinode.compose.item
 
+import android.media.Image
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -31,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
@@ -108,7 +112,7 @@ private fun NodeDetailsBody(
        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
    ) {
        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-       var completeConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+
        NodeDetails(
            node = nodeDetailsUiState.nodeDetails.toNode(), modifier = Modifier.fillMaxWidth()
        )
@@ -155,9 +159,10 @@ fun NodeDetails(
                 .padding(dimensionResource(id = R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
         ) {
+            Image(painter = painterResource(id = node.icon), contentDescription = null)
             NodeDetailsRow(
                 labelResID = R.string.node,
-                itemDetail = node.name,
+                itemDetail = node.title,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
@@ -167,17 +172,7 @@ fun NodeDetails(
             )
             NodeDetailsRow(
                 labelResID = R.string.quantity_in_stock,
-                itemDetail = item.quantity.toString(),
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
-            NodeDetailsRow(
-                labelResID = R.string.price,
-                itemDetail = node.formatedPrice(),
+                itemDetail = node.description,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
