@@ -4,6 +4,7 @@ import android.adservices.adid.AdId
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,11 +72,9 @@ fun HomeScreen(
             // TODO
         },
     ) { innerPadding ->
-        val value = nodeDetails.title,
         HomeBody(
             nodeList = homeUiState.nodeList,
             onItemClick = navigateToNodeUpdate,
-            onStatusChange = viewModel.completeNode, // TODO
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
@@ -86,7 +85,6 @@ fun HomeScreen(
 private fun HomeBody(
     nodeList: List<Node>,
     onItemClick: (Node) -> Unit,
-    onStatusChange: (Node) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -97,7 +95,7 @@ private fun HomeBody(
     Row(
         modifier = modifier,
     ) {
-        PiNodeList(nodeList, onItemClick, onStatusChange, contentPadding)
+        PiNodeList(nodeList, onItemClick, contentPadding)
     }
 }
 
@@ -106,7 +104,6 @@ private fun HomeBody(
 private fun PiNodeList(
     itemList: List<Node>,
     onItemClick: (Node) -> Unit,
-    completeNodeId: Int,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -120,13 +117,7 @@ private fun PiNodeList(
                 item = item,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
-                    .combinedClickable {
-                        onClick = { onItemClick(item) }
-                        onLongClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                            completeNodeId = item.id
-                        }
-                    }
+                    .clickable { onItemClick(item) }
             )
         }
     }
@@ -189,6 +180,5 @@ fun DrawGridPreview() {
     val verticalLineCount = 5
     val horizontalLineCount = 20
     val strokeWidth = 3f
-    val color = NodeStatus.Red
-    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth, color, modifier = Modifier)
+    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
 }

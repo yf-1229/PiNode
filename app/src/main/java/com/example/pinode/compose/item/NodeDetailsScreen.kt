@@ -38,12 +38,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Delete
 import com.example.pinode.R
 import com.example.pinode.data.Node
+import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
+import com.example.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
 
 
@@ -217,4 +220,14 @@ private fun DeleteConfirmationDialog(
             }
         }
     )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun ItemDetailsScreenPreview() {
+    PiNodeTheme {
+        NodeDetailsBody(NodeDetailsUiState(nodeDetails = NodeDetails(1, NodeStatus.RED, R.drawable.ic_launcher_foreground, "Test")
+        ), onComplete = {}, onDelete = {})
+    }
 }

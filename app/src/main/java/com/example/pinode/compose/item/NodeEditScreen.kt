@@ -28,8 +28,8 @@ object NodeEditDestination : NavigationDestination {
 @Composable
 fun NodeEditScreen(
     navigateBack: () -> Unit,
-    navigateUp: () -> Unit,
-    modifier: Modifier,
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: NodeEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()

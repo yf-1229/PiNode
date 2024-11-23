@@ -12,7 +12,9 @@ import com.example.pinode.compose.home.HomeDestination
 import com.example.pinode.compose.home.HomeScreen
 import com.example.pinode.compose.item.NodeDetails
 import com.example.pinode.compose.item.NodeDetailsDestination
+import com.example.pinode.compose.item.NodeDetailsScreen
 import com.example.pinode.compose.item.NodeEditDestination
+import com.example.pinode.compose.item.NodeEditScreen
 
 @Composable
 fun NodeNavHost(
@@ -24,20 +26,45 @@ fun NodeNavHost(
         startDestination = HomeDestination.route,
         modifier = modifier
     ) {
+        // Home
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToNodeEntry = { navController.navigate()}, // TODO
+                navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route)}, // TODO
                 navigateToNodeUpdate = {
                     navController.navigate("${NodeDetailsDestination.route}/${it}")
                 },
             )
         }
-        composable(
+        // NodeEntry
+        composable(route = NodeEntryDestination.route) {
+            NodeEntryScreen(
+                navigateBack = {},
+                onNavigateUp = {}
+            )
+        }
+
+        composable( // NodeDetails
             route = NodeDetailsDestination.routeWithArgs,
             arguments = listOf(navArgument(NodeDetailsDestination.nodeIdArg) {
                 type = NavType.IntType
-            }) {
+            })
+        ) {
+            NodeDetailsScreen(
+                navigateToEditNode = { navController.navigate("${NodeEditDestination.route}/$it")},
+                navigateBack = { navController.navigateUp() }
+            )
+        }
 
+        composable( // NodeEdit
+            route = NodeEditDestination.routeWithArgs,
+            arguments = listOf(navArgument(NodeEditDestination.nodeIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            NodeEditScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 
