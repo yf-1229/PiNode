@@ -1,6 +1,5 @@
 package com.example.pinode.compose.item
 
-import PiNodeTopAppBar
 import android.icu.util.Currency
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,10 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pinode.PiNodeTopAppBar
 import com.example.pinode.R
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
+import com.example.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -163,3 +165,10 @@ fun NodeInputForm(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun NodeEditScreenPreview() {
+    PiNodeTheme {
+        NodeEditScreen(navigateBack = { /*Do nothing*/ }, onNavigateUp = { /*Do nothing*/ })
+    }
+}

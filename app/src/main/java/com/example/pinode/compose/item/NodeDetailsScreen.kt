@@ -1,6 +1,5 @@
 package com.example.pinode.compose.item
 
-import android.media.Image
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Delete
+import com.example.pinode.PiNodeTopAppBar
 import com.example.pinode.R
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus

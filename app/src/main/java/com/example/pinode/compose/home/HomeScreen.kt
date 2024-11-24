@@ -1,11 +1,9 @@
 package com.example.pinode.compose.home
 
-import android.adservices.adid.AdId
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,28 +21,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.R
-import com.example.pinode.compose.item.NodeDetails
-import com.example.pinode.compose.item.NodeUiState
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
-
+import com.example.pinode.ui.theme.PiNodeTheme
 
 
 object HomeDestination : NavigationDestination {
@@ -159,18 +150,54 @@ private fun DrawGrid(
                 val y = j * gridSpacing
                 drawLine( // 縦線を描画
                     color = Color.Black,
-                    start = androidx.compose.ui.geometry.Offset(x, 0f),
-                    end = androidx.compose.ui.geometry.Offset(x, size.height),
+                    start = Offset(x, 0f),
+                    end = Offset(x, size.height),
                     strokeWidth = strokeWidth,
                 )
                 drawLine( // 横線を描画
                     color = Color.Black,
-                    start = androidx.compose.ui.geometry.Offset(0f, y),
-                    end = androidx.compose.ui.geometry.Offset(size.width, y),
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
                     strokeWidth = strokeWidth,
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyPreview() {
+    PiNodeTheme {
+        HomeBody(listOf(
+            Node(1, NodeStatus.RED), Node(2, "Pen", 200.0, 30)
+        ), onItemClick = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyEmptyListPreview() {
+    PiNodeTheme {
+        HomeBody(listOf(), onItemClick = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun InventoryItemPreview() {
+    PiNodeTheme {
+        PiNodeItem(
+            Node(
+                1,
+                status = NodeStatus.RED,
+                icon = null,
+                title = "Test4",
+                description = TODO(),
+                isCompleted = TODO(),
+                isDeleted = TODO(),
+            ),
+        )
     }
 }
 
