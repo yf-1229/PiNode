@@ -165,41 +165,7 @@ private fun DrawGrid(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeBodyPreview() {
-    PiNodeTheme {
-        HomeBody(listOf(
-            Node(1, NodeStatus.RED), Node(2, "Pen", 200.0, 30)
-        ), onItemClick = {})
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun HomeBodyEmptyListPreview() {
-    PiNodeTheme {
-        HomeBody(listOf(), onItemClick = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun InventoryItemPreview() {
-    PiNodeTheme {
-        PiNodeItem(
-            Node(
-                1,
-                status = NodeStatus.RED,
-                icon = null,
-                title = "Test4",
-                description = TODO(),
-                isCompleted = TODO(),
-                isDeleted = TODO(),
-            ),
-        )
-    }
-}
 
 @Composable
 @Preview

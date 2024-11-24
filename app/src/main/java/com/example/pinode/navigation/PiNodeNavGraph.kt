@@ -5,12 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pinode.compose.home.HomeDestination
 import com.example.pinode.compose.home.HomeScreen
-import com.example.pinode.compose.item.NodeDetails
 import com.example.pinode.compose.item.NodeDetailsDestination
 import com.example.pinode.compose.item.NodeDetailsScreen
 import com.example.pinode.compose.item.NodeEditDestination
@@ -40,8 +38,8 @@ fun PiNodeNavHost(
         // NodeEntry
         composable(route = NodeEntryDestination.route) {
             NodeEntryScreen(
-                navigateBack = {},
-                onNavigateUp = {}
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
             )
         }
 
