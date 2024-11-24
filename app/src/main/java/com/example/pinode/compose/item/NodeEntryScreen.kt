@@ -1,55 +1,75 @@
 package com.example.pinode.compose.item
 
 import android.icu.util.Currency
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.R
+import com.example.pinode.navigation.NavigationDestination
+import com.example.pinode.ui.AppViewModelProvider
+import kotlinx.coroutines.launch
 import java.util.Locale
 
-@Composable
-fun NodeItemScreen(nodeUiState: NodeUiState, modifier: Modifier) {
-    NodeItemDialog(nodeUiState, modifier = Modifier)
+object NodeEntryDestination : NavigationDestination {
+    override val route = "node_entry"
+    override val titleRes = R.string.node_entry_title
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NodeItemDialog(nodeUiState: NodeUiState, modifier: Modifier) {
-    Dialog(onDismissRequest = { nodeUiState.onDismissRequest }) { // scaffoldに変更
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Column(modifier = Modifier) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = null,
-                    modifier = Modifier
-                )
-            }
+fun NodeEntryScreen(
+    navigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
+    canNavigateBack: Boolean = true,
+    viewModel: NodeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val coroutineScope = rememberCoroutineScope()
+    Scaffold(
+        topBar = {
+            PiNodeTopAppBar(
+                title = stringResource(NodeEntryDestination.titleRes),
+                canNavigateBack = canNavigateBack,
+                navigateUp = onNavigateUp
+            )
         }
+    ) { innerPadding ->
+        NodeEntryBody(
+            nodeUiState = viewModel.nodeUiState,
+            onNodeValueChange = viewModel::updateUiState,
+            onSaveClick = {
+                // Note: If the user rotates the screen very fast, the operation may get cancelled
+                // and the item may not be saved in the Database. This is because when config
+                // change occurs, the Activity will be recreated and the rememberCoroutineScope will
+                // be cancelled - since the scope is bound to composition.
+                coroutineScope.launch {
+                    viewModel.saveNode()
+                    navigateBack()
+                }
+            },
+            modifier = Modifier
+                .padding(
+                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    top = innerPadding.calculateTopPadding(),
+                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                )
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -92,23 +112,24 @@ fun NodeInputForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ) {
-        OutlinedTextField(
-            value = nodeDetails.icon,
-            onValueChange = { onValueChange(nodeDetails.copy(icon = it)) },
-            label = { Text(stringResource(R.string.node_name_req)) },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
-        )
+        // TODO 画像を入力できるようにする
+//        OutlinedTextField(
+//            value = nodeDetails.icon,
+//            onValueChange = { onValueChange(nodeDetails.copy(icon = it)) },
+//            label = { Text(stringResource(R.string.node_name_req)) },
+//            colors = OutlinedTextFieldDefaults.colors(
+//                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+//            ),
+//            modifier = Modifier.fillMaxWidth(),
+//            enabled = enabled,
+//            singleLine = true
+//        )
         OutlinedTextField(
             value = nodeDetails.title,
             onValueChange = { onValueChange(nodeDetails.copy(title = it)) },
-            label = { Text(stringResource(R.string.item_price_req)) },
+            label = { Text(stringResource(R.string.node_title_req)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -122,7 +143,7 @@ fun NodeInputForm(
         OutlinedTextField(
             value = nodeDetails.description,
             onValueChange = { onValueChange(nodeDetails.copy(description = it)) },
-            label = { Text(stringResource(R.string.quantity_req)) },
+            label = { Text(stringResource(R.string.node_description_req)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,

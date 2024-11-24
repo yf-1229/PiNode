@@ -59,7 +59,7 @@ object NodeDetailsDestination : NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NodeDetailsScreen(
+fun NodeDetailsScreen( // Dialogにする
     navigateToEditNode: (Int) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,

@@ -1,12 +1,14 @@
 package com.example.pinode
 
+import PiNodeApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import com.example.pinode.ui.theme.PiNodeTheme
+import java.lang.reflect.Modifier
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,6 +16,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PiNodeTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    PiNodeApp()
+                }
             }
         }
     }

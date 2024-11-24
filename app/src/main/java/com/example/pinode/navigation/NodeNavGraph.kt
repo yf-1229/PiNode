@@ -15,9 +15,11 @@ import com.example.pinode.compose.item.NodeDetailsDestination
 import com.example.pinode.compose.item.NodeDetailsScreen
 import com.example.pinode.compose.item.NodeEditDestination
 import com.example.pinode.compose.item.NodeEditScreen
+import com.example.pinode.compose.item.NodeEntryDestination
+import com.example.pinode.compose.item.NodeEntryScreen
 
 @Composable
-fun NodeNavHost(
+fun PiNodeNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {

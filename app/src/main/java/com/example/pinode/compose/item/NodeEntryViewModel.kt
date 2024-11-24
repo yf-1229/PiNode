@@ -9,7 +9,7 @@ import com.example.pinode.data.NodeStatus
 import com.example.pinode.data.NodesRepository
 import java.text.NumberFormat
 
-class NodeCreateViewModel(private val nodesRepository: NodesRepository): ViewModel() {
+class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
     var nodeUiState by mutableStateOf(NodeUiState())
         private set
 

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 object NodeEditDestination : NavigationDestination {
     override val route = "node_edit"
-    override val titleRes = R.string.edit_item_title
+    override val titleRes = R.string.edit_node_title
     const val nodeIdArg = "nodeId"
     val routeWithArgs = "$route/{$nodeIdArg}"
 }
