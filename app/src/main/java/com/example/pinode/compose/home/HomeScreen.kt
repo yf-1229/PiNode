@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -112,12 +113,21 @@ private fun HomeBody(
     Row(
         modifier = modifier,
     ) {
-        PiNodeList(
-            nodeList = nodeList,
-            onItemClick = { onItemClick(it.id)},
-            contentPadding = contentPadding,
-            modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
-        )
+        if (nodeList.isEmpty()) {
+            Text(
+                text = stringResource(R.string.no_node_description),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(contentPadding),
+            )
+        } else {
+            PiNodeList(
+                nodeList = nodeList,
+                onItemClick = { onItemClick(it.id) },
+                contentPadding = contentPadding,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+            )
+        }
     }
 }
 
