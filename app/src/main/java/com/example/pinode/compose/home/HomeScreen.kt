@@ -1,7 +1,6 @@
 package com.example.pinode.compose.home
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -34,10 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +42,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.PiNodeTopAppBar
 import com.example.pinode.R
 import com.example.pinode.data.Node
-import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
 import com.example.pinode.ui.theme.PiNodeTheme
@@ -60,7 +56,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
-    navigateToNodeUpdate: (Node) -> Unit,
+    navigateToNodeUpdate: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +101,7 @@ fun HomeScreen(
 @Composable
 private fun HomeBody(
     nodeList: List<Node>,
-    onItemClick: (Node) -> Unit,
+    onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -116,13 +112,18 @@ private fun HomeBody(
     Row(
         modifier = modifier,
     ) {
-        PiNodeList(nodeList, onItemClick, contentPadding)
+        PiNodeList(
+            nodeList = nodeList,
+            onItemClick = { onItemClick(it.id)},
+            contentPadding = contentPadding,
+            modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+        )
     }
 }
 
 @Composable
 private fun PiNodeList(
-    itemList: List<Node>,
+    nodeList: List<Node>,
     onItemClick: (Node) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -131,7 +132,7 @@ private fun PiNodeList(
         modifier = modifier,
         contentPadding = contentPadding
     ) {
-        items(items = itemList, { it.id }) { item ->
+        items(items = nodeList, { it.id }) { item ->
             PiNodeItem(
                 item = item,
                 modifier = Modifier
