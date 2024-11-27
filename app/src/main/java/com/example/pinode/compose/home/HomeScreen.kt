@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -45,7 +46,6 @@ import com.example.pinode.R
 import com.example.pinode.data.Node
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
-import com.example.pinode.ui.theme.PiNodeTheme
 
 
 object HomeDestination : NavigationDestination {
@@ -109,10 +109,11 @@ private fun HomeBody(
     val verticalLineCount = 5
     val horizontalLineCount = 20
     val strokeWidth = 3f
-    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-    Row(
+
+    Box( // TODO Rowにして
         modifier = modifier,
     ) {
+        DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
         if (nodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),

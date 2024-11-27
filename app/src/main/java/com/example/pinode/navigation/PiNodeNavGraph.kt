@@ -67,6 +67,4 @@ fun PiNodeNavHost(
             )
         }
     }
-
-
 }
