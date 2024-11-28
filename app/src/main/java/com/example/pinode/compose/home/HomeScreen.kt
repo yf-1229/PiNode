@@ -4,9 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -29,7 +27,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -44,8 +41,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pinode.PiNodeTopAppBar
 import com.example.pinode.R
 import com.example.pinode.data.Node
+import com.example.pinode.data.NodeStatus
 import com.example.pinode.navigation.NavigationDestination
 import com.example.pinode.ui.AppViewModelProvider
+import com.example.pinode.ui.theme.PiNodeTheme
 
 
 object HomeDestination : NavigationDestination {
@@ -214,4 +213,14 @@ fun DrawGridPreview() {
     val horizontalLineCount = 20
     val strokeWidth = 3f
     DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyPreview() {
+    PiNodeTheme {
+        HomeBody(listOf(
+            Node(1, NodeStatus.RED, null, "Test1", "test", isCompleted = false, isDeleted = false)
+        ), onItemClick = {})
+    }
 }

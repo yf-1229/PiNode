@@ -1,12 +1,7 @@
 package com.example.pinode.compose.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pinode.compose.item.NodeDetails
-import com.example.pinode.compose.item.NodeUiState
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,13 +28,6 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
-    }
-
-    var nodeUiState by mutableStateOf(NodeUiState())
-        private set
-
-    fun completeNode(nodeDetails: NodeDetails) {
-
     }
 }
 
