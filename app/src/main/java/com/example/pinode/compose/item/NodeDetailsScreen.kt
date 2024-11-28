@@ -182,7 +182,6 @@ fun NodeDetails(
                 .padding(dimensionResource(id = R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
         ) {
-            Image(painter = painterResource(id = node.icon), contentDescription = null)
             NodeDetailsRow(
                 labelResID = R.string.node,
                 itemDetail = node.title,
@@ -247,7 +246,7 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun ItemDetailsScreenPreview() {
     PiNodeTheme {
-        NodeDetailsBody(NodeDetailsUiState(nodeDetails = NodeDetails(1, NodeStatus.RED, R.drawable.ic_launcher_foreground, "Test")
+        NodeDetailsBody(NodeDetailsUiState(nodeDetails = NodeDetails(1, NodeStatus.RED, "Test")
         ), onComplete = {}, onDelete = {})
     }
 }

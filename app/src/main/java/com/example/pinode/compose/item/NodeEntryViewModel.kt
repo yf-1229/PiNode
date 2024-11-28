@@ -43,7 +43,6 @@ data class NodeUiState(
 data class NodeDetails(
     val id: Int = 0,
     val status: NodeStatus = NodeStatus.GRAY,
-    val icon: Int = 0,
     val title: String = "",
     val description: String = "",
     val isCompleted: Boolean = false,
@@ -53,7 +52,6 @@ data class NodeDetails(
 fun NodeDetails.toNode(): Node = Node(
     id = id,
     status = status,
-    icon = icon,
     title = title,
     description = description,
     isCompleted = isCompleted,
@@ -72,7 +70,6 @@ fun Node.toNodeUiState(isEntryValid: Boolean = false): NodeUiState = NodeUiState
 fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     id = id,
     status = status,
-    icon = icon,
     title = title.toString(),
     description = description.toString(),
     isCompleted = isCompleted,

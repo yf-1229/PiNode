@@ -220,7 +220,7 @@ fun DrawGridPreview() {
 fun HomeBodyPreview() {
     PiNodeTheme {
         HomeBody(listOf(
-            Node(1, NodeStatus.RED, null, "Test1", "test", isCompleted = false, isDeleted = false)
+            Node(1, NodeStatus.RED, "Test1", "test", isCompleted = false, isDeleted = false)
         ), onItemClick = {})
     }
 }

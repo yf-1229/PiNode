@@ -115,20 +115,6 @@ fun NodeInputForm(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ) {
-        // TODO 画像を入力できるようにする
-//        OutlinedTextField(
-//            value = nodeDetails.icon,
-//            onValueChange = { onValueChange(nodeDetails.copy(icon = it)) },
-//            label = { Text(stringResource(R.string.node_name_req)) },
-//            colors = OutlinedTextFieldDefaults.colors(
-//                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-//                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-//                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-//            ),
-//            modifier = Modifier.fillMaxWidth(),
-//            enabled = enabled,
-//            singleLine = true
-//        )
         OutlinedTextField(
             value = nodeDetails.title,
             onValueChange = { onValueChange(nodeDetails.copy(title = it)) },
