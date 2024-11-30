@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,7 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +68,7 @@ fun HomeScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             PiNodeTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
@@ -112,7 +116,6 @@ private fun HomeBody(
     Box( // TODO Rowにして
         modifier = modifier,
     ) {
-        DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
         if (nodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
@@ -121,6 +124,7 @@ private fun HomeBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
+            DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
             PiNodeList(
                 nodeList = nodeList,
                 onItemClick = { onItemClick(it.id) },
@@ -158,13 +162,17 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    val color = item.status.rgb
-    Box(
-        modifier = modifier
-            .size(20.dp) // 丸のサイズ
-            .background(Color.Red) // TODO
-            .clip(CircleShape) // 丸い形状にクリップ
-    )
+    val color = item.status.color
+    Card(
+        modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Box(
+            modifier = modifier
+                .size(20.dp) // 丸のサイズ
+                .background(color) // TODO
+                .clip(CircleShape) // 丸い形状にクリップ
+        )
+    }
 }
 
 

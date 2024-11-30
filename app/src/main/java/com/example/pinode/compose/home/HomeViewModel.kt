@@ -12,10 +12,9 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel to retrieve all items in the Room database.
  */
-class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() {
+class HomeViewModel(nodesRepository: NodesRepository) : ViewModel() {
 
     /**
-     * Holds home ui state. The list of items are retrieved from [ItemsRepository] and mapped to
      * [HomeUiState]
      */
     val homeUiState: StateFlow<HomeUiState> =
@@ -34,6 +33,4 @@ class HomeViewModel(private val nodesRepository: NodesRepository) : ViewModel() 
 /**
  * Ui State for HomeScreen
  */
-data class HomeUiState(
-    val nodeList: List<Node> = listOf(),
-)
+data class HomeUiState(val nodeList: List<Node> = listOf())

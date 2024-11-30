@@ -1,6 +1,6 @@
 package com.example.pinode.data
 
-import androidx.compose.ui.graphics.colorspace.Rgb
+import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -22,8 +22,8 @@ data class Node(
     val isDeleted: Boolean
 )
 
-enum class NodeStatus(val rgb: Int){ // Node's color
-    RED(0xFF0000), YELLOW(0xFFF00), GREEN(0x008000), GRAY(0x808080), BLACK(0x000000)
+enum class NodeStatus(val color: Color){ // Node's color
+    RED(Color.Red), YELLOW(Color.Yellow), GREEN(Color.Green), GRAY(Color.Gray), BLACK(Color.Black)
 }
 
 @Dao
