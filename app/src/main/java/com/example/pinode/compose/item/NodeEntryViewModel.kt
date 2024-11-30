@@ -58,9 +58,6 @@ fun NodeDetails.toNode(): Node = Node(
     isDeleted = isDeleted
 )
 
-fun Node.formatedColor(): String {
-    return NumberFormat.getCurrencyInstance().format(status)
-}
 
 fun Node.toNodeUiState(isEntryValid: Boolean = false): NodeUiState = NodeUiState(
     nodeDetails = this.toNodeDetails(),
@@ -70,8 +67,8 @@ fun Node.toNodeUiState(isEntryValid: Boolean = false): NodeUiState = NodeUiState
 fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     id = id,
     status = status,
-    title = title.toString(),
-    description = description.toString(),
+    title = title,
+    description = description,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

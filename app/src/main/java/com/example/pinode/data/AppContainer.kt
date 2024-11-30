@@ -17,6 +17,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [NodesRepository]
      */
     override val nodesRepository: NodesRepository by lazy {
-        OfflineNodesRepository(NodeDatabase.getDatabase(context).nodeDao())
+        OfflineNodesRepository(PiNodeDatabase.getDatabase(context).nodeDao())
     }
 }

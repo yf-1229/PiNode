@@ -169,7 +169,7 @@ private fun PiNodeItem(
         Box(
             modifier = modifier
                 .size(20.dp) // 丸のサイズ
-                .background(color) // TODO
+                .background(color)
                 .clip(CircleShape) // 丸い形状にクリップ
         )
     }
