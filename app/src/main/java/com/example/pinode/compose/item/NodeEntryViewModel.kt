@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.pinode.data.Node
 import com.example.pinode.data.NodeStatus
 import com.example.pinode.data.NodesRepository
-import java.text.NumberFormat
+
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
     var nodeUiState by mutableStateOf(NodeUiState())

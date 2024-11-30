@@ -17,7 +17,7 @@ abstract class PiNodeDatabase : RoomDatabase() {
         fun getDatabase(context: Context): PiNodeDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, PiNodeDatabase::class.java, "item_database")
+                Room.databaseBuilder(context, PiNodeDatabase::class.java, "node_database")
                     .build()
                     .also { Instance = it }
             }

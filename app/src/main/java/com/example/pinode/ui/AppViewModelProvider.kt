@@ -6,10 +6,11 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.pinode.NodeApplication
+import com.example.pinode.PiNodeApplication
 import com.example.pinode.compose.home.HomeViewModel
+import com.example.pinode.compose.item.NodeDetailsViewModel
 import com.example.pinode.compose.item.NodeEditViewModel
-import com.example.pinode.data.Node
+import com.example.pinode.compose.item.NodeEntryViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -20,19 +21,32 @@ object AppViewModelProvider {
         initializer {
             NodeEditViewModel(
                 this.createSavedStateHandle(),
-                nodeApplication().container.nodesRepository
+                pinodeApplication().container.nodesRepository
             )
         }
+        // Initializer for NodeEntryViewModel
+        initializer {
+            NodeEntryViewModel(pinodeApplication().container.nodesRepository)
+        }
+
+        // Initializer for NodeDetailsViewModel
+        initializer {
+            NodeDetailsViewModel(
+                this.createSavedStateHandle(),
+                pinodeApplication().container.nodesRepository
+            )
+        }
+
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(nodeApplication().container.nodesRepository)
+            HomeViewModel(pinodeApplication().container.nodesRepository)
         }
     }
 }
 
+
 /**
- * Extension function to queries for [Application] object and returns an instance of
- * [InventoryApplication].
+ * Extension function to queries for [Application] object and returns an instance ofn].
  */
-fun CreationExtras.nodeApplication(): NodeApplication =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as NodeApplication)
+fun CreationExtras.pinodeApplication(): PiNodeApplication =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as PiNodeApplication)

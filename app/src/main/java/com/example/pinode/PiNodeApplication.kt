@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.pinode.data.AppContainer
 import com.example.pinode.data.AppDataContainer
 
-class NodeApplication : Application() {
+class PiNodeApplication : Application() {
 
     lateinit var container: AppContainer
     override fun onCreate() {

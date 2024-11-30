@@ -3,12 +3,17 @@ package com.example.pinode.compose.home
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -29,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -113,7 +119,8 @@ private fun HomeBody(
     val horizontalLineCount = 20
     val strokeWidth = 3f
 
-    Box( // TODO Rowにして
+    Column( // TODO Rowにして
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
         if (nodeList.isEmpty()) {
@@ -124,13 +131,15 @@ private fun HomeBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
-            PiNodeList(
-                nodeList = nodeList,
-                onItemClick = { onItemClick(it.id) },
-                contentPadding = contentPadding,
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
-            )
+            Box {
+                DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
+                PiNodeList(
+                    nodeList = nodeList,
+                    onItemClick = { onItemClick(it.id) },
+                    contentPadding = contentPadding,
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                )
+            }
         }
     }
 }
@@ -174,9 +183,6 @@ private fun PiNodeItem(
         )
     }
 }
-
-
-
 
 @Composable
 private fun DrawGrid(
