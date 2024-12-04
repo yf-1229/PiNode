@@ -1,4 +1,4 @@
-package com.example.pinode.ui.theme
+package com.pinode.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

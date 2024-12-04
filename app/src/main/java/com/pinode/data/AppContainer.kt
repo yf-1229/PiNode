@@ -1,4 +1,4 @@
-package com.example.pinode.data
+package com.pinode.data
 
 import android.content.Context
 
@@ -9,9 +9,6 @@ interface AppContainer {
     val nodesRepository: NodesRepository
 }
 
-/**
- * [AppContainer] implementation that provides instance of [OfflineItemsRepository]
- */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
      * Implementation for [NodesRepository]

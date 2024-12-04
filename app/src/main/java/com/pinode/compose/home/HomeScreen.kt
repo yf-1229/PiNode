@@ -1,4 +1,4 @@
-package com.example.pinode.compose.home
+package com.pinode.compose.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -48,13 +48,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pinode.PiNodeTopAppBar
-import com.example.pinode.R
-import com.example.pinode.data.Node
-import com.example.pinode.data.NodeStatus
-import com.example.pinode.navigation.NavigationDestination
-import com.example.pinode.ui.AppViewModelProvider
-import com.example.pinode.ui.theme.PiNodeTheme
+import com.pinode.PiNodeTopAppBar
+import com.pinode.data.Node
+import com.pinode.data.NodeStatus
+import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.AppViewModelProvider
+import com.pinode.ui.theme.PiNodeTheme
+import com.pinode.R
 
 
 object HomeDestination : NavigationDestination {

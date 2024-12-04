@@ -1,4 +1,4 @@
-package com.example.pinode.data
+package com.pinode.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.room.Dao

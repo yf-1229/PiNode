@@ -1,4 +1,4 @@
-package com.example.pinode.navigation
+package com.pinode.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -7,14 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.pinode.compose.home.HomeDestination
-import com.example.pinode.compose.home.HomeScreen
-import com.example.pinode.compose.item.NodeDetailsDestination
-import com.example.pinode.compose.item.NodeDetailsScreen
-import com.example.pinode.compose.item.NodeEditDestination
-import com.example.pinode.compose.item.NodeEditScreen
-import com.example.pinode.compose.item.NodeEntryDestination
-import com.example.pinode.compose.item.NodeEntryScreen
+import com.pinode.compose.home.HomeDestination
+import com.pinode.compose.home.HomeScreen
+import com.pinode.compose.item.NodeDetailsDestination
+import com.pinode.compose.item.NodeDetailsScreen
+import com.pinode.compose.item.NodeEditDestination
+import com.pinode.compose.item.NodeEditScreen
+import com.pinode.compose.item.NodeEntryDestination
+import com.pinode.compose.item.NodeEntryScreen
 
 @Composable
 fun PiNodeNavHost(

@@ -1,4 +1,4 @@
-package com.example.pinode.data
+package com.pinode.data
 
 import kotlinx.coroutines.flow.Flow
 

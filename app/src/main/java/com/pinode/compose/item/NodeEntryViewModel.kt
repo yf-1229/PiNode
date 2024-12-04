@@ -1,12 +1,12 @@
-package com.example.pinode.compose.item
+package com.pinode.compose.item
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.pinode.data.Node
-import com.example.pinode.data.NodeStatus
-import com.example.pinode.data.NodesRepository
+import com.pinode.data.Node
+import com.pinode.data.NodeStatus
+import com.pinode.data.NodesRepository
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {

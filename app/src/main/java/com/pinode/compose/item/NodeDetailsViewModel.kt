@@ -1,10 +1,9 @@
-package com.example.pinode.compose.item
+package com.pinode.compose.item
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pinode.data.NodeStatus
-import com.example.pinode.data.NodesRepository
+import com.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull

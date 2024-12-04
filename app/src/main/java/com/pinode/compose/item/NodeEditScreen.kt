@@ -1,4 +1,4 @@
-package com.example.pinode.compose.item
+package com.pinode.compose.item
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -11,11 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pinode.R
-import com.example.pinode.navigation.NavigationDestination
-import com.example.pinode.ui.AppViewModelProvider
+import com.pinode.PiNodeTopAppBar
+import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
+import com.pinode.R
+import com.pinode.ui.theme.PiNodeTheme
 
 object NodeEditDestination : NavigationDestination {
     override val route = "node_edit"
@@ -35,7 +38,11 @@ fun NodeEditScreen(
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-
+            PiNodeTopAppBar(
+                title = stringResource(NodeEditDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onNavigateUp
+            )
         },
         modifier = modifier
     ) { innerPadding ->

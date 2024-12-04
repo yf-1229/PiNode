@@ -1,4 +1,4 @@
-package com.example.pinode.data
+package com.pinode.data
 
 import android.content.Context
 import androidx.room.Database

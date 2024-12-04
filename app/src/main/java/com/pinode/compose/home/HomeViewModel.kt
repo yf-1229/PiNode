@@ -1,9 +1,9 @@
-package com.example.pinode.compose.home
+package com.pinode.compose.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pinode.data.Node
-import com.example.pinode.data.NodesRepository
+import com.pinode.data.Node
+import com.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

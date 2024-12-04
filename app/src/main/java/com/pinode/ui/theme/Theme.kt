@@ -1,4 +1,4 @@
-package com.example.pinode.ui.theme
+package com.pinode.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

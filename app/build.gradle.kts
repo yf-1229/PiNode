@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pinode"
+    namespace = "com.pinode"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pinode"
+        applicationId = "com.pinode"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

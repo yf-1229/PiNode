@@ -1,4 +1,4 @@
-package com.example.pinode
+package com.pinode
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.pinode.navigation.PiNodeNavHost
+import com.pinode.navigation.PiNodeNavHost
 
 
 @Composable

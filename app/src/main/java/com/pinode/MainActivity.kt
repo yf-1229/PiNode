@@ -1,4 +1,4 @@
-package com.example.pinode
+package com.pinode
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import com.example.pinode.ui.theme.PiNodeTheme
+import com.pinode.ui.theme.PiNodeTheme
 import androidx.compose.ui.Modifier
 
 

@@ -1,8 +1,8 @@
-package com.example.pinode
+package com.pinode
 
 import android.app.Application
-import com.example.pinode.data.AppContainer
-import com.example.pinode.data.AppDataContainer
+import com.pinode.data.AppContainer
+import com.pinode.data.AppDataContainer
 
 class PiNodeApplication : Application() {
 

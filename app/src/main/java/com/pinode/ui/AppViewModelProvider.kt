@@ -1,4 +1,4 @@
-package com.example.pinode.ui
+package com.pinode.ui
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -6,11 +6,11 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.pinode.PiNodeApplication
-import com.example.pinode.compose.home.HomeViewModel
-import com.example.pinode.compose.item.NodeDetailsViewModel
-import com.example.pinode.compose.item.NodeEditViewModel
-import com.example.pinode.compose.item.NodeEntryViewModel
+import com.pinode.PiNodeApplication
+import com.pinode.compose.home.HomeViewModel
+import com.pinode.compose.item.NodeDetailsViewModel
+import com.pinode.compose.item.NodeEditViewModel
+import com.pinode.compose.item.NodeEntryViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app

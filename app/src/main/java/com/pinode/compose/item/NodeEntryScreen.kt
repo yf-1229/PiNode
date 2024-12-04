@@ -1,4 +1,4 @@
-package com.example.pinode.compose.item
+package com.pinode.compose.item
 
 import android.icu.util.Currency
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +24,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pinode.PiNodeTopAppBar
-import com.example.pinode.R
-import com.example.pinode.navigation.NavigationDestination
-import com.example.pinode.ui.AppViewModelProvider
-import com.example.pinode.ui.theme.PiNodeTheme
+import com.pinode.PiNodeTopAppBar
+import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.AppViewModelProvider
+import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
+import com.pinode.R
 import java.util.Locale
 
 object NodeEntryDestination : NavigationDestination {
