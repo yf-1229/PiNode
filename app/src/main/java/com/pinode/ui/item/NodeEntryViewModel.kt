@@ -1,4 +1,4 @@
-package com.pinode.compose.item
+package com.pinode.ui.item
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

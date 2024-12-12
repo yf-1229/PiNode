@@ -1,4 +1,4 @@
-package com.pinode.navigation
+package com.pinode.ui.navigation
 
 interface NavigationDestination {
     val route: String

@@ -7,10 +7,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pinode.PiNodeApplication
-import com.pinode.compose.home.HomeViewModel
-import com.pinode.compose.item.NodeDetailsViewModel
-import com.pinode.compose.item.NodeEditViewModel
-import com.pinode.compose.item.NodeEntryViewModel
+import com.pinode.ui.home.HomeViewModel
+import com.pinode.ui.item.NodeDetailsViewModel
+import com.pinode.ui.item.NodeEditViewModel
+import com.pinode.ui.item.NodeEntryViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app

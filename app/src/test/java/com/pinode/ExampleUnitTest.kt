@@ -1,4 +1,4 @@
-package com.example.pinode
+package com.pinode
 
 import org.junit.Test
 

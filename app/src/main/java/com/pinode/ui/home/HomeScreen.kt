@@ -1,4 +1,4 @@
-package com.pinode.compose.home
+package com.pinode.ui.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -51,7 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
-import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.theme.PiNodeTheme
 import com.pinode.R

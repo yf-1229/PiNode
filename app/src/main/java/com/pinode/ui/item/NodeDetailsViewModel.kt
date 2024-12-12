@@ -1,4 +1,4 @@
-package com.pinode.compose.item
+package com.pinode.ui.item
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

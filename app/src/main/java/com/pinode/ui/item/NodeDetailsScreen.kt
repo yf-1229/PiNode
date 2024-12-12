@@ -1,4 +1,4 @@
-package com.pinode.compose.item
+package com.pinode.ui.item
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -47,7 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
-import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
@@ -246,7 +246,8 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun ItemDetailsScreenPreview() {
     PiNodeTheme {
-        NodeDetailsBody(NodeDetailsUiState(nodeDetails = NodeDetails(1, NodeStatus.RED, "Test")
+        NodeDetailsBody(
+            NodeDetailsUiState(nodeDetails = NodeDetails(1, NodeStatus.RED, "Test")
         ), onComplete = {}, onDelete = {})
     }
 }

@@ -1,4 +1,4 @@
-package com.pinode.compose.item
+package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
-import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 import com.pinode.R

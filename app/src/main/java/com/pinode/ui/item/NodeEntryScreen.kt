@@ -1,4 +1,4 @@
-package com.pinode.compose.item
+package com.pinode.ui.item
 
 import android.icu.util.Currency
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
-import com.pinode.navigation.NavigationDestination
+import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.pinode.compose.home
+package com.pinode.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
