@@ -18,7 +18,7 @@ import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 import com.pinode.R
-import com.pinode.ui.theme.PiNodeTheme
+
 
 object NodeEditDestination : NavigationDestination {
     override val route = "node_edit"

@@ -28,14 +28,18 @@ enum class NodeStatus(val color: Color){ // Node's color
 
 @Dao
 interface NodeDao {
-    @Query("SELECT * from nodes WHERE id = :id")
-    fun getNode(id: Int): Flow<Node>
-    @Query("SELECT * from nodes ORDER BY title ASC")
-    fun getAllItems(): Flow<List<Node>>
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNode(node: Node)
+
     @Update
     suspend fun updateNode(node: Node)
+
     @Delete
     suspend fun deleteNode(node: Node)
+
+    @Query("SELECT * from nodes WHERE id = :id")
+    fun getNode(id: Int): Flow<Node>
+
+    @Query("SELECT * from nodes ORDER BY title ASC")
+    fun getAllItems(): Flow<List<Node>>
 }
