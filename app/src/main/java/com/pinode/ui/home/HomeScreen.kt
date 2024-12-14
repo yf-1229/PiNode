@@ -115,10 +115,6 @@ private fun HomeBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val verticalLineCount = 5
-    val horizontalLineCount = 20
-    val strokeWidth = 3f
-
     Column( // TODO Rowにして
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
@@ -132,7 +128,6 @@ private fun HomeBody(
             )
         } else {
             Box {
-                DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
                 PiNodeList(
                     nodeList = nodeList,
                     onItemClick = { onItemClick(it.id) },
@@ -175,58 +170,10 @@ private fun PiNodeItem(
     Card(
         modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Box(
-            modifier = modifier
-                .size(20.dp) // 丸のサイズ
-                .background(color)
-                .clip(CircleShape) // 丸い形状にクリップ
-        )
+       Column(
+           modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+       ) {  }
     }
-}
-
-@Composable
-private fun DrawGrid(
-    verticalLineCount: Int,
-    horizontalLineCount: Int,
-    strokeWidth: Float,
-    modifier: Modifier = Modifier,
-) {
-    Canvas(modifier = modifier
-        .background(Color.LightGray)
-        .fillMaxSize()
-    ) {
-        val gridSpacing = size.width / (verticalLineCount + 1) // TODO uiStateから今のid数を取得　
-
-        for (i in 1..verticalLineCount) {
-            for (j in 1..horizontalLineCount) {
-                val x = i * gridSpacing
-                val y = j * gridSpacing
-                drawLine( // 縦線を描画
-                    color = Color.Black,
-                    start = Offset(x, 0f),
-                    end = Offset(x, size.height),
-                    strokeWidth = strokeWidth,
-                )
-                drawLine( // 横線を描画
-                    color = Color.Black,
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = strokeWidth,
-                )
-            }
-        }
-    }
-}
-
-
-
-@Composable
-@Preview
-fun DrawGridPreview() {
-    val verticalLineCount = 5
-    val horizontalLineCount = 20
-    val strokeWidth = 3f
-    DrawGrid(verticalLineCount, horizontalLineCount, strokeWidth)
 }
 
 @Preview(showBackground = true)
