@@ -166,13 +166,14 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    val color = item.status.color
     Card(
         modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
        Column(
            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
-       ) {  }
+       ) {
+           Text(item.title)
+       }
     }
 }
 

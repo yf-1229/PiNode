@@ -43,8 +43,6 @@ object AppViewModelProvider {
         }
     }
 }
-
-
 /**
  * Extension function to queries for [Application] object and returns an instance ofn].
  */
