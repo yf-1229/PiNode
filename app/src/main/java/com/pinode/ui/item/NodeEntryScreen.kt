@@ -124,7 +124,6 @@ fun NodeInputForm(
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
-            leadingIcon = { Text(Currency.getInstance(Locale.getDefault()).symbol) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
