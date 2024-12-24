@@ -28,11 +28,12 @@ class NodeDetailsViewModel(
                 initialValue = NodeDetailsUiState()
             )
 
-    fun completeNode() {
+    fun completeNode() { // TODO
         viewModelScope.launch {
             val currentItem = uiState.value.nodeDetails.toNode()
             if (!currentItem.isCompleted) {
-                nodesRepository.updateNode(currentItem.copy(isCompleted = true)) // TODO
+                currentItem.isCompleted = true
+                nodesRepository.updateNode(currentItem) // TODO
             }
         }
     }

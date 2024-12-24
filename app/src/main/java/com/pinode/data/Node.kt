@@ -18,7 +18,7 @@ data class Node(
     val status: NodeStatus,
     val title: String,
     val description: String,
-    val isCompleted: Boolean,
+    var isCompleted: Boolean,
     val isDeleted: Boolean
 )
 
