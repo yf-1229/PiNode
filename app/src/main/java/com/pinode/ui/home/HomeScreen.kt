@@ -166,14 +166,8 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-       Column(
-           modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
-       ) {
-           Text(item.title)
-       }
+    Box() {
+    
     }
 }
 
