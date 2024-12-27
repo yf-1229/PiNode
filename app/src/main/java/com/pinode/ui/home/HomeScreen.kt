@@ -161,14 +161,19 @@ private fun PiNodeList(
     }
 }
 
+
 @Composable
 private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    Box() {
-    
-    }
+    val color = item.status.color
+    Box(
+        modifier = modifier
+            .size(40.dp) // 丸のサイズ
+            .clip(CircleShape) // 丸い形状にクリップ
+            .background(color) // TODO
+    )
 }
 
 @Preview(showBackground = true)

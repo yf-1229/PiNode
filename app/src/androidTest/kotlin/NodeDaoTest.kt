@@ -1,21 +1,21 @@
 package com.example.pinode
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room.Room.inMemoryDatabaseBuilder
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.pinode.data.Node
-import com.example.pinode.data.NodeDao
-import com.example.pinode.data.NodeStatus
-import com.example.pinode.data.PiNodeDatabase
-import org.junit.After
-import org.junit.Before
-import org.junit.runner.RunWith
-import java.io.IOException
+import com.pinode.data.Node
+import com.pinode.data.NodeDao
+import com.pinode.data.NodeStatus
+import com.pinode.data.PiNodeDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class NodeDaoTest {
@@ -27,7 +27,7 @@ class NodeDaoTest {
         val context: Context = ApplicationProvider.getApplicationContext()
         // Using an in-memory database because the information stored here disappears when the
         // process is killed.
-        pinodeDatabase = Room.inMemoryDatabaseBuilder(context, PiNodeDatabase::class.java)
+        pinodeDatabase = inMemoryDatabaseBuilder(context, PiNodeDatabase::class.java)
             // Allowing main thread queries, just for testing.
             .allowMainThreadQueries()
             .build()
