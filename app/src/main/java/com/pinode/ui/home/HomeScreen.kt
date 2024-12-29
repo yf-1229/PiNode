@@ -100,7 +100,10 @@ fun HomeScreen(
         },
     ) { innerPadding ->
         HomeBody(
-            nodeList = homeUiState.nodeList,
+            nodeList1 = homeUiState.nodeList1,
+            nodeList2 = homeUiState.nodeList2,
+            nodeList3 = homeUiState.nodeList3,
+            nodeList4 = homeUiState.nodeList4,
             onItemClick = navigateToNodeUpdate,
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -110,7 +113,10 @@ fun HomeScreen(
 
 @Composable
 private fun HomeBody(
-    nodeList: List<Node>,
+    nodeList1: List<Node>,
+    nodeList2: List<Node>,
+    nodeList3: List<Node>,
+    nodeList4: List<Node>,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -119,7 +125,7 @@ private fun HomeBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
-        if (nodeList.isEmpty()) {
+        if (nodeList1.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
                 textAlign = TextAlign.Center,
@@ -127,9 +133,27 @@ private fun HomeBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            Box {
-                PiNodeList(
-                    nodeList = nodeList,
+            Row {
+                PiNodeList( // the first one on the left
+                    nodeList = nodeList1,
+                    onItemClick = { onItemClick(it.id) },
+                    contentPadding = contentPadding,
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                )
+                PiNodeList( // the second one on the left
+                    nodeList = nodeList2,
+                    onItemClick = { onItemClick(it.id) },
+                    contentPadding = contentPadding,
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                )
+                PiNodeList( // the third one on the left
+                    nodeList = nodeList4,
+                    onItemClick = { onItemClick(it.id) },
+                    contentPadding = contentPadding,
+                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                )
+                PiNodeList( // the fourth one on the left
+                    nodeList = nodeList4,
                     onItemClick = { onItemClick(it.id) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -176,12 +200,3 @@ private fun PiNodeItem(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeBodyPreview() {
-    PiNodeTheme {
-        HomeBody(listOf(
-            Node(1, NodeStatus.RED, "Test1", "test", isCompleted = false, isDeleted = false)
-        ), onItemClick = {})
-    }
-}
