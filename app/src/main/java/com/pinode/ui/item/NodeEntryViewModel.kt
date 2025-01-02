@@ -42,7 +42,7 @@ data class NodeUiState(
 
 data class NodeDetails(
     val id: Int = 0,
-    val status: NodeStatus = NodeStatus.GRAY,
+    val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
     val isCompleted: Boolean = false,

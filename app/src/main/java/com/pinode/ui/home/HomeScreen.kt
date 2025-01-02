@@ -147,7 +147,7 @@ private fun HomeBody(
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
                 PiNodeList( // the third one on the left
-                    nodeList = nodeList4,
+                    nodeList = nodeList3,
                     onItemClick = { onItemClick(it.id) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))

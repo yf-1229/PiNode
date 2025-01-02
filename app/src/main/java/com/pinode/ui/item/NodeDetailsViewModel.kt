@@ -1,8 +1,10 @@
 package com.pinode.ui.item
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,7 @@ class NodeDetailsViewModel(
             val currentItem = uiState.value.nodeDetails.toNode()
             if (!currentItem.isCompleted) {
                 currentItem.isCompleted = true
+                currentItem.status = NodeStatus.GRAY
                 nodesRepository.updateNode(currentItem) // TODO
             }
         }
