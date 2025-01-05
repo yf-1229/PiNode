@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
+import java.time.DayOfWeek
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
@@ -45,6 +46,7 @@ data class NodeDetails(
     val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
+    val daysOfWeek: DayOfWeek = DayOfWeek.SUNDAY,,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -54,6 +56,7 @@ fun NodeDetails.toNode(): Node = Node(
     status = status,
     title = title,
     description = description,
+    daysOfWeek = daysOfWeek,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
@@ -69,6 +72,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     status = status,
     title = title,
     description = description,
+    daysOfWeek = daysOfWeek,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

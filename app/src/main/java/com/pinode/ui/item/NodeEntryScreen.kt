@@ -150,6 +150,61 @@ fun NodeInputForm(
     }
 }
 
+@Composable
+fun WeekdaySelector(
+    selectedDay: Int,
+    onDaySelected: (Int) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        for (i in 0..6) {
+            WeekdayButton(
+                day = i,
+                isSelected = selectedDay == i,
+                onClick = { onDaySelected(i) }
+            )
+        }
+    }
+}
+
+@Composable
+fun WeekdayButton(
+    day: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val dayName = when (day) {
+        0 -> "Sun"
+        1 -> "Mon"
+        2 -> "Tue"
+        3 -> "Wed"
+        4 -> "Thu"
+        5 -> "Fri"
+        6 -> "Sat"
+        else -> ""
+    }
+
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(8.dp)
+            .background(
+                color = if (isSelected) Color.Blue else Color.Gray,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (isSelected) Color.Blue else Color.Gray,
+            contentColor = Color.White
+        )
+    ) {
+        Text(dayName)
+    }
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun NodeEditScreenPreview() {
