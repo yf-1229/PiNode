@@ -20,7 +20,6 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val daysOfWeek: DayOfWeek,
     var isCompleted: Boolean,
     val isDeleted: Boolean
 )

@@ -1,15 +1,22 @@
 package com.pinode.ui.item
 
 import android.icu.util.Currency
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -17,12 +24,19 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.ui.navigation.NavigationDestination
@@ -150,59 +164,6 @@ fun NodeInputForm(
     }
 }
 
-@Composable
-fun WeekdaySelector(
-    selectedDay: Int,
-    onDaySelected: (Int) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        for (i in 0..6) {
-            WeekdayButton(
-                day = i,
-                isSelected = selectedDay == i,
-                onClick = { onDaySelected(i) }
-            )
-        }
-    }
-}
-
-@Composable
-fun WeekdayButton(
-    day: Int,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val dayName = when (day) {
-        0 -> "Sun"
-        1 -> "Mon"
-        2 -> "Tue"
-        3 -> "Wed"
-        4 -> "Thu"
-        5 -> "Fri"
-        6 -> "Sat"
-        else -> ""
-    }
-
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .padding(8.dp)
-            .background(
-                color = if (isSelected) Color.Blue else Color.Gray,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (isSelected) Color.Blue else Color.Gray,
-            contentColor = Color.White
-        )
-    ) {
-        Text(dayName)
-    }
-}
 
 
 @Preview(showBackground = true)
