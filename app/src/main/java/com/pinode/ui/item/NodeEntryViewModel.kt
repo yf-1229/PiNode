@@ -4,10 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.room.TypeConverter
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.Date
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
@@ -46,6 +51,9 @@ data class NodeDetails(
     val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
+    val currentDate: LocalDate = LocalDate.now(),
+    val currentTime: LocalTime = LocalTime.now(),
+    val deadline: LocalDateTime = LocalDateTime.of(currentDate, currentTime),
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -55,6 +63,7 @@ fun NodeDetails.toNode(): Node = Node(
     status = status,
     title = title,
     description = description,
+    deadline = deadline,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
@@ -70,6 +79,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     status = status,
     title = title,
     description = description,
+    deadline = deadline,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

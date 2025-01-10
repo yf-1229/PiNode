@@ -12,6 +12,8 @@ import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
 import java.time.DayOfWeek
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity(tableName = "nodes")
 data class Node(
@@ -20,6 +22,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
+    val deadline: LocalDateTime,
     var isCompleted: Boolean,
     val isDeleted: Boolean
 )
