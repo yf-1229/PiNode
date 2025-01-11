@@ -1,6 +1,5 @@
 package com.pinode.data
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -11,9 +10,6 @@ import androidx.room.Query
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
-import java.time.DayOfWeek
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
 
 @Entity(tableName = "nodes")
 data class Node(
@@ -22,9 +18,9 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val deadline: LocalDateTime,
+    val deadline: String,
     var isCompleted: Boolean,
-    val isDeleted: Boolean
+    val isDeleted: Boolean,
 )
 
 enum class NodeStatus(var color: Int){ // Node's color
