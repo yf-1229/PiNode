@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
@@ -191,12 +192,12 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    val color = item.status.color
+    val itemColor = item.status.color
     Box(
         modifier = modifier
             .size(40.dp) // 丸のサイズ
             .clip(CircleShape) // 丸い形状にクリップ
-            .background(color) // TODO
+            .background(Color(itemColor)) // TODO
     )
 }
 
