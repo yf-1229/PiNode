@@ -192,12 +192,12 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    val itemColor = item.status.color
+    val itemColor: Int = item.status.color
     Box(
         modifier = modifier
             .size(40.dp) // 丸のサイズ
             .clip(CircleShape) // 丸い形状にクリップ
-            .background(Color(itemColor)) // TODO
+            .background(colorResource(itemColor)) // TODO
     )
 }
 
