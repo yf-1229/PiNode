@@ -197,7 +197,7 @@ private fun PiNodeItem(
         modifier = modifier
             .size(40.dp) // 丸のサイズ
             .clip(CircleShape) // 丸い形状にクリップ
-            .background(colorResource(itemColor)) // TODO
+            .background(colorResource(itemColor))
     )
 }
 
