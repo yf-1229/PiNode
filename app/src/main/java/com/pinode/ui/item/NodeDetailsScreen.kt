@@ -191,7 +191,7 @@ fun NodeDetails(
                 )
             )
             NodeDetailsRow(
-                labelResID = R.string.quantity_in_stock,
+                labelResID = R.string.node_description_req,
                 itemDetail = node.description,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
@@ -199,6 +199,9 @@ fun NodeDetails(
                             .padding_medium
                     )
                 )
+            )
+            TimerActivity(
+                node = node
             )
         }
 
@@ -215,6 +218,12 @@ private fun NodeDetailsRow(
         Spacer(modifier = Modifier.weight(1f))
         Text(text = itemDetail, fontWeight = FontWeight.Bold)
     }
+}
+
+@Composable
+private fun TimerActivity(node: Node) {
+    val deadline: String = node.deadline
+
 }
 
 

@@ -93,6 +93,7 @@ fun NodeEntryBody(
             onValueChange = onNodeValueChange,
             modifier = Modifier.fillMaxWidth()
         )
+
         Button(
             onClick = onSaveClick,
             enabled = nodeUiState.isEntryValid,
@@ -100,6 +101,12 @@ fun NodeEntryBody(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(R.string.save_action))
+            // deadlineの処理
+            val DateTime = DateTimeCtrl()
+            val currentTime = DateTime.GetNowStr("yyyy/MM/dd HH:mm:ss.SSS")
+            val deadlineTime = currentTime.plusHours(24)
+            val deadlineFormated: String = deadlineTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineFormated))
         }
     }
 }
@@ -147,10 +154,8 @@ fun NodeInputForm(
                 modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium))
             )
         }
-        val currentTime = LocalDateTime.now()
-        val deadlineTime = currentTime.plusHours(24)
-        val deadlineFormated: String = deadlineTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        onValueChange(nodeDetails.copy(deadline = deadlineFormated))
+
+
     }
 }
 
