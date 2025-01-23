@@ -8,25 +8,26 @@ class DateTimeCtrl {
     fun GetNow() : LocalDateTime {
         return LocalDateTime.now()
     }
-
-    fun GetNowStr(pattern: String) : String{
-        val dt = GetNow()
-        return Format(dt,pattern)
+    
+    fun GetDeadline(countdown: String) : LocalDateTime {
+         val dt = LocalDateTime.now()
+         val deadline = dt.plusHours(countdown)
+         return deadline
     }
 
-    fun GetDeadline(countdown: String) {
-
+    fun GetTimeStr(dt: LocalDateTime, pattern: String) : String{
+        return Format(dt,pattern)
     }
 
 
     @SuppressLint("NewApi")
-    fun Format(date : LocalDateTime, pattern: String) : String{
+    fun Format(date: LocalDateTime, pattern: String) : String{
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
         return date.format(formatter)
     }
 
     @SuppressLint("NewApi")
-    fun Parse(str : String, pattern: String) : LocalDateTime{
+    fun Parse(str: String, pattern: String) : LocalDateTime{
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
         val dt: LocalDateTime = LocalDateTime.parse(str,formatter)
         return dt
