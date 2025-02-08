@@ -8,10 +8,10 @@ class DateTimeCtrl {
     fun GetNow() : LocalDateTime {
         return LocalDateTime.now()
     }
-    
-    fun GetDeadline(countdown: String) : LocalDateTime {
-         val dt = LocalDateTime.now()
-         val deadline = dt.plusHours(countdown)
+
+    fun GetDeadline(deadMinutes: Long) : LocalDateTime {
+         val dt = GetNow()
+         val deadline = dt.plusHours(deadMinutes)
          return deadline
     }
 

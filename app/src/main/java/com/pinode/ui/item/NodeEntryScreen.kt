@@ -14,9 +14,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -91,6 +98,12 @@ fun NodeEntryBody(
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
+            onClick = onNodeValueChange(
+                nodeUiState.nodeDetails.copy(
+                currentTime = currentTimeFormated,
+                deadline = deadlineFormated
+                )
+            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -101,12 +114,6 @@ fun NodeEntryBody(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(R.string.save_action))
-            // deadlineの処理
-            val DateTime = DateTimeCtrl()
-            val currentTime = DateTime.GetNowStr("yyyy/MM/dd HH:mm:ss.SSS")
-            val deadlineTime = currentTime.plusHours(24)
-            val deadlineFormated: String = deadlineTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineFormated))
         }
     }
 }
@@ -116,6 +123,7 @@ fun NodeInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
+    onClick: Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -148,18 +156,34 @@ fun NodeInputForm(
             enabled = enabled,
             singleLine = true
         )
-        if (enabled) {
-            Text(
-                text = stringResource(R.string.required_fields),
-                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium))
-            )
+
+        val DateTime = DateTimeCtrl()
+        val currentTime = DateTime.GetNow()
+        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        val deadlineTime = DateTime.GetDeadline(deadMinutes = deadMinutes)
+        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
+
+        var selectedIndex by remember { mutableIntStateOf(0) }
+        val options = listOf("15", "30", "60")
+
+        SingleChoiceSegmentedButtonRow {
+            options.forEachIndexed { index, label ->
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = options.size
+                    ),
+                    onClick = { selectedIndex = index },
+                    selected = index == selectedIndex,
+                    label = { Text(label) },
+                )
+            }
         }
-
-
     }
 }
 
 
+on =
 
 @Preview(showBackground = true)
 @Composable

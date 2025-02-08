@@ -11,6 +11,7 @@ import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
 
+
 @Entity(tableName = "nodes")
 data class Node(
     @PrimaryKey(autoGenerate = true)
@@ -18,6 +19,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
+    val currentTime: String,
     val deadline: String,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
