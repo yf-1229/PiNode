@@ -21,6 +21,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -95,25 +97,32 @@ fun NodeEntryBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        val DateTime = DateTimeCtrl()
-        val currentTime = DateTime.GetNow()
-        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
-        val deadlineTime = DateTime.GetDeadline(deadMinutes = deadMinutes)
-        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        // NodeInputFormで選択された時間
+        var selectedMinutes by remember { mutableIntStateOf(0) }
+
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
+            OnSelectedMinutesChange = { selectedMinutes = it }, // callback
             onValueChange = onNodeValueChange,
-            onClick = onNodeValueChange(
-                nodeUiState.nodeDetails.copy(
-                currentTime = currentTimeFormated,
-                deadline = deadlineFormated
-                )
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
+        val DateTime = DateTimeCtrl()
+        val currentTime = DateTime.GetNow()
+        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        val deadlineTime = DateTime.GetDeadline(selectedMinutes = selectedMinutes.toLong())
+        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
+
         Button(
-            onClick = onSaveClick,
+            onClick = {
+                onSaveClick()
+                onNodeValueChange(
+                    nodeUiState.nodeDetails.copy(
+                        currentTime = currentTimeFormated,
+                        deadline = deadlineFormated
+                    )
+                )
+            },
             enabled = nodeUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
@@ -127,8 +136,8 @@ fun NodeEntryBody(
 fun NodeInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
+    OnSelectedMinutesChange: (Int) -> Unit, // ここまでInt
     onValueChange: (NodeDetails) -> Unit = {},
-    onClick: Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -162,10 +171,8 @@ fun NodeInputForm(
             singleLine = true
         )
 
-
-
         var selectedIndex by remember { mutableIntStateOf(0) }
-        val options = listOf("15", "30", "60")
+        val options = listOf(15, 30, 60)
 
         SingleChoiceSegmentedButtonRow {
             options.forEachIndexed { index, label ->
@@ -174,9 +181,18 @@ fun NodeInputForm(
                         index = index,
                         count = options.size
                     ),
-                    onClick = { selectedIndex = index },
+                    onClick = {
+                        selectedIndex = index
+                        OnSelectedMinutesChange(index) // selectedIndexをremember
+                              },
                     selected = index == selectedIndex,
-                    label = { Text(label) },
+                    label = {
+                        when (label) {
+                            15 -> Text("15")
+                            30 -> Text("30")
+                            60 -> Text("60")
+                        }
+                    },
                 )
             }
         }

@@ -6,12 +6,12 @@ import java.time.format.DateTimeFormatter
 
 class DateTimeCtrl {
     fun GetNow() : LocalDateTime {
-        return LocalDateTime.now()
+        return LocalDateTime.now() // TODO Instantクラスを使う
     }
 
-    fun GetDeadline(deadMinutes: Long) : LocalDateTime {
+    fun GetDeadline(selectedMinutes: Long) : LocalDateTime {
          val dt = GetNow()
-         val deadline = dt.plusHours(deadMinutes)
+         val deadline = dt.plusMinutes(selectedMinutes)
          return deadline
     }
 
