@@ -95,6 +95,11 @@ fun NodeEntryBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
+        val DateTime = DateTimeCtrl()
+        val currentTime = DateTime.GetNow()
+        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        val deadlineTime = DateTime.GetDeadline(deadMinutes = deadMinutes)
+        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
@@ -157,11 +162,7 @@ fun NodeInputForm(
             singleLine = true
         )
 
-        val DateTime = DateTimeCtrl()
-        val currentTime = DateTime.GetNow()
-        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
-        val deadlineTime = DateTime.GetDeadline(deadMinutes = deadMinutes)
-        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
+
 
         var selectedIndex by remember { mutableIntStateOf(0) }
         val options = listOf("15", "30", "60")
@@ -183,7 +184,6 @@ fun NodeInputForm(
 }
 
 
-on =
 
 @Preview(showBackground = true)
 @Composable
