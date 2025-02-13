@@ -102,7 +102,7 @@ fun NodeEntryBody(
 
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
-            OnSelectedMinutesChange = { selectedMinutes = it }, // callback
+            selectedMinutesChange = { selectedMinutes = it }, // callback
             onValueChange = onNodeValueChange,
             modifier = Modifier.fillMaxWidth()
         )
@@ -136,7 +136,7 @@ fun NodeEntryBody(
 fun NodeInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
-    OnSelectedMinutesChange: (Int) -> Unit, // ここまでInt
+    selectedMinutesChange: (Int) -> Unit, // ここまでInt
     onValueChange: (NodeDetails) -> Unit = {},
     enabled: Boolean = true
 ) {
@@ -183,7 +183,7 @@ fun NodeInputForm(
                     ),
                     onClick = {
                         selectedIndex = index
-                        OnSelectedMinutesChange(index) // selectedIndexをremember
+                        selectedMinutesChange(index) // selectedIndexをremember
                               },
                     selected = index == selectedIndex,
                     label = { Text(label.toString()) }
