@@ -109,9 +109,9 @@ fun NodeEntryBody(
 
         val DateTime = DateTimeCtrl()
         val currentTime = DateTime.GetNow()
-        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime)
         val deadlineTime = DateTime.GetDeadline(selectedMinutes = selectedMinutes.toLong())
-        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime, "yyyy/MM/dd HH:mm:ss.SSS")
+        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime)
 
         Button(
             onClick = {

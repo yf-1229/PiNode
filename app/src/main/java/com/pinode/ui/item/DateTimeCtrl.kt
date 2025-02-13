@@ -1,35 +1,19 @@
 package com.pinode.ui.item
 
-import android.annotation.SuppressLint
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.Instant
 
 class DateTimeCtrl {
-    fun GetNow() : LocalDateTime {
-        return LocalDateTime.now() // TODO Instantクラスを使う
+    fun GetNow() : Instant {
+        return Instant.now()
     }
 
-    fun GetDeadline(selectedMinutes: Long) : LocalDateTime {
+    fun GetDeadline(selectedMinutes: Long) : Instant {
          val dt = GetNow()
-         val deadline = dt.plusMinutes(selectedMinutes)
+         val deadline = dt.plusSeconds(selectedMinutes * 60)
          return deadline
     }
 
-    fun GetTimeStr(dt: LocalDateTime, pattern: String) : String{
-        return Format(dt,pattern)
-    }
-
-
-    @SuppressLint("NewApi")
-    fun Format(date: LocalDateTime, pattern: String) : String{
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
-        return date.format(formatter)
-    }
-
-    @SuppressLint("NewApi")
-    fun Parse(str: String, pattern: String) : LocalDateTime{
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
-        val dt: LocalDateTime = LocalDateTime.parse(str,formatter)
-        return dt
+    fun GetTimeStr(dt: Instant) : String{ // TODO NodeEntryScreen.kt にプレスコードする？
+        return dt.toString()
     }
 }
