@@ -186,13 +186,7 @@ fun NodeInputForm(
                         OnSelectedMinutesChange(index) // selectedIndexをremember
                               },
                     selected = index == selectedIndex,
-                    label = {
-                        when (label) {
-                            15 -> Text("15")
-                            30 -> Text("30")
-                            60 -> Text("60")
-                        }
-                    },
+                    label = { Text(label.toString()) }
                 )
             }
         }
