@@ -118,7 +118,7 @@ private fun HomeBody(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column( // TODO Rowにして
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
         if (nodeList.isEmpty()) {
@@ -178,4 +178,5 @@ private fun PiNodeItem(
         modifier = modifier
     )
 }
+
 
