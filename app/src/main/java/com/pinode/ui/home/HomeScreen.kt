@@ -1,6 +1,5 @@
 package com.pinode.ui.home
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,22 +7,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,9 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
@@ -51,12 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
+import com.pinode.R
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
-import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.AppViewModelProvider
+import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
-import com.pinode.R
 
 
 object HomeDestination : NavigationDestination {
@@ -157,7 +151,6 @@ private fun PiNodeList(
             PiNodeItem(
                 item = item,
                 modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.padding_small))
                     .clickable { onItemClick(item) }
             )
         }
@@ -171,12 +164,47 @@ private fun PiNodeItem(
     modifier: Modifier = Modifier
 ) {
     val itemColor: Int = item.status.color
-    Text(
-        item.title,
-        color = colorResource(itemColor),
-        fontSize = 30.sp,
-        modifier = modifier
-    )
+    Column{
+        Box(
+            modifier = modifier
+                .size(20.dp) // 丸のサイズ
+                .clip(CircleShape) // 丸い形状にクリップ
+                .background(colorResource(itemColor))
+        )
+        Text(
+            item.title,
+            color = Color.White,
+            fontSize = 30.sp,
+            modifier = modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small))
+        )
+    }
 }
 
-
+@Preview
+@Composable
+fun PreviewHomeBody() {
+    PiNodeTheme {
+        HomeBody(listOf(
+            Node(
+                1,
+                NodeStatus.RED,
+                "Test1",
+                "test",
+                currentTime = "",
+                deadline = "",
+                isCompleted = false,
+                isDeleted = false
+            ),
+            Node(
+                2,
+                NodeStatus.GRAY,
+                "Test2",
+                "test2",
+                currentTime = "",
+                deadline = "",
+                isCompleted = true,
+                isDeleted = false
+            )
+        ), onItemClick = {})
+    }
+}
