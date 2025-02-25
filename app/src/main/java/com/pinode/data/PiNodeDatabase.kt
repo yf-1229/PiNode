@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 
 @Database(entities = [Node::class], version = 1, exportSchema = false)
+@TypeConverters(DateTimeConverter::class)
 abstract class PiNodeDatabase : RoomDatabase() {
-
     abstract fun nodeDao(): NodeDao
 
     companion object {

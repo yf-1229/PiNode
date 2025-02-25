@@ -50,6 +50,7 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
 import com.pinode.R
+import java.time.Instant
 
 
 object NodeDetailsDestination : NavigationDestination {
@@ -222,7 +223,12 @@ private fun NodeDetailsRow(
 
 @Composable
 private fun TimerActivity(node: Node) {
-    val deadline: String = node.deadline
+    val DateTime = DateTimeCtrl()
+    val nowTime: Instant  = DateTime.GetNow()
+    val deadline: Instant = node.deadline
+    val limit  = deadline - nowTime
+
+
 
 }
 

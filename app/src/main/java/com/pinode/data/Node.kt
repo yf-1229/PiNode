@@ -7,9 +7,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.TypeConverter
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 
 @Entity(tableName = "nodes")
@@ -19,11 +22,12 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val currentTime: String,
-    val deadline: String,
+    val fontSize: Int,
+    val deadline: Instant,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
+
 
 enum class NodeStatus(var color: Int){ // Node's color
     RED(R.color.RED),
@@ -31,8 +35,6 @@ enum class NodeStatus(var color: Int){ // Node's color
     GREEN(R.color.GREEN),
     GRAY(R.color.GRAY)
 }
-
-
 
 
 @Dao
@@ -51,4 +53,5 @@ interface NodeDao {
 
     @Query("SELECT * from nodes ORDER BY title ASC")
     fun getAllItems(): Flow<List<Node>>
+
 }

@@ -108,18 +108,14 @@ fun NodeEntryBody(
         )
 
         val DateTime = DateTimeCtrl()
-        val currentTime = DateTime.GetNow()
-        val currentTimeFormated: String = DateTime.GetTimeStr(currentTime)
         val deadlineTime = DateTime.GetDeadline(selectedMinutes = selectedMinutes.toLong())
-        val deadlineFormated: String = DateTime.GetTimeStr(deadlineTime)
 
         Button(
             onClick = {
                 onSaveClick()
                 onNodeValueChange(
                     nodeUiState.nodeDetails.copy(
-                        currentTime = currentTimeFormated,
-                        deadline = deadlineFormated
+                        deadline = deadlineTime
                     )
                 )
             },

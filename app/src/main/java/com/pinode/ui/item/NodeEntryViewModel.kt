@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
+import java.time.Instant
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
@@ -45,8 +46,8 @@ data class NodeDetails(
     val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
-    val currentTime: String = "",
-    val deadline: String = "",
+    val fontSize: Int = 1,
+    val deadline: Instant = Instant.ofEpochMilli(0),
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -57,7 +58,7 @@ fun NodeDetails.toNode(): Node = Node(
     status = status,
     title = title,
     description = description,
-    currentTime = currentTime,
+    fontSize = fontSize,
     deadline = deadline,
     isCompleted = isCompleted,
     isDeleted = isDeleted
@@ -74,7 +75,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     status = status,
     title = title,
     description = description,
-    currentTime = currentTime,
+    fontSize = fontSize,
     deadline = deadline,
     isCompleted = isCompleted,
     isDeleted = isDeleted

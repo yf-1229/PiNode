@@ -12,8 +12,4 @@ class DateTimeCtrl {
          val deadline = dt.plusSeconds(selectedMinutes * 60)
          return deadline
     }
-
-    fun GetTimeStr(dt: Instant) : String{ // TODO NodeEntryScreen.kt にプレスコードする？
-        return dt.toString()
-    }
 }
