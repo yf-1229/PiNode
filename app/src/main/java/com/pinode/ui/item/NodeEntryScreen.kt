@@ -38,8 +38,10 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.toDuration
 
 object NodeEntryDestination : NavigationDestination {
     override val route = "node_entry"
@@ -107,15 +109,14 @@ fun NodeEntryBody(
             modifier = Modifier.fillMaxWidth()
         )
 
-        val DateTime = DateTimeCtrl()
-        val deadlineTime = DateTime.GetDeadline(selectedMinutes = selectedMinutes.toLong())
+        val duration = Duration.ofMinutes(selectedMinutes.toLong())
 
         Button(
             onClick = {
                 onSaveClick()
                 onNodeValueChange(
                     nodeUiState.nodeDetails.copy(
-                        deadline = deadlineTime
+                        duration = duration
                     )
                 )
             },

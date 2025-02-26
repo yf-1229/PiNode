@@ -201,9 +201,6 @@ fun NodeDetails(
                     )
                 )
             )
-            TimerActivity(
-                node = node
-            )
         }
 
     }
@@ -221,16 +218,6 @@ private fun NodeDetailsRow(
     }
 }
 
-@Composable
-private fun TimerActivity(node: Node) {
-    val DateTime = DateTimeCtrl()
-    val nowTime: Instant  = DateTime.GetNow()
-    val deadline: Instant = node.deadline
-    val limit  = deadline - nowTime
-
-
-
-}
 
 
 @Composable

@@ -7,12 +7,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import androidx.room.TypeConverter
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 
 
 @Entity(tableName = "nodes")
@@ -22,8 +19,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val fontSize: Int,
-    val deadline: Instant,
+    val duration: java.time.Duration,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
