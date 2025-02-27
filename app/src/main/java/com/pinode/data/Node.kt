@@ -23,7 +23,7 @@ data class Node(
     val title: String,
     val description: String,
     val fontSize: Int,
-    val deadline: Instant,
+    val deadline: Instant, 
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
