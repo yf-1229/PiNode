@@ -50,6 +50,7 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
 import com.pinode.R
+import java.time.Duration
 import java.time.Instant
 
 
@@ -202,7 +203,7 @@ fun NodeDetails(
                 )
             )
             TimerActivity(
-                node = node
+                node = node,
             )
         }
 
@@ -226,8 +227,12 @@ private fun TimerActivity(node: Node) {
     val DateTime = DateTimeCtrl()
     val nowTime: Instant  = DateTime.GetNow()
     val deadline: Instant = node.deadline
-    val limit  = deadline - nowTime
+    val duration = Duration.between(
+        nowTime, deadline
+    )
 
+    if (duration.compareTo(Duration.ofMinutes(5)) == 0)
+        println("test")
 
 
 }

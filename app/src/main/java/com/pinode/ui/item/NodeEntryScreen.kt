@@ -21,8 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -38,8 +36,6 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 object NodeEntryDestination : NavigationDestination {
     override val route = "node_entry"
@@ -107,8 +103,8 @@ fun NodeEntryBody(
             modifier = Modifier.fillMaxWidth()
         )
 
-        val DateTime = DateTimeCtrl()
-        val deadlineTime = DateTime.GetDeadline(selectedMinutes = selectedMinutes.toLong())
+        val DateTimeCtrl = DateTimeCtrl()
+        val deadlineTime = DateTimeCtrl.GetDeadline(selectedMinutes = selectedMinutes.toLong())
 
         Button(
             onClick = {
