@@ -51,6 +51,7 @@ import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
+import java.time.Instant
 
 
 object HomeDestination : NavigationDestination {
@@ -190,8 +191,8 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test1",
                 "test",
-                currentTime = "",
-                deadline = "",
+                fontSize = 1,
+                deadline = Instant.now(),
                 isCompleted = false,
                 isDeleted = false
             ),
@@ -200,8 +201,8 @@ fun PreviewHomeBody() {
                 NodeStatus.GRAY,
                 "Test2",
                 "test2",
-                currentTime = "",
-                deadline = "",
+                fontSize = 1,
+                deadline = Instant.now(),
                 isCompleted = true,
                 isDeleted = false
             )
