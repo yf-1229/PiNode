@@ -1,17 +1,16 @@
 package com.pinode.data
 
 import androidx.room.TypeConverter
-import java.time.Instant
-import java.time.format.DateTimeFormatter
+import java.time.Duration
 
 class DateTimeConverter {
     @TypeConverter
-    fun stringToInstant(value: String): Instant =
-        formatter.parse(value, Instant::from)
-    @TypeConverter
-    fun instantToString(value: Instant): String =
-        formatter.format(value)
+    fun stringToDuration(value: String): Duration {
+        return Duration.parse(value)
+    }
 
-    private val formatter: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
+    @TypeConverter
+    fun durationToString(value: Duration): String {
+        return value.toString()
+    }
 }
