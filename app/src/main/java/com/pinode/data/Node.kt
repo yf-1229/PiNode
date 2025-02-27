@@ -23,11 +23,10 @@ data class Node(
     val title: String,
     val description: String,
     val fontSize: Int,
-    val deadline: Instant,
+    val deadline: Instant, 
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
-
 
 enum class NodeStatus(var color: Int){ // Node's color
     RED(R.color.RED),
