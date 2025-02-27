@@ -28,6 +28,7 @@ data class Node(
     val isDeleted: Boolean,
 )
 
+
 enum class NodeStatus(var color: Int){ // Node's color
     RED(R.color.RED),
     YELLOW(R.color.YELLOW),
