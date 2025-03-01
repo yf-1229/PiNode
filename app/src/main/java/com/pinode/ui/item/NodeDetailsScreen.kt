@@ -163,6 +163,8 @@ private fun NodeDetailsBody(
                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
            )
        }
+
+
    }
 }
 
@@ -202,9 +204,6 @@ fun NodeDetails(
                     )
                 )
             )
-            TimerActivity(
-                node = node,
-            )
         }
 
     }
@@ -222,20 +221,7 @@ private fun NodeDetailsRow(
     }
 }
 
-@Composable
-private fun TimerActivity(node: Node) {
-    val DateTime = DateTimeCtrl()
-    val nowTime: Instant  = DateTime.GetNow()
-    val deadline: Instant = node.deadline
-    val duration = Duration.between(
-        nowTime, deadline
-    )
 
-    if (duration.compareTo(Duration.ofMinutes(5)) == 0)
-        println("test")
-
-
-}
 
 
 @Composable

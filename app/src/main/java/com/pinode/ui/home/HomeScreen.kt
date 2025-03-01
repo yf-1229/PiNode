@@ -41,6 +41,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,8 +50,10 @@ import com.pinode.R
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
+import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
+import java.time.Duration
 import java.time.Instant
 
 
@@ -112,7 +115,7 @@ private fun HomeBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    Column( // TODO Rowにして
+    Column(
         horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
@@ -164,7 +167,20 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
+    val dateTime = DateTimeCtrl()
+    val nowTime: Instant  = dateTime.GetNow()
+    val deadline: Instant = item.deadline
+    val duration = Duration.between(
+        nowTime, deadline
+    )
+
     val itemColor: Int = item.status.color
+    val fontNowSize = when {
+        duration < Duration.ofMinutes(5) -> 16.sp
+        duration < Duration.ofMinutes(10) -> 15.sp
+        else -> 16.sp
+    }
+
     Column{
         Box(
             modifier = modifier
@@ -175,10 +191,17 @@ private fun PiNodeItem(
         Text(
             item.title,
             color = Color.White,
-            fontSize = 30.sp,
+            fontSize = fontNowSize,
             modifier = modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small))
         )
     }
+}
+
+@Composable
+private fun TimerActivity(node: Node) {
+
+
+
 }
 
 @Preview
@@ -191,7 +214,6 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test1",
                 "test",
-                fontSize = 1,
                 deadline = Instant.now(),
                 isCompleted = false,
                 isDeleted = false
@@ -201,7 +223,6 @@ fun PreviewHomeBody() {
                 NodeStatus.GRAY,
                 "Test2",
                 "test2",
-                fontSize = 1,
                 deadline = Instant.now(),
                 isCompleted = true,
                 isDeleted = false

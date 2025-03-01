@@ -103,8 +103,8 @@ fun NodeEntryBody(
             modifier = Modifier.fillMaxWidth()
         )
 
-        val DateTimeCtrl = DateTimeCtrl()
-        val deadlineTime = DateTimeCtrl.GetDeadline(selectedMinutes = selectedMinutes.toLong())
+        val dateTimeCtrl = DateTimeCtrl()
+        val deadlineTime = dateTimeCtrl.GetDeadline(selectedMinutes = selectedMinutes.toLong())
 
         Button(
             onClick = {

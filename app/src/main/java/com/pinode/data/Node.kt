@@ -22,7 +22,6 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val fontSize: Int,
     val deadline: Instant, 
     var isCompleted: Boolean,
     val isDeleted: Boolean,
