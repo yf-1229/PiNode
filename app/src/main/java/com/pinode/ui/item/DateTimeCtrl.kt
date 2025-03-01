@@ -9,7 +9,7 @@ class DateTimeCtrl {
 
     fun GetDeadline(selectedMinutes: Long) : Instant {
         val dt = GetNow()
-        val deadline = dt.plusSeconds(selectedMinutes * 60)
+        val deadline = dt.plusMillis(selectedMinutes)
         return deadline
     }
 }

@@ -176,9 +176,9 @@ private fun PiNodeItem(
 
     val itemColor: Int = item.status.color
     val fontNowSize = when {
-        duration < Duration.ofMinutes(5) -> 16.sp
-        duration < Duration.ofMinutes(10) -> 15.sp
-        else -> 16.sp
+        duration < Duration.ofMinutes(5) -> 60.sp
+        duration < Duration.ofMinutes(45) -> 40.sp
+        else -> 1.sp
     }
 
     Column{
