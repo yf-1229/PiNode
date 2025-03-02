@@ -188,7 +188,7 @@ private fun PiNodeItem(
 
     val fontNowSize: TextUnit = when {
         duration.isNegative -> 5.sp
-        duration <= Duration.ofMinutes(5) -> 60.sp
+        duration <= Duration.ofMinutes(10) -> 60.sp
         duration <= Duration.ofMinutes(30) -> 20.sp
         else -> 15.sp
     }

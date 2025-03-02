@@ -159,7 +159,7 @@ fun NodeInputForm(
         )
 
         var selectedIndex by remember { mutableIntStateOf(0) }
-        val options = listOf(5, 30, 60)
+        val options = listOf(10, 30, 60)
 
         SingleChoiceSegmentedButtonRow {
             options.forEachIndexed { index, minutes ->
