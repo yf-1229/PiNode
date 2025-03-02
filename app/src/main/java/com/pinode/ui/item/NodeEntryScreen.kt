@@ -94,27 +94,22 @@ fun NodeEntryBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         // NodeInputFormで選択された時間
-        var selectedMinutes by remember { mutableIntStateOf(0) }
+        var selectedMinutes by remember { mutableIntStateOf(5) }
 
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
-            selectedMinutesChange = { selectedMinutes = it }, // callback
+            selectedMinutesChange = { minutes ->
+                selectedMinutes = minutes
+                val dateTimeCtrl = DateTimeCtrl()
+                val deadlineTime = dateTimeCtrl.getDeadline(selectedMinutes = minutes.toLong())
+                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
+            },
             onValueChange = onNodeValueChange,
             modifier = Modifier.fillMaxWidth()
         )
 
-        val dateTimeCtrl = DateTimeCtrl()
-        val deadlineTime = dateTimeCtrl.GetDeadline(selectedMinutes = selectedMinutes.toLong())
-
         Button(
-            onClick = {
-                onSaveClick()
-                onNodeValueChange(
-                    nodeUiState.nodeDetails.copy(
-                        deadline = deadlineTime
-                    )
-                )
-            },
+            onClick = onSaveClick,  // 保存時にはすでにdeadlineが更新済み
             enabled = nodeUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
@@ -128,7 +123,7 @@ fun NodeEntryBody(
 fun NodeInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
-    selectedMinutesChange: (Int) -> Unit, // ここまでInt
+    selectedMinutesChange: (Int) -> Unit,
     onValueChange: (NodeDetails) -> Unit = {},
     enabled: Boolean = true
 ) {
@@ -164,10 +159,10 @@ fun NodeInputForm(
         )
 
         var selectedIndex by remember { mutableIntStateOf(0) }
-        val options = listOf(15, 30, 60)
+        val options = listOf(5, 30, 60)
 
         SingleChoiceSegmentedButtonRow {
-            options.forEachIndexed { index, label ->
+            options.forEachIndexed { index, minutes ->
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
@@ -175,10 +170,10 @@ fun NodeInputForm(
                     ),
                     onClick = {
                         selectedIndex = index
-                        selectedMinutesChange(index) // selectedIndexをremember
+                        selectedMinutesChange(minutes) // selectedIndexをremember
                               },
                     selected = index == selectedIndex,
-                    label = { Text(label.toString()) }
+                    label = { Text("$minutes") }
                 )
             }
         }

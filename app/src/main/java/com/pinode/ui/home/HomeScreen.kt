@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,8 +27,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,8 +56,8 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
+import kotlinx.coroutines.delay
 import java.time.Duration
-import java.time.Instant
 
 
 object HomeDestination : NavigationDestination {
@@ -167,46 +170,54 @@ private fun PiNodeItem(
     item: Node,
     modifier: Modifier = Modifier
 ) {
-    val dateTime = DateTimeCtrl()
-    val nowTime: Instant  = dateTime.GetNow()
-    val deadline: Instant = item.deadline
-    val duration = Duration.between(
-        nowTime, deadline
-    )
+    // 状態を使用して現在時刻を保持し、更新可能にする
+    var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
+
+    // 一定間隔で時間を更新
+    LaunchedEffect(key1 = Unit) {
+        while(true) {
+            delay(1000) // 10秒ごとに更新（必要に応じて調整してください）
+            currentTime = DateTimeCtrl().getNow()
+        }
+    }
+
+    val deadline = item.deadline
+    val duration = Duration.between(currentTime, deadline)
 
     val itemColor: Int = item.status.color
-    val fontNowSize = when {
-        duration < Duration.ofMinutes(5) -> 60.sp
-        duration < Duration.ofMinutes(45) -> 40.sp
-        else -> 1.sp
+
+    val fontNowSize: TextUnit = when {
+        duration.isNegative -> 5.sp
+        duration <= Duration.ofMinutes(5) -> 60.sp
+        duration <= Duration.ofMinutes(30) -> 20.sp
+        else -> 15.sp
     }
 
-    Column{
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.padding(vertical = 8.dp)
+    ) {
         Box(
-            modifier = modifier
-                .size(20.dp) // 丸のサイズ
-                .clip(CircleShape) // 丸い形状にクリップ
+            modifier = Modifier
+                .size(20.dp)
+                .clip(CircleShape)
                 .background(colorResource(itemColor))
         )
+
         Text(
-            item.title,
+            text = duration.toString(), // TODO
             color = Color.White,
             fontSize = fontNowSize,
-            modifier = modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small))
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
 
-@Composable
-private fun TimerActivity(node: Node) {
-
-
-
-}
 
 @Preview
 @Composable
 fun PreviewHomeBody() {
+    val dateTimeCtrl = DateTimeCtrl()
     PiNodeTheme {
         HomeBody(listOf(
             Node(
@@ -214,17 +225,17 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test1",
                 "test",
-                deadline = Instant.now(),
+                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 5.toLong()),
                 isCompleted = false,
                 isDeleted = false
             ),
             Node(
                 2,
-                NodeStatus.GRAY,
+                NodeStatus.GREEN,
                 "Test2",
                 "test2",
-                deadline = Instant.now(),
-                isCompleted = true,
+                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 50.toLong()),
+                isCompleted = false,
                 isDeleted = false
             )
         ), onItemClick = {})
