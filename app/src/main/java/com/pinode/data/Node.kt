@@ -1,5 +1,6 @@
 package com.pinode.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -12,6 +13,7 @@ import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
@@ -22,7 +24,8 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val deadline: Instant, 
+    @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
+    val deadline: LocalDateTime,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )

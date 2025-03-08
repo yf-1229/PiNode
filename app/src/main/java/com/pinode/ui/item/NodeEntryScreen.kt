@@ -36,11 +36,15 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
+import kotlin.math.min
 
 object NodeEntryDestination : NavigationDestination {
     override val route = "node_entry"
     override val titleRes = R.string.node_entry_title
 }
+
+// 共通のオプションリストを定数として定義
+private val TIME_OPTIONS = listOf(5, 30, 60)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,12 +97,20 @@ fun NodeEntryBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        // NodeInputFormで選択された時間
-        var selectedMinutes by remember { mutableIntStateOf(5) }
+        // 初期値を正しくTIME_OPTIONS[0]に設定
+        var selectedMinutes by remember { mutableIntStateOf(TIME_OPTIONS[0]) }
+
+        // 初期値として選択されたミニッツに応じてdeadlineを設定
+        remember {
+            val dateTimeCtrl = DateTimeCtrl()
+            val deadlineTime = dateTimeCtrl.getDeadline(selectedMinutes = selectedMinutes.toLong())
+            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
+            true // Rememberブロックに値を返す
+        }
 
         NodeInputForm(
             nodeDetails = nodeUiState.nodeDetails,
-            selectedMinutesChange = { minutes ->
+            selectedMinutesChange = { minutes: Int ->
                 selectedMinutes = minutes
                 val dateTimeCtrl = DateTimeCtrl()
                 val deadlineTime = dateTimeCtrl.getDeadline(selectedMinutes = minutes.toLong())
@@ -158,29 +170,29 @@ fun NodeInputForm(
             singleLine = true
         )
 
+        // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
         var selectedIndex by remember { mutableIntStateOf(0) }
-        val options = listOf(10, 30, 60)
 
+        // 時間選択UI
         SingleChoiceSegmentedButtonRow {
-            options.forEachIndexed { index, minutes ->
+            TIME_OPTIONS.forEachIndexed { index, minutes ->
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
-                        count = options.size
+                        count = TIME_OPTIONS.size
                     ),
                     onClick = {
                         selectedIndex = index
-                        selectedMinutesChange(minutes) // selectedIndexをremember
-                              },
+                        // 選択された時間値を渡す
+                        selectedMinutesChange(TIME_OPTIONS[index])
+                    },
                     selected = index == selectedIndex,
-                    label = { Text("$minutes") }
+                    label = { Text(minutes.toString()) }
                 )
             }
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

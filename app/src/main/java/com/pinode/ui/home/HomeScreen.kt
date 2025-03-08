@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.DateTimeConverter
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
@@ -58,6 +60,7 @@ import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import java.time.Duration
+import java.time.Instant
 
 
 object HomeDestination : NavigationDestination {
@@ -183,7 +186,6 @@ private fun PiNodeItem(
 
     val deadline = item.deadline
     val duration = Duration.between(currentTime, deadline)
-
     val itemColor: Int = item.status.color
 
     val fontNowSize: TextUnit = when {
@@ -213,31 +215,34 @@ private fun PiNodeItem(
     }
 }
 
-
 @Preview
 @Composable
 fun PreviewHomeBody() {
-    val dateTimeCtrl = DateTimeCtrl()
     PiNodeTheme {
+        val dateTimeCtrl = DateTimeCtrl()
+        val deadline = dateTimeCtrl.getDeadline(5)
+        val dateTimeConverter = DateTimeConverter()
+        val deadlineStr = dateTimeConverter.localDateTimeToString(deadline)
+        val deadlineConverted = dateTimeConverter.stringToLocalDateTime(deadlineStr)
         HomeBody(listOf(
             Node(
                 1,
                 NodeStatus.RED,
                 "Test1",
                 "test",
-                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 5.toLong()),
+                deadline = dateTimeCtrl.getDeadline(5),
                 isCompleted = false,
                 isDeleted = false
             ),
             Node(
                 2,
-                NodeStatus.GREEN,
+                NodeStatus.RED,
                 "Test2",
-                "test2",
-                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 50.toLong()),
+                "test",
+                deadline = deadlineConverted,
                 isCompleted = false,
                 isDeleted = false
-            )
+            ),
         ), onItemClick = {})
     }
 }
