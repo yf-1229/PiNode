@@ -24,8 +24,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
-    val deadline: LocalDateTime,
+    val deadline: Instant,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
