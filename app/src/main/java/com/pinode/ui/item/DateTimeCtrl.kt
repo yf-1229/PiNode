@@ -1,16 +1,16 @@
 package com.pinode.ui.item
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 
 class DateTimeCtrl {
-    fun getNow() : LocalDateTime {
-        return LocalDateTime.now()
+    fun getNow() : Instant {
+        return Instant.now()
     }
 
-    fun getDeadline(selectedMinutes: Long): LocalDateTime {
+    fun getDeadline(selectedMinutes: Long): Instant {
         val dt = getNow()
-        val deadline: LocalDateTime = dt.plusSeconds(selectedMinutes * 60)
+        val deadline: Instant = dt.plusSeconds(selectedMinutes * 60)
         return deadline
     }
 }

@@ -190,8 +190,10 @@ private fun PiNodeItem(
 
     val fontNowSize: TextUnit = when {
         duration.isNegative -> 5.sp
-        duration <= Duration.ofMinutes(10) -> 60.sp
-        duration <= Duration.ofMinutes(30) -> 20.sp
+        duration <= Duration.ofMinutes(5) -> 60.sp
+        duration <= Duration.ofMinutes(10) -> 50.sp
+        duration <= Duration.ofMinutes(15) -> 40.sp
+        duration <= Duration.ofMinutes(30) -> 30.sp
         else -> 15.sp
     }
 
@@ -207,7 +209,7 @@ private fun PiNodeItem(
         )
 
         Text(
-            text = duration.toString(), // TODO
+            text =item.title,
             color = Color.White,
             fontSize = fontNowSize,
             modifier = Modifier.padding(start = 8.dp)
@@ -218,12 +220,8 @@ private fun PiNodeItem(
 @Preview
 @Composable
 fun PreviewHomeBody() {
+    val dateTimeCtrl = DateTimeCtrl()
     PiNodeTheme {
-        val dateTimeCtrl = DateTimeCtrl()
-        val deadline = dateTimeCtrl.getDeadline(5)
-        val dateTimeConverter = DateTimeConverter()
-        val deadlineStr = dateTimeConverter.localDateTimeToString(deadline)
-        val deadlineConverted = dateTimeConverter.stringToLocalDateTime(deadlineStr)
         HomeBody(listOf(
             Node(
                 1,
@@ -238,8 +236,8 @@ fun PreviewHomeBody() {
                 2,
                 NodeStatus.RED,
                 "Test2",
-                "test",
-                deadline = deadlineConverted,
+                "test2",
+                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 50),
                 isCompleted = false,
                 isDeleted = false
             ),
