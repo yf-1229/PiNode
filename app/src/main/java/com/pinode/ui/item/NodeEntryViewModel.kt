@@ -55,6 +55,7 @@ data class NodeDetails(
 )
 
 
+
 fun NodeDetails.toNode(): Node = Node(
     id = id,
     status = status,
