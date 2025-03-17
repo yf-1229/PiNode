@@ -9,8 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
-import com.pinode.ui.item.NodeDetailsDestination
-import com.pinode.ui.item.NodeDetailsScreen
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
 import com.pinode.ui.item.NodeEntryDestination
@@ -30,9 +28,6 @@ fun PiNodeNavHost(
         composable(route = HomeDestination.route) {
             HomeScreen(
                 navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route)},
-                navigateToNodeUpdate = {
-                    navController.navigate("${NodeDetailsDestination.route}/${it}")
-                },
             )
         }
         // NodeEntry
@@ -40,18 +35,6 @@ fun PiNodeNavHost(
             NodeEntryScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
-            )
-        }
-
-        composable( // NodeDetails
-            route = NodeDetailsDestination.routeWithArgs,
-            arguments = listOf(navArgument(NodeDetailsDestination.nodeIdArg) {
-                type = NavType.IntType
-            })
-        ) {
-            NodeDetailsScreen(
-                navigateToEditNode = { navController.navigate("${NodeEditDestination.route}/$it")},
-                navigateBack = { navController.navigateUp() }
             )
         }
 

@@ -1,16 +1,20 @@
 package com.pinode.ui.home
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -19,20 +23,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,24 +53,26 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
-import com.pinode.data.DateTimeConverter
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
+import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.Duration
-import java.time.Instant
 
 
 object HomeDestination : NavigationDestination {
@@ -72,12 +84,14 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
-    navigateToNodeUpdate: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -105,12 +119,32 @@ fun HomeScreen(
             }
         },
     ) { innerPadding ->
+        var showDialog by remember { mutableStateOf(false) }
         HomeBody(
             nodeList = homeUiState.nodeList,
-            onItemClick = navigateToNodeUpdate,
+            onItemClick = { nodeId ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                    showDialog = true
+                }
+            },
+            onItemLongClick = { nodeId ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                    viewModel.completeNode()
+                }
+            },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
+        if (showDialog) {
+            NodeDetailsDialog(
+                item = uiState.nodeDetails.toNode(),
+                onDismissRequest = { showDialog = false },
+                onDelete = {},
+                modifier = modifier
+            )
+        }
     }
 }
 
@@ -118,6 +152,7 @@ fun HomeScreen(
 private fun HomeBody(
     nodeList: List<Node>,
     onItemClick: (Int) -> Unit,
+    onItemLongClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -133,37 +168,46 @@ private fun HomeBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            Row {
+            Box {
                 PiNodeList(
                     nodeList = nodeList,
-                    onItemClick = { onItemClick(it.id) },
+                    onItemClick = { onItemClick(it.id)},
+                    onItemLongClick = { onItemLongClick(it.id) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
-
             }
         }
     }
 }
 
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
-    onItemClick: (Node) -> Unit,
+    onItemClick: (Node) -> Unit?,
+    onItemLongClick: (Node) -> Unit?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = contentPadding
-    ) {
-        items(items = nodeList, { it.id }) { item ->
-            PiNodeItem(
-                item = item,
-                modifier = Modifier
-                    .clickable { onItemClick(item) }
-            )
+    Box {
+        LazyColumn(
+            modifier = modifier,
+            contentPadding = contentPadding
+        ) {
+            items(items = nodeList, { it.id }) { item ->
+                PiNodeItem(
+                    item = item,
+                    modifier = Modifier
+                        .combinedClickable {
+                            onItemClick(item)
+                            onItemLongClick(item)
+                        }
+                )
+            }
         }
+
     }
 }
 
@@ -214,13 +258,124 @@ private fun PiNodeItem(
         )
 
         Text(
-            text =item.title,
+            text = item.title,
             color = Color.White,
             fontSize = fontNowSize,
             modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
+
+
+@Composable
+fun NodeDetailsDialog(
+    item: Node,
+    onDismissRequest: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+
+        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+        NodeDetails(
+            node = item, modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedButton(
+            onClick = { deleteConfirmationRequired = true },
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.delete))
+        }
+        if (deleteConfirmationRequired) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmationRequired = false
+                    onDelete()
+                },
+                onDeleteCancel = { deleteConfirmationRequired = false },
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            )
+        }
+    }
+}
+
+@Composable
+fun NodeDetails(
+    node: Node, modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier, colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(id = R.dimen.padding_medium)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+        ) {
+            NodeDetailsRow(
+                labelResID = R.string.node,
+                itemDetail = node.title,
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(
+                        id = R.dimen
+                            .padding_medium
+                    )
+                )
+            )
+            NodeDetailsRow(
+                labelResID = R.string.node_description_req,
+                itemDetail = node.description,
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(
+                        id = R.dimen
+                            .padding_medium
+                    )
+                )
+            )
+        }
+
+    }
+}
+
+
+@Composable
+private fun NodeDetailsRow(
+    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        Text(text = stringResource(labelResID))
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = itemDetail, fontWeight = FontWeight.Bold)
+    }
+}
+
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit, onDeleteCancel: () -> Unit, modifier: Modifier = Modifier
+) {
+    AlertDialog(onDismissRequest = { /* Do nothing */ },
+        title = { Text(stringResource(R.string.attention)) },
+        text = { Text(stringResource(R.string.delete_question)) },
+        modifier = modifier,
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text(text = stringResource(R.string.no))
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text(text = stringResource(R.string.yes))
+            }
+        }
+    )
+}
+
 
 @Preview
 @Composable
@@ -246,6 +401,6 @@ fun PreviewHomeBody() {
                 isCompleted = false,
                 isDeleted = false
             ),
-        ), onItemClick = {})
+        ), onItemClick = {}, onItemLongClick = {})
     }
 }
