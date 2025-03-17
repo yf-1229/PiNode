@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -141,8 +142,13 @@ fun HomeScreen(
             NodeDetailsDialog(
                 item = uiState.nodeDetails.toNode(),
                 onDismissRequest = { showDialog = false },
-                onDelete = {},
-                modifier = modifier
+                onDelete = {
+                    coroutineScope.launch {
+                        viewModel.deleteNode()
+                        showDialog = false
+                    }
+                },
+                modifier = modifier.fillMaxWidth()
             )
         }
     }
@@ -223,7 +229,7 @@ private fun PiNodeItem(
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
         while(true) {
-            delay(1000) // 10秒ごとに更新（必要に応じて調整してください）
+            delay(1000) // 10秒ごとに更新
             currentTime = DateTimeCtrl().getNow()
         }
     }
@@ -277,26 +283,33 @@ fun NodeDetailsDialog(
     Dialog(onDismissRequest = { onDismissRequest() }) {
 
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-        NodeDetails(
-            node = item, modifier = Modifier.fillMaxWidth()
-        )
 
-        OutlinedButton(
-            onClick = { deleteConfirmationRequired = true },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
+        Card(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(32.dp)
         ) {
-            Text(stringResource(R.string.delete))
-        }
-        if (deleteConfirmationRequired) {
-            DeleteConfirmationDialog(
-                onDeleteConfirm = {
-                    deleteConfirmationRequired = false
-                    onDelete()
-                },
-                onDeleteCancel = { deleteConfirmationRequired = false },
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            NodeDetails(
+                node = item, modifier = Modifier.fillMaxWidth()
             )
+
+            OutlinedButton(
+                onClick = { deleteConfirmationRequired = true },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.delete))
+            }
+            if (deleteConfirmationRequired) {
+                DeleteConfirmationDialog(
+                    onDeleteConfirm = {
+                        deleteConfirmationRequired = false
+                        onDelete()
+                    },
+                    onDeleteCancel = { deleteConfirmationRequired = false },
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                )
+            }
         }
     }
 }
@@ -306,7 +319,9 @@ fun NodeDetails(
     node: Node, modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier, colors = CardDefaults.cardColors(
+        modifier = modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -315,7 +330,8 @@ fun NodeDetails(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             NodeDetailsRow(
                 labelResID = R.string.node,
@@ -348,9 +364,9 @@ private fun NodeDetailsRow(
     @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier) {
-        Text(text = stringResource(labelResID))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = itemDetail, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(labelResID), fontSize = 20.sp)
+        Spacer(modifier = Modifier.weight(2f))
+        Text(text = itemDetail, fontWeight = FontWeight.Bold, fontSize = 30.sp)
     }
 }
 
