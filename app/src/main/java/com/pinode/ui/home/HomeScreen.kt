@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -188,7 +190,6 @@ private fun HomeBody(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
@@ -206,9 +207,11 @@ private fun PiNodeList(
                 PiNodeItem(
                     item = item,
                     modifier = Modifier
-                        .combinedClickable {
-                            onItemClick(item)
-                            onItemLongClick(item)
+                        .pointerInput(item) {
+                            detectTapGestures(
+                                onTap = { onItemClick(item) },
+                                onLongPress = { onItemLongClick(item) }
+                            )
                         }
                 )
             }
