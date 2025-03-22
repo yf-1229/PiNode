@@ -87,6 +87,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
+    navigateToNodeEdit: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +106,7 @@ fun HomeScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = {
+        floatingActionButton = { // TODO Delete this Button
             FloatingActionButton(
                 onClick = navigateToNodeEntry,
                 shape = MaterialTheme.shapes.medium,
@@ -144,6 +145,7 @@ fun HomeScreen(
             NodeDetailsDialog(
                 item = uiState.nodeDetails.toNode(),
                 onDismissRequest = { showDialog = false },
+                onEdit = { navigateToNodeEdit(uiState.nodeDetails.id) },
                 onDelete = {
                     coroutineScope.launch {
                         viewModel.deleteNode()

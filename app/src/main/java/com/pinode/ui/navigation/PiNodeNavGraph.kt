@@ -28,6 +28,7 @@ fun PiNodeNavHost(
         composable(route = HomeDestination.route) {
             HomeScreen(
                 navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route)},
+                navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it")},
             )
         }
         // NodeEntry
