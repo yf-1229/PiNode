@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -106,7 +108,7 @@ fun HomeScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = { // TODO Delete this Button
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = navigateToNodeEntry,
                 shape = MaterialTheme.shapes.medium,
@@ -145,14 +147,19 @@ fun HomeScreen(
             NodeDetailsDialog(
                 item = uiState.nodeDetails.toNode(),
                 onDismissRequest = { showDialog = false },
-                onEdit = { navigateToNodeEdit(uiState.nodeDetails.id) },
+                onEdit = {
+                    navigateToNodeEdit(uiState.nodeDetails.id)
+                    showDialog = false
+                         },
                 onDelete = {
                     coroutineScope.launch {
                         viewModel.deleteNode()
                         showDialog = false
                     }
                 },
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
             )
         }
     }
@@ -282,6 +289,7 @@ private fun PiNodeItem(
 fun NodeDetailsDialog(
     item: Node,
     onDismissRequest: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -298,6 +306,13 @@ fun NodeDetailsDialog(
                 node = item, modifier = Modifier.fillMaxWidth()
             )
 
+            OutlinedButton(
+                onClick = { onEdit() },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.edit_node_title))
+            }
             OutlinedButton(
                 onClick = { deleteConfirmationRequired = true },
                 shape = MaterialTheme.shapes.small,
