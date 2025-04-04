@@ -39,7 +39,6 @@ fun NodeEditScreen(
     Scaffold(
         topBar = {
             PiNodeTopAppBar(
-                title = stringResource(NodeEditDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = onNavigateUp
             )

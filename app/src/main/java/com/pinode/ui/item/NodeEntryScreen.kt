@@ -58,7 +58,6 @@ fun NodeEntryScreen(
     Scaffold(
         topBar = {
             PiNodeTopAppBar(
-                title = stringResource(NodeEntryDestination.titleRes),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp
             )

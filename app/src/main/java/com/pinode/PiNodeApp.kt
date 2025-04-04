@@ -23,14 +23,13 @@ fun PiNodeApp(navController: NavHostController = rememberNavController()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PiNodeTopAppBar(
-    title: String,
     canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     navigateUp: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(title) },
+        title = { },
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
@@ -45,3 +44,4 @@ fun PiNodeTopAppBar(
         }
     )
 }
+
