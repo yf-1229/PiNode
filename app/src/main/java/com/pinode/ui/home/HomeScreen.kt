@@ -82,6 +82,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
@@ -98,7 +101,7 @@ import java.time.Duration
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.today_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,6 +109,7 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
+    navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -141,7 +145,7 @@ fun HomeScreen(
             }
         },
         bottomBar = {
-            NavigationBarTest()
+            BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
@@ -217,36 +221,6 @@ private fun HomeBody(
     }
 }
 
-
-@Composable
-fun NavigationBarTest() {
-    var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Songs", "Artists", "Playlists")
-    val selectedIcons = listOf(Icons.Filled.Home, Icons.Filled.Favorite, Icons.Filled.Star)
-    val unselectedIcons =
-        listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
-    NavigationBar(
-        modifier = Modifier,
-        tonalElevation = 12.dp,
-
-        ) {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        if (selectedItem == index) selectedIcons[index] else unselectedIcons[index],
-                        contentDescription = item
-                    )
-                },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = { selectedItem = index },
-
-                )
-        }
-    }
-
-}
 
 @Composable
 private fun PiNodeList(
