@@ -33,7 +33,7 @@ fun PiNodeNavHost(
                     navController = navController
                 )
             }
-            composable("Yesterday") {
+            composable("afterTomorrow") {
 
             }
         }
