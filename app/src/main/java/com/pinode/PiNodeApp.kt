@@ -97,7 +97,7 @@ fun BottomNavigationBar(
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
-                    navController.navigate(itemsDestination[index]) {
+                    navController.navigate("homeScreen/${itemsDestination[index]}") {
                         launchSingleTop = true // TODO
                         restoreState = true // TODO
                     }

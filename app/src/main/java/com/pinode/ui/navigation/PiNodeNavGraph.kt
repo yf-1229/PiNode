@@ -22,18 +22,20 @@ fun PiNodeNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route,
+        startDestination = "homeScreen",
         modifier = modifier
     ) {
-        composable(route = HomeDestination.route) {
-            HomeScreen( // Home -> Today
-                navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route)},
-                navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it")},
-                navController = navController
-            )
-        }
-        composable("Yesterday") {
+        navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
+            composable("homeScreen/${HomeDestination.route}") {
+                HomeScreen( // Home -> Today
+                    navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route) },
+                    navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
+                    navController = navController
+                )
+            }
+            composable("Yesterday") {
 
+            }
         }
         // NodeEntry
         composable(route = NodeEntryDestination.route) {
@@ -54,7 +56,6 @@ fun PiNodeNavHost(
                 onNavigateUp = { navController.navigateUp() }
             )
         }
-
         // TODO Add Settings
     }
 }
