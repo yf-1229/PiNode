@@ -274,7 +274,7 @@ private fun PiNodeItem(
     val itemColor: Int = item.status.color
 
 
-    val fontNowSize: TextUnit = when {
+    val fontNowSize: TextUnit = when { // TODO itemCOlorを変更する
         duration.isNegative -> 120.sp
         duration <= Duration.ofMinutes(5) -> 100.sp
         duration <= Duration.ofMinutes(10) -> 90.sp
