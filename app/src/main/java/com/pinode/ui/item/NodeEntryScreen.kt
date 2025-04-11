@@ -36,7 +36,6 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
-import kotlin.math.min
 
 object NodeEntryDestination : NavigationDestination {
     override val route = "node_entry"

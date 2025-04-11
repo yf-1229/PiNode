@@ -1,9 +1,7 @@
 package com.pinode.ui.home
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -27,35 +24,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBarDefaults.windowInsets
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,7 +51,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -77,13 +60,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
@@ -271,20 +252,30 @@ private fun PiNodeItem(
 
     val deadline = item.deadline
     val duration = Duration.between(currentTime, deadline)
-    val itemColor: Int = item.status.color
+    val itemColor: Color = when {
+        duration.isNegative -> Color.Red
+        duration <= Duration.ofMinutes(5) -> Color.Yellow
+        duration <= Duration.ofMinutes(10) -> 90.dp
+        duration <= Duration.ofMinutes(15) -> 80.dp
+        duration <= Duration.ofMinutes(30) -> 50.dp
+        duration <= Duration.ofMinutes(60) -> 40.dp
+        duration <= Duration.ofMinutes(90) -> 35.dp
+        duration <= Duration.ofMinutes(120) -> 30.dp
+        duration <= Duration.ofMinutes(150) -> 25.dp
+        else -> 20.dp
+    }
 
-
-    val fontNowSize: TextUnit = when { // TODO itemCOlorを変更する
-        duration.isNegative -> 120.sp
-        duration <= Duration.ofMinutes(5) -> 100.sp
-        duration <= Duration.ofMinutes(10) -> 90.sp
-        duration <= Duration.ofMinutes(15) -> 80.sp
-        duration <= Duration.ofMinutes(30) -> 75.sp
-        duration <= Duration.ofMinutes(60) -> 70.sp
-        duration <= Duration.ofMinutes(90) -> 65.sp
-        duration <= Duration.ofMinutes(120) -> 60.sp
-        duration <= Duration.ofMinutes(150) -> 55.sp
-        else -> 50.sp
+    val circleNowSize = when {
+        duration.isNegative -> 70.dp
+        duration <= Duration.ofMinutes(5) -> 70.dp
+        duration <= Duration.ofMinutes(10) -> 90.dp
+        duration <= Duration.ofMinutes(15) -> 80.dp
+        duration <= Duration.ofMinutes(30) -> 50.dp
+        duration <= Duration.ofMinutes(60) -> 40.dp
+        duration <= Duration.ofMinutes(90) -> 35.dp
+        duration <= Duration.ofMinutes(120) -> 30.dp
+        duration <= Duration.ofMinutes(150) -> 25.dp
+        else -> 20.dp
     }
 
     Column(
@@ -293,7 +284,7 @@ private fun PiNodeItem(
     ) {
         Box(
             modifier = Modifier
-                .size(20.dp)
+                .size(circleNowSize)
                 .clip(CircleShape)
                 .background(colorResource(itemColor))
         )
@@ -301,7 +292,7 @@ private fun PiNodeItem(
         Text(
             text = item.title,
             color = Color.White,
-            fontSize = fontNowSize,
+            fontSize = 32.sp,
             modifier = Modifier.padding(start = 8.dp),
             style = TextStyle.Default.copy(
                 lineBreak = LineBreak.Heading
