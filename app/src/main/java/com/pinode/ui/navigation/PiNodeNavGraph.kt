@@ -10,9 +10,9 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
+import com.pinode.ui.item.NodeAddFastDestination
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
-import com.pinode.ui.item.NodeEntryDestination
 import com.pinode.ui.item.NodeEntryScreen
 
 @Composable
@@ -28,7 +28,7 @@ fun PiNodeNavHost(
         navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
             composable("homeScreen/${HomeDestination.route}") {
                 HomeScreen( // Home -> Today
-                    navigateToNodeEntry = { navController.navigate(NodeEntryDestination.route) },
+                    navigateToNodeEntry = { navController.navigate(NodeAddFastDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController
                 )
@@ -38,7 +38,7 @@ fun PiNodeNavHost(
             }
         }
         // NodeEntry
-        composable(route = NodeEntryDestination.route) {
+        composable(route = NodeAddFastDestination.route) {
             NodeEntryScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }

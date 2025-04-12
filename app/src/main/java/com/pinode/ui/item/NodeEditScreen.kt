@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.ui.navigation.NavigationDestination
@@ -45,7 +44,7 @@ fun NodeEditScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        NodeEntryBody(
+        NodeAddFastBody(
             nodeUiState = viewModel.nodeUiState,
             onNodeValueChange = viewModel::updateUiState,
             onSaveClick = {

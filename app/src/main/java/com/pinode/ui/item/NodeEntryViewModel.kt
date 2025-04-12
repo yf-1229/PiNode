@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
-import java.time.Duration
 import java.time.Instant
-import java.time.LocalDateTime
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {

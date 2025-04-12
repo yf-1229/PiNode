@@ -252,17 +252,12 @@ private fun PiNodeItem(
 
     val deadline = item.deadline
     val duration = Duration.between(currentTime, deadline)
-    val itemColor: Color = when {
-        duration.isNegative -> Color.Red
-        duration <= Duration.ofMinutes(5) -> Color.Yellow
-        duration <= Duration.ofMinutes(10) -> 90.dp
-        duration <= Duration.ofMinutes(15) -> 80.dp
-        duration <= Duration.ofMinutes(30) -> 50.dp
-        duration <= Duration.ofMinutes(60) -> 40.dp
-        duration <= Duration.ofMinutes(90) -> 35.dp
-        duration <= Duration.ofMinutes(120) -> 30.dp
-        duration <= Duration.ofMinutes(150) -> 25.dp
-        else -> 20.dp
+
+
+    val itemColor: Color = when (priority) {
+        1 -> Color.Red
+        2 -> Color.Yellow
+        else -> Color.White
     }
 
     val circleNowSize = when {

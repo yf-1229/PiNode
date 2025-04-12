@@ -37,13 +37,13 @@ import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.launch
 
-object NodeEntryDestination : NavigationDestination {
-    override val route = "node_entry"
+object NodeAddFastDestination : NavigationDestination {
+    override val route = "node_add_fast"
     override val titleRes = R.string.node_entry_title
 }
 
 // 共通のオプションリストを定数として定義
-private val TIME_OPTIONS = listOf(5, 30, 60)
+private val TIME_OPTIONS = listOf(15, 30, 60) // For Fast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +62,7 @@ fun NodeEntryScreen(
             )
         }
     ) { innerPadding ->
-        NodeEntryBody(
+        NodeAddFastBody(
             nodeUiState = viewModel.nodeUiState,
             onNodeValueChange = viewModel::updateUiState,
             onSaveClick = {
@@ -85,7 +85,7 @@ fun NodeEntryScreen(
 
 
 @Composable
-fun NodeEntryBody(
+fun NodeAddFastBody( // Fast
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
@@ -106,7 +106,7 @@ fun NodeEntryBody(
             true // Rememberブロックに値を返す
         }
 
-        NodeInputForm(
+        NodeAddFastInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             selectedMinutesChange = { minutes: Int ->
                 selectedMinutes = minutes
@@ -130,7 +130,7 @@ fun NodeEntryBody(
 }
 
 @Composable
-fun NodeInputForm(
+fun NodeAddFastInputForm( // Fast
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     selectedMinutesChange: (Int) -> Unit,
