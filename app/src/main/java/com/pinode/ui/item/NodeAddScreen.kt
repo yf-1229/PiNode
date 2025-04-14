@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -25,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -166,6 +171,7 @@ fun NodeAddInputForm(
         }
     }
 }
+
 @Composable
 fun Pick () {
     Row() {
@@ -201,6 +207,70 @@ fun TimePickerChip() {
                 Modifier.size(AssistChipDefaults.IconSize),
             )
         }
+    )
+}
+
+@Composable
+fun DateInputChip(
+    text: String,
+    onDismiss: () -> Unit,
+) {
+    var enabled by remember { mutableStateOf(true) }
+    if (!enabled) return
+
+    InputChip(
+        onClick = {
+            onDismiss()
+            enabled = !enabled
+        },
+        label = { Text(text) },
+        selected = enabled,
+        avatar = {
+            Icon(
+                Icons.Filled.DateRange,
+                contentDescription = "Date Selected",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
+        trailingIcon = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription = "Localized description",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
+    )
+}
+
+@Composable
+fun TimeInputChip(
+    text: String,
+    onDismiss: () -> Unit,
+) {
+    var enabled by remember { mutableStateOf(true) }
+    if (!enabled) return
+
+    InputChip(
+        onClick = {
+            onDismiss()
+            enabled = !enabled
+        },
+        label = { Text(text) },
+        selected = enabled,
+        avatar = {
+            Icon(
+                painter = painterResource(R.drawable.schedule_24),
+                contentDescription = "Time Selected",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
+        trailingIcon = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription = "Localized description",
+                Modifier.size(InputChipDefaults.AvatarSize)
+            )
+        },
     )
 }
 
