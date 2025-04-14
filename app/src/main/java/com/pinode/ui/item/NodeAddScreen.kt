@@ -173,14 +173,6 @@ fun NodeAddInputForm(
 }
 
 @Composable
-fun Pick () {
-    Row() {
-        DatePickerChip()
-        TimePickerChip()
-    }
-}
-
-@Composable
 fun DatePickerChip() {
     AssistChip(
         onClick = { }, // TODO
