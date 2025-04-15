@@ -186,9 +186,7 @@ fun DatePickerChip(
         onClick = {
             if (showModal) {
                 DatePickerModal(
-                    onDateSelected = { date: Long ->
-                        selectedDateChange = date
-                    },
+                    onDateSelected = { selectedDateChange = it },
                     onDismiss = { showModal = false}
                 )
             }
