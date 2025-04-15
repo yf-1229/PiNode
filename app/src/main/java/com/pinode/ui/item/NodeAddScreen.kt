@@ -11,24 +11,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
@@ -52,6 +51,7 @@ object NodeAddDestination : NavigationDestination {
     override val titleRes = R.string.node_entry_title
 }
 
+val datePickerState = rememberDatePickerState()
 private val PRIORITY_OPTIONS = listOf(1, 2, 3, 0)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,6 +133,8 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
+    selectedDateChange: (Long) -> Unit,
+    selectedTimeChange: (Long) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -165,17 +167,32 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
-        Row {
-            DatePickerChip()
-            TimePickerChip()
+        Row() {
+            DatePickerChip(selectedDateChange)
+            TimePickerChip(selectedTimeChange)
         }
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerChip() {
+fun DatePickerChip(
+    selectedDateChange: (Long) -> Unit
+) {
+    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    var showModal by remember { mutableStateOf(false) }
     AssistChip(
-        onClick = { }, // TODO
+        onClick = {
+            if (showModal) {
+                DatePickerModal(
+                    onDateSelected = { date: Long ->
+                        selectedDateChange = date
+                    },
+                    onDismiss = { showModal = false}
+                )
+            }
+        },
         label = { Text("What date is it?") },
         leadingIcon = {
             Icon(
@@ -187,10 +204,42 @@ fun DatePickerChip() {
     )
 }
 
+// TODO 日付選択ツール
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerChip() {
+fun DatePickerModal(
+    onDateSelected: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
+@Composable
+fun TimePickerChip(
+    selectedTimeChange: (Long) -> Unit
+) {
     AssistChip(
-        onClick = { }, // TODO
+        onClick = { }, // TODO 時刻選択ツール
         label = { Text("When is it?") },
         leadingIcon = {
             Icon(
@@ -202,73 +251,4 @@ fun TimePickerChip() {
     )
 }
 
-@Composable
-fun DateInputChip(
-    text: String,
-    onDismiss: () -> Unit,
-) {
-    var enabled by remember { mutableStateOf(true) }
-    if (!enabled) return
-
-    InputChip(
-        onClick = {
-            onDismiss()
-            enabled = !enabled
-        },
-        label = { Text(text) },
-        selected = enabled,
-        avatar = {
-            Icon(
-                Icons.Filled.DateRange,
-                contentDescription = "Date Selected",
-                Modifier.size(InputChipDefaults.AvatarSize)
-            )
-        },
-        trailingIcon = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = "Localized description",
-                Modifier.size(InputChipDefaults.AvatarSize)
-            )
-        },
-    )
-}
-
-@Composable
-fun TimeInputChip(
-    text: String,
-    onDismiss: () -> Unit,
-) {
-    var enabled by remember { mutableStateOf(true) }
-    if (!enabled) return
-
-    InputChip(
-        onClick = {
-            onDismiss()
-            enabled = !enabled
-        },
-        label = { Text(text) },
-        selected = enabled,
-        avatar = {
-            Icon(
-                painter = painterResource(R.drawable.schedule_24),
-                contentDescription = "Time Selected",
-                Modifier.size(InputChipDefaults.AvatarSize)
-            )
-        },
-        trailingIcon = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = "Localized description",
-                Modifier.size(InputChipDefaults.AvatarSize)
-            )
-        },
-    )
-}
-
-@Preview
-@Composable
-fun ChipPreview() {
-    DatePickerChip()
-    TimePickerChip()
-}
+// TODO 時刻選択ツール
