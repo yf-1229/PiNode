@@ -188,12 +188,10 @@ fun NodeAddInputForm(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerChip(
     selectedDateChange: (Long) -> Unit
 ) {
-    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
     var showModal by remember { mutableStateOf(false) }
     AssistChip(
         onClick = {
@@ -215,7 +213,7 @@ fun DatePickerChip(
         }
     )
 }
-
+// TODO https://developer.android.com/develop/ui/compose/components/datepickers?hl=ja#selected-date 参考
 // TODO 日付選択ツール
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
