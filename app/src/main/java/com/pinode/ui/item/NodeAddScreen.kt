@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,7 +52,6 @@ object NodeAddDestination : NavigationDestination {
     override val titleRes = R.string.node_entry_title
 }
 
-val datePickerState = rememberDatePickerState()
 private val PRIORITY_OPTIONS = listOf(1, 2, 3, 0)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,6 +103,9 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
+        var selectedTime by remember { mutableIntStateOf(0) }
+        var selectedDate by remember { mutableIntStateOf(0) }
+
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
@@ -114,6 +117,16 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
+            selectedDateChange = { date: Long ->
+                selectedDate = date.toInt()
+                onNodeValueChange(nodeUiState.nodeDetails.copy(dateDeadline = selectedDate))
+
+            },
+            selectedTimeChange = { time: Long ->
+                selectedTime = time.toInt() // TODO
+                val dateTimeCtrl = DateTimeCtrl()
+
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -186,7 +199,8 @@ fun DatePickerChip(
         onClick = {
             if (showModal) {
                 DatePickerModal(
-                    onDateSelected = { selectedDateChange = it },
+                    onDateSelected = { date ->
+                        selectedDateChange(date) },
                     onDismiss = { showModal = false}
                 )
             }
@@ -215,7 +229,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                onDateSelected(datePickerState)
                 onDismiss()
             }) {
                 Text("OK")
