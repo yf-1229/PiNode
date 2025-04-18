@@ -219,6 +219,7 @@ fun DatePickerChip(
 @Composable
 fun DatePickerModal(
     onDateSelected: (Long) -> Unit,
+    onDateSelectedText: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
