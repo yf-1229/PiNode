@@ -1,6 +1,7 @@
 package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -45,6 +46,9 @@ import com.pinode.R
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 object NodeAddDestination : NavigationDestination {
@@ -117,15 +121,14 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            selectedDateChange = { date: Long ->
-                selectedDate = date.toInt()
+            selectedDateChange = { date: Long? ->
+                selectedDate = // TODO dateをRoomに保存できる形式に
                 onNodeValueChange(nodeUiState.nodeDetails.copy(dateDeadline = selectedDate))
 
             },
             selectedTimeChange = { time: Long ->
                 selectedTime = time.toInt() // TODO
                 val dateTimeCtrl = DateTimeCtrl()
-
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -146,7 +149,7 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
-    selectedDateChange: (Long) -> Unit,
+    selectedDateChange: (Long?) -> Unit,
     selectedTimeChange: (Long) -> Unit,
     enabled: Boolean = true
 ) {
@@ -180,6 +183,7 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
+
         Row() {
             DatePickerChip(selectedDateChange)
             TimePickerChip(selectedTimeChange)
@@ -188,22 +192,25 @@ fun NodeAddInputForm(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerChip(
-    selectedDateChange: (Long) -> Unit
+    selectedDateChange: (Long?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    val datePickerState = rememberDatePickerState()
+
+    val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
     AssistChip(
-        onClick = {
-            if (showModal) {
-                DatePickerModal(
-                    onDateSelected = { date ->
-                        selectedDateChange(date) },
-                    onDismiss = { showModal = false}
-                )
+        onClick = { showModal = true},
+        label = {
+            if (selectedDate != null) {
+                Text(formattedDate)
+            } else {
+                Text("Date")
             }
         },
-        label = { Text("What date is it?") },
         leadingIcon = {
             Icon(
                 Icons.Filled.DateRange,
@@ -212,35 +219,29 @@ fun DatePickerChip(
             )
         }
     )
-}
-// TODO https://developer.android.com/develop/ui/compose/components/datepickers?hl=ja#selected-date 参考
-// TODO 日付選択ツール
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModal(
-    onDateSelected: (Long) -> Unit,
-    onDateSelectedText: (String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState()
 
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState)
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+    if (showModal){
+        DatePickerDialog(
+            onDismissRequest = { showModal = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    selectedDateChange(datePickerState.selectedDateMillis)
+                    selectedDate = datePickerState.selectedDateMillis
+                    showModal = false
+                }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showModal = false }
+                ) {
+                    Text("Cancel")
+                }
+            },
+        ) {
+            DatePicker(state = datePickerState)
         }
-    ) {
-        DatePicker(state = datePickerState)
     }
 }
 
