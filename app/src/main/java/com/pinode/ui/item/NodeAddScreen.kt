@@ -121,7 +121,7 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            selectedDateChange = { date: Long? ->
+            selectedDateChasnge = { date: Long? ->
                 selectedDate = // TODO dateをRoomに保存できる形式に
                 onNodeValueChange(nodeUiState.nodeDetails.copy(dateDeadline = selectedDate))
 

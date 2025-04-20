@@ -1,6 +1,7 @@
 package com.pinode.ui.item
 
 import java.time.Instant
+import java.util.Date
 
 
 class DateTimeCtrl {
@@ -13,4 +14,10 @@ class DateTimeCtrl {
         val deadline: Instant = dt.plusSeconds(selectedMinutes * 60)
         return deadline
     }
+
+    fun dateFormatterToDate(dateSt: Date) {
+
+    }
+
+
 }

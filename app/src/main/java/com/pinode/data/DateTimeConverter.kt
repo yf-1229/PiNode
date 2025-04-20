@@ -2,6 +2,7 @@ package com.pinode.data
 
 import androidx.room.TypeConverter
 import java.time.Instant
+import java.util.Date
 
 class DateTimeConverter {
     @TypeConverter
@@ -18,5 +19,12 @@ class DateTimeConverter {
     @TypeConverter
     fun instantToString(value: Instant?): String? {
         return value?.toString()
+    }
+}
+
+class DateConverter { // TODO https://stackoverflow.com/questions/50313525/room-using-date-field
+    @TypeConverter
+    fun LongToDate(dateLong: Long) {
+        return dateLong == null ? null : new
     }
 }
