@@ -9,15 +9,17 @@ class DateTimeCtrl {
         return Instant.now()
     }
 
-    fun getDeadline(selectedMinutes: Long): Instant {
+    fun getDeadlineByMinutes(selectedMinutes: Long): Instant {
         val dt = getNow()
         val deadline: Instant = dt.plusSeconds(selectedMinutes * 60)
         return deadline
     }
 
-    fun dateFormatterToDate(dateSt: Date) {
-
+    fun getDeadlineByMinutes(
+        selectedDate: Long?,
+        selectedTime: Long?
+    ) {
+        val dt = getNow()
+        val deadline: Instant = dt.
     }
-
-
 }

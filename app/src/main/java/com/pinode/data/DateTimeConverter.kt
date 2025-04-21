@@ -21,10 +21,3 @@ class DateTimeConverter {
         return value?.toString()
     }
 }
-
-class DateConverter { // TODO https://stackoverflow.com/questions/50313525/room-using-date-field
-    @TypeConverter
-    fun LongToDate(dateLong: Long) {
-        return dateLong == null ? null : new
-    }
-}

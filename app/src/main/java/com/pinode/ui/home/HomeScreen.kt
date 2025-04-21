@@ -436,7 +436,7 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test1hdsuhcdsjcndjkcdsfdwfew",
                 "test",
-                deadline = dateTimeCtrl.getDeadline(5),
+                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
                 isCompleted = false,
                 isDeleted = false
             ),
@@ -445,7 +445,7 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test2",
                 "test2",
-                deadline = dateTimeCtrl.getDeadline(selectedMinutes = 50),
+                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
                 isCompleted = false,
                 isDeleted = false
             ),

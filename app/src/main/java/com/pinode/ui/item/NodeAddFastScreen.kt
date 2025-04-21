@@ -101,7 +101,7 @@ fun NodeAddFastBody( // Fast
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadline(selectedMinutes = selectedMinutes.toLong())
+            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = selectedMinutes.toLong())
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
             true // Rememberブロックに値を返す
         }
@@ -111,7 +111,7 @@ fun NodeAddFastBody( // Fast
             selectedMinutesChange = { minutes: Int ->
                 selectedMinutes = minutes
                 val dateTimeCtrl = DateTimeCtrl()
-                val deadlineTime = dateTimeCtrl.getDeadline(selectedMinutes = minutes.toLong())
+                val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
                 onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
             },
             onValueChange = onNodeValueChange,

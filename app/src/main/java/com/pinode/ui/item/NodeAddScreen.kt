@@ -1,7 +1,6 @@
 package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -18,7 +17,6 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +45,6 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 
@@ -107,13 +104,14 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var selectedTime by remember { mutableIntStateOf(0) }
         var selectedDate by remember { mutableIntStateOf(0) }
+        var selectedTime by remember { mutableIntStateOf(0) }
+
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadline(selectedTime = selectedTime.toLong())
+            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedTime = selectedTime.toLong())
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
             true // Rememberブロックに値を返す
         }
