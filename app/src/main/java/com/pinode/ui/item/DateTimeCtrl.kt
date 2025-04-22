@@ -1,7 +1,9 @@
 package com.pinode.ui.item
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.time.Duration
 
 
 class DateTimeCtrl {
@@ -16,10 +18,13 @@ class DateTimeCtrl {
     }
 
     fun getDeadlineByMinutes(
-        selectedDate: Long?,
-        selectedTime: Long?
+        selectedDate: Long,
+        selectedTime: Long
     ) {
         val dt = getNow()
-        val deadline: Instant = dt.
+        val durationDate = Duration.between(dt, selectedDate)
+        val deadline: Instant = dt
+            .plus(selectedDate, ChronoUnit.DAYS)
+            .plusSeconds(selectedTime)
     }
 }
