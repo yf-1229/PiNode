@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.time.Duration
+import java.time.LocalDateTime
 
 
 class DateTimeCtrl {
@@ -18,13 +19,9 @@ class DateTimeCtrl {
     }
 
     fun getDeadlineByMinutes(
-        selectedDate: Long,
-        selectedTime: Long
-    ) {
+        selectedDate: LocalDateTime,
+        selectedTime: LocalDateTime
+    ): Instant {
         val dt = getNow()
-        val durationDate = Duration.between(dt, selectedDate)
-        val deadline: Instant = dt
-            .plus(selectedDate, ChronoUnit.DAYS)
-            .plusSeconds(selectedTime)
     }
 }

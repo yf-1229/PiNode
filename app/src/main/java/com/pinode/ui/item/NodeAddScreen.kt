@@ -45,6 +45,8 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
 import java.util.Locale
 
 
@@ -111,8 +113,8 @@ fun NodeAddBody(
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedTime = selectedTime.toLong())
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
+            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedTime = selectedTime)
+            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedTime))
             true // Rememberブロックに値を返す
         }
 
@@ -121,7 +123,6 @@ fun NodeAddBody(
             onValueChange = onNodeValueChange,
             selectedDateChasnge = { date: Long? ->
                 selectedDate = // TODO dateをRoomに保存できる形式に
-                onNodeValueChange(nodeUiState.nodeDetails.copy(dateDeadline = selectedDate))
 
             },
             selectedTimeChange = { time: Long ->
@@ -224,7 +225,8 @@ fun DatePickerChip(
             confirmButton = {
                 TextButton(onClick = {
                     selectedDateChange(datePickerState.selectedDateMillis)
-                    selectedDate = datePickerState.selectedDateMillis
+                    selectedDate = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(
+                        ZoneId.systemDefault()).toLocalDate() }
                     showModal = false
                 }
                 ) {
