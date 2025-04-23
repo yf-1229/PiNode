@@ -197,7 +197,7 @@ fun DatePickerChip(
     selectedDateChange: (Long?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    var selectedDate by remember { mutableStateOf(LocalDate) }
     val datePickerState = rememberDatePickerState()
 
     val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
