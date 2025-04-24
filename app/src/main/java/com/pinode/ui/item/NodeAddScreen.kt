@@ -199,7 +199,10 @@ fun DatePickerChip(
     selectedDateChange: () -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    var selectedDate by remember = datePickerState.selectedDateMillis?.let {
+        convertMillisToDate(it)
+    } ?: ""
+
     val datePickerState = rememberDatePickerState()
 
     val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
@@ -247,6 +250,8 @@ fun DatePickerChip(
 }
 
 
+
+
 @Composable
 fun TimePickerChip(
     selectedTimeChange: (Long) -> Unit
@@ -265,3 +270,7 @@ fun TimePickerChip(
 }
 
 // TODO 時刻選択ツール
+fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    return formatter.format(Date(millis))
+}
