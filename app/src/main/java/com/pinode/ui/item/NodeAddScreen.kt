@@ -46,6 +46,8 @@ import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Locale
 
@@ -194,10 +196,10 @@ fun NodeAddInputForm(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerChip(
-    selectedDateChange: (Long?) -> Unit
+    selectedDateChange: () -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
     val datePickerState = rememberDatePickerState()
 
     val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
@@ -225,8 +227,7 @@ fun DatePickerChip(
             confirmButton = {
                 TextButton(onClick = {
                     selectedDateChange(datePickerState.selectedDateMillis)
-                    selectedDate = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(
-                        ZoneId.systemDefault()).toLocalDate() }
+                    selectedDate = datePickerState.selectedDateMillis
                     showModal = false
                 }
                 ) {
