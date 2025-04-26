@@ -13,6 +13,7 @@ import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,7 +25,8 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val deadline: Instant,
+    val deadline: LocalDateTime,
+    val startDate: LocalDate,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )

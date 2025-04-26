@@ -8,6 +8,8 @@ import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewModel() {
@@ -47,7 +49,8 @@ data class NodeDetails(
     val title: String = "",
     val description: String = "",
     val fontSize: Int = 1,
-    val deadline: Instant = Instant.ofEpochMilli(0),
+    val deadline: LocalDateTime = LocalDateTime.now(),
+    val startDate: LocalDate = LocalDate.now(),
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -60,6 +63,7 @@ fun NodeDetails.toNode(): Node = Node(
     title = title,
     description = description,
     deadline = deadline,
+    startDate = startDate,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
@@ -76,6 +80,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     title = title,
     description = description,
     deadline = deadline,
+    startDate = startDate,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

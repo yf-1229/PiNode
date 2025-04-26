@@ -49,6 +49,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Date
 import java.util.Locale
 
 
@@ -108,14 +109,13 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var selectedDate by remember { mutableIntStateOf(0) }
+        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
         var selectedTime by remember { mutableIntStateOf(0) }
 
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedTime = selectedTime)
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedTime))
             true // Rememberブロックに値を返す
         }
@@ -123,12 +123,12 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            selectedDateChasnge = { date: Long? ->
-                selectedDate = // TODO dateをRoomに保存できる形式に
-
+            selectedDateChange = { date: LocalDate? ->
+                selectedDate = date
+                onNodeValueChange(nodeUiState.nodeDetails.copy(startDate = date))
             },
-            selectedTimeChange = { time: Long ->
-                selectedTime = time.toInt() // TODO
+            selectedTimeChange = { time: LocalDate? ->
+                selectedTime = time// TODO
                 val dateTimeCtrl = DateTimeCtrl()
             },
             modifier = Modifier.fillMaxWidth()
@@ -150,8 +150,8 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
-    selectedDateChange: (Long?) -> Unit,
-    selectedTimeChange: (Long) -> Unit,
+    selectedDateChange: (LocalDate?) -> Unit,
+    selectedTimeChange: (LocalDate?) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -187,7 +187,6 @@ fun NodeAddInputForm(
 
         Row() {
             DatePickerChip(selectedDateChange)
-            TimePickerChip(selectedTimeChange)
         }
     }
 }
@@ -196,13 +195,10 @@ fun NodeAddInputForm(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerChip(
-    selectedDateChange: () -> Unit
+    selectedDateChange: (LocalDate?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember = datePickerState.selectedDateMillis?.let {
-        convertMillisToDate(it)
-    } ?: ""
-
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
     val datePickerState = rememberDatePickerState()
 
     val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
@@ -229,7 +225,7 @@ fun DatePickerChip(
             onDismissRequest = { showModal = false },
             confirmButton = {
                 TextButton(onClick = {
-                    selectedDateChange(datePickerState.selectedDateMillis)
+                    selectedDateChange(datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
                     selectedDate = datePickerState.selectedDateMillis
                     showModal = false
                 }
