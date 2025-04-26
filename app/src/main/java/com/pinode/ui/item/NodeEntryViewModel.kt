@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -50,7 +49,7 @@ data class NodeDetails(
     val description: String = "",
     val fontSize: Int = 1,
     val deadline: LocalDateTime = LocalDateTime.now(),
-    val startDate: LocalDate = LocalDate.now(),
+    val startDate: LocalDate? = LocalDate.now(),
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )

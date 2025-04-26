@@ -1,6 +1,5 @@
 package com.pinode.data
 
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -8,14 +7,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import androidx.room.TypeConverter
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 @Entity(tableName = "nodes")
@@ -26,7 +22,7 @@ data class Node(
     val title: String,
     val description: String,
     val deadline: LocalDateTime,
-    val startDate: LocalDate,
+    val startDate: LocalDate?,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )

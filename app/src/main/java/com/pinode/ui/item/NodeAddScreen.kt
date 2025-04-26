@@ -25,7 +25,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -116,7 +118,7 @@ fun NodeAddBody(
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             val dateTimeCtrl = DateTimeCtrl()
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedTime))
+            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = ))
             true // Rememberブロックに値を返す
         }
 
@@ -185,7 +187,7 @@ fun NodeAddInputForm(
             singleLine = true
         )
 
-        Row() {
+        Row {
             DatePickerChip(selectedDateChange)
         }
     }
@@ -203,7 +205,7 @@ fun DatePickerChip(
 
     val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
     AssistChip(
-        onClick = { showModal = true},
+        onClick = { showModal = true },
         label = {
             if (selectedDate != null) {
                 Text(formattedDate)
@@ -248,12 +250,16 @@ fun DatePickerChip(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerChip(
-    selectedTimeChange: (Long) -> Unit
+    selectedTimeChange: (LocalDateTime) -> Unit
 ) {
+    val selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var showDial by remember { mutableStateOf(false) }
+
     AssistChip(
-        onClick = { }, // TODO 時刻選択ツール
+        onClick = { showDial = true},
         label = { Text("When is it?") },
         leadingIcon = {
             Icon(
@@ -263,10 +269,32 @@ fun TimePickerChip(
             )
         }
     )
-}
 
-// TODO 時刻選択ツール
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
+    if (showDial) {
+        val timePickerState = rememberTimePickerState(
+            initialHour = LocalDateTime.now().hour,
+            initialMinute = LocalDateTime.now().minute,
+            is24Hour = true,
+        )
+
+        Column {
+            TimePicker(
+                state = timePickerState,
+            )
+            Button(onClick = { showDial = false }) {
+                Text("Dismiss picker")
+            }
+            Button(onClick = {
+                selectedTimeChange(
+                    LocalDateTime(
+                        timePickerState.hour.
+                    )
+                )
+                showDial = false
+            }) {
+                Text("Confirm selection")
+            }
+        }
+    }
+    }
 }
