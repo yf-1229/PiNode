@@ -51,7 +51,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
 import java.util.Locale
 
 
@@ -197,9 +196,25 @@ fun NodeAddInputForm(
 @Composable
 fun PickerChip(deadline: LocalDateTime) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTime by remember { mutableIntStateOf(0) }
+    var selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
 
-    DatePickerChip({selectedDate = selectedDateChange})
+
+    DatePickerChip(
+        selectedDateChange = { selectedDate = it }
+    )
+    TimePickerChip(
+        selectedTimeChange = { selectedTime = it }
+    )
+
+    if (selectedTime == null) {
+        val deadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
+    } else if (selectedTime != null) {
+        val deadline: LocalDateTime = selectedDate.atTime(selectedTime.toLocalTime())
+    }
+
+
+    val deadline: LocalDateTime =
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
