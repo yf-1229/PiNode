@@ -194,6 +194,14 @@ fun NodeAddInputForm(
 }
 
 
+@Composable
+fun PickerChip(deadline: LocalDateTime) {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTime by remember { mutableIntStateOf(0) }
+
+    DatePickerChip({selectedDate = selectedDateChange})
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerChip(
