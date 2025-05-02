@@ -110,8 +110,7 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-        var selectedTime by remember { mutableIntStateOf(0) }
+        var deadline by remember { mutableStateOf(LocalDate.now()) }
 
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
@@ -124,13 +123,8 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            selectedDateChange = { date: LocalDate? ->
-                selectedDate = date
-                onNodeValueChange(nodeUiState.nodeDetails.copy(startDate = date))
-            },
-            selectedTimeChange = { time: LocalDate? ->
-                selectedTime = time// TODO
-                val dateTimeCtrl = DateTimeCtrl()
+            deadline = { selectedDeadline: LocalDateTime ->
+                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -151,8 +145,7 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
-    selectedDateChange: (LocalDate?) -> Unit,
-    selectedTimeChange: (LocalDate?) -> Unit,
+    deadline: (LocalDateTime) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -185,19 +178,17 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
-
-        Row {
-            DatePickerChip(selectedDateChange)
-        }
+        PickerChip(
+            deadline = deadline
+        )
     }
 }
 
 
 @Composable
-fun PickerChip(deadline: LocalDateTime) {
+fun PickerChip(deadline: (LocalDateTime) -> Unit) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
-
 
     DatePickerChip(
         selectedDateChange = { selectedDate = it }
@@ -207,14 +198,12 @@ fun PickerChip(deadline: LocalDateTime) {
     )
 
     if (selectedTime == null) {
-        val deadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
+        val selectedDeadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
+        deadline(selectedDeadlineAllDay)
     } else if (selectedTime != null) {
-        val deadline: LocalDateTime = selectedDate.atTime(selectedTime.toLocalTime())
+        val selectedDeadline: LocalDateTime = selectedDate.atTime(selectedTime.toLocalTime())
+        deadline(selectedDeadline)
     }
-
-
-    val deadline: LocalDateTime =
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -310,7 +299,7 @@ fun TimePickerChip(
             Button(onClick = {
                 selectedTimeChange(
                     LocalDateTime(
-                        timePickerState.hour.
+                        timePickerState.hour
                     )
                 )
                 showDial = false
