@@ -50,6 +50,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Locale
 
@@ -265,7 +266,7 @@ fun DatePickerChip(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerChip(
-    selectedTimeChange: (LocalDateTime) -> Unit
+    selectedTimeChange: (LocalTime?) -> Unit
 ) {
     val selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
     var showDial by remember { mutableStateOf(false) }
@@ -297,11 +298,7 @@ fun TimePickerChip(
                 Text("Dismiss picker")
             }
             Button(onClick = {
-                selectedTimeChange(
-                    LocalDateTime(
-                        timePickerState.hour
-                    )
-                )
+                selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
                 showDial = false
             }) {
                 Text("Confirm selection")
