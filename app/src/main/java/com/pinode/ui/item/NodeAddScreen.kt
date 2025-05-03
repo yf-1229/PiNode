@@ -189,7 +189,7 @@ fun NodeAddInputForm(
 @Composable
 fun PickerChip(deadline: (LocalDateTime) -> Unit) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
 
     DatePickerChip(
         selectedDateChange = { selectedDate = it }
