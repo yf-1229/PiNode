@@ -305,5 +305,4 @@ fun TimePickerChip(
             }
         }
     }
-    }
 }
