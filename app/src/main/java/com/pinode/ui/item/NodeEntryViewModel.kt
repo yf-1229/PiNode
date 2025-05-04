@@ -62,7 +62,6 @@ fun NodeDetails.toNode(): Node = Node(
     title = title,
     description = description,
     deadline = deadline,
-    startDate = startDate,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
@@ -79,7 +78,6 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     title = title,
     description = description,
     deadline = deadline,
-    startDate = startDate,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

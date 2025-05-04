@@ -111,13 +111,12 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var deadline by remember { mutableStateOf(LocalDate.now()) }
+        var deadline by remember { mutableStateOf(LocalDateTime.now()) }
 
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
-            val dateTimeCtrl = DateTimeCtrl()
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = ))
+            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
             true // Rememberブロックに値を返す
         }
 
@@ -125,6 +124,7 @@ fun NodeAddBody(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
             deadline = { selectedDeadline: LocalDateTime ->
+                deadline = selectedDeadline
                 onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
             },
             modifier = Modifier.fillMaxWidth()
@@ -202,7 +202,7 @@ fun PickerChip(deadline: (LocalDateTime) -> Unit) {
         val selectedDeadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
         deadline(selectedDeadlineAllDay)
     } else if (selectedTime != null) {
-        val selectedDeadline: LocalDateTime = selectedDate.atTime(selectedTime.toLocalTime())
+        val selectedDeadline: LocalDateTime = selectedDate.atTime(selectedTime)
         deadline(selectedDeadline)
     }
 }

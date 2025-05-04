@@ -1,23 +1,22 @@
 package com.pinode.data
 
 import androidx.room.TypeConverter
-import java.time.Instant
-import java.util.Date
+import java.time.LocalDateTime
 
 class DateTimeConverter {
     @TypeConverter
-    fun stringToInstant(value: String?): Instant? {
+    fun stringToLocalDateTime(value: String?): LocalDateTime? {
         try {
-            Instant.parse(value)
+            LocalDateTime.parse(value)
         } catch (e: Exception) {
             throw IllegalArgumentException("Invalid date-time format: $value", e)
         }
-        return value?.let { Instant.parse(it) }
+        return value?.let { LocalDateTime.parse(it) }
 
     }
 
     @TypeConverter
-    fun instantToString(value: Instant?): String? {
+    fun localDateTimeToString(value: LocalDateTime?): String? {
         return value?.toString()
     }
 }
