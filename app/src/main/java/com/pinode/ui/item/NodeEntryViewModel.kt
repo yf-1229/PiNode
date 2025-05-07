@@ -49,7 +49,6 @@ data class NodeDetails(
     val description: String = "",
     val fontSize: Int = 1,
     val deadline: LocalDateTime = LocalDateTime.now(),
-    val startDate: LocalDate? = LocalDate.now(),
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )

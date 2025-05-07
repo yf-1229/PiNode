@@ -27,6 +27,9 @@ object AppViewModelProvider {
         initializer {
             NodeEntryViewModel(pinodeApplication().container.nodesRepository)
         }
+        
+        initializer {
+        }
 
         // Initializer for HomeViewModel
         initializer {
