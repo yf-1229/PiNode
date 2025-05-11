@@ -89,6 +89,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeEntry: () -> Unit,
+    navigateToNodeAdd: () -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
