@@ -19,6 +19,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -179,6 +180,16 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
+
+        var checked by remember { mutableStateOf(false) }
+        IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+            if (checked) {
+                Icon(Icons.Filled.Lock, contentDescription = "Localized description")
+            } else {
+                Icon(Icons.Outlined.Lock, contentDescription = "Localized description")
+            }
+        }
+
         PickerChip(
             deadline = deadline
         )
