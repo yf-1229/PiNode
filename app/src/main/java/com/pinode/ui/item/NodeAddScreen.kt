@@ -182,9 +182,13 @@ fun NodeAddInputForm(
         )
 
         var checked by remember { mutableStateOf(false) }
-        IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+        IconToggleButton(
+            checked = checked,
+            onCheckedChange = { checked = it }
+        ) {
             if (checked) {
-                Icon(Icons.Filled.Lock, contentDescription = "Localized description")
+                Icon(, contentDescription = "Localized description",
+                )
             } else {
                 Icon(Icons.Outlined.Lock, contentDescription = "Localized description")
             }
