@@ -187,10 +187,12 @@ fun NodeAddInputForm(
             onCheckedChange = { checked = it }
         ) {
             if (checked) {
-                Icon(, contentDescription = "Localized description",
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp), contentDescription = "Localized description",
                 )
             } else {
-                Icon(Icons.Outlined.Lock, contentDescription = "Localized description")
+                Icon(Icons.Outlined.Lock, contentDescription = "Localized description"
+                )
             }
         }
 
