@@ -2,7 +2,6 @@ package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +30,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -181,17 +179,18 @@ fun NodeAddInputForm(
         )
 
         var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(description = it))
+        onValueChange(nodeDetails.copy(description = checked))
         IconToggleButton(
             checked = checked,
             onCheckedChange = { checked = it }
         ) {
             if (checked) {
                 Icon(
-                    painterResource(R.drawable.priority_high_24dp), contentDescription = "Localized description",
+                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
                 )
             } else {
-                Icon(Icons.Outlined.Lock, contentDescription = "Localized description"
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
                 )
             }
         }
