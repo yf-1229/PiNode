@@ -61,7 +61,6 @@ object NodeAddDestination : NavigationDestination {
     override val titleRes = R.string.node_entry_title
 }
 
-private val PRIORITY_OPTIONS = listOf(1, 2, 3, 0)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -182,6 +181,7 @@ fun NodeAddInputForm(
         )
 
         var checked by remember { mutableStateOf(false) }
+        onValueChange(nodeDetails.copy(description = it))
         IconToggleButton(
             checked = checked,
             onCheckedChange = { checked = it }
