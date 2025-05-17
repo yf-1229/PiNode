@@ -179,7 +179,7 @@ fun NodeAddInputForm(
         )
 
         var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(description = checked))
+        onValueChange(nodeDetails.copy(priority = checked))
         IconToggleButton(
             checked = checked,
             onCheckedChange = { checked = it }

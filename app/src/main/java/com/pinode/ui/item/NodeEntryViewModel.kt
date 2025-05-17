@@ -47,8 +47,8 @@ data class NodeDetails(
     val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
-    val fontSize: Int = 1,
     val deadline: LocalDateTime = LocalDateTime.now(),
+    val priority: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -61,6 +61,7 @@ fun NodeDetails.toNode(): Node = Node(
     title = title,
     description = description,
     deadline = deadline,
+    priority = priority,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
@@ -77,6 +78,7 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     title = title,
     description = description,
     deadline = deadline,
+    priority = priority,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )

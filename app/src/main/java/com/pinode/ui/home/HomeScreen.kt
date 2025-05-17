@@ -254,11 +254,12 @@ private fun PiNodeItem(
     val deadline = item.deadline
     val duration = Duration.between(currentTime, deadline)
 
-
-    val itemColor: Color = when (priority) {
-        1 -> Color.Red
-        2 -> Color.Yellow
-        else -> Color.White
+    if (!item.isCompleted && item.priority) {
+        item.status = NodeStatus.RED
+    } else if (!item.isCompleted) {
+        item.status = NodeStatus.GREEN
+    } else {
+        item.status = NodeStatus.GRAY
     }
 
     val circleNowSize = when {
@@ -282,7 +283,7 @@ private fun PiNodeItem(
             modifier = Modifier
                 .size(circleNowSize)
                 .clip(CircleShape)
-                .background(colorResource(itemColor))
+                .background(colorResource(item.status.color))
         )
 
         Text(
@@ -438,6 +439,7 @@ fun PreviewHomeBody() {
                 "Test1hdsuhcdsjcndjkcdsfdwfew",
                 "test",
                 deadline = dateTimeCtrl.getDeadlineByMinutes(5),
+                priority = false,
                 isCompleted = false,
                 isDeleted = false
             ),
@@ -447,6 +449,7 @@ fun PreviewHomeBody() {
                 "Test2",
                 "test2",
                 deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
+                priority = false,
                 isCompleted = false,
                 isDeleted = false
             ),

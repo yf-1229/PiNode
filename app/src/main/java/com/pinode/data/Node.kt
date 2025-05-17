@@ -22,6 +22,7 @@ data class Node(
     val title: String,
     val description: String,
     val deadline: LocalDateTime,
+    val priority: Boolean,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
