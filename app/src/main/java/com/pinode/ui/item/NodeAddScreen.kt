@@ -195,9 +195,7 @@ fun NodeAddInputForm(
             }
         }
 
-        PickerChip(
-            deadline = deadline
-        )
+        PickerChip(deadline = deadline)
     }
 }
 

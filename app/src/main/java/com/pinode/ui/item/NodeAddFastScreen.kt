@@ -10,6 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -21,12 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -186,6 +190,23 @@ fun NodeAddFastInputForm( // Fast
                     },
                     selected = index == selectedIndex,
                     label = { Text(minutes.toString()) }
+                )
+            }
+        }
+
+        var checked by remember { mutableStateOf(false) }
+        onValueChange(nodeDetails.copy(priority = checked))
+        IconToggleButton(
+            checked = checked,
+            onCheckedChange = { checked = it }
+        ) {
+            if (checked) {
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
+                )
+            } else {
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
                 )
             }
         }
