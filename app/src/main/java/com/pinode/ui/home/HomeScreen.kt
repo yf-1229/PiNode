@@ -164,21 +164,36 @@ fun HomeScreen(
                 },
             ) {
                 items.forEachIndexed { i, item ->
-                    FloatingActionButton(
-                    onClick = navigateToNodeEntry,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .padding(
-                            end = WindowInsets.safeDrawing.asPaddingValues()
-                                .calculateEndPadding(LocalLayoutDirection.current)
+                    FloatingActionButtonMenuItem(
+                        onClick = navigateToNodeEntry,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier
+                            .padding(
+                                end = WindowInsets.safeDrawing.asPaddingValues()
+                                    .calculateEndPadding(LocalLayoutDirection.current)
+                            .semantics {
+                                isTravelGroup = true
+                                if (i == items.size - 1) {
+                                    customActions =
+                                        listOf(
+                                        CustomAccessibilityAction(
+                                            label = "Close menu",
+                                            action = {
+                                                fabMenuExpanded = false
+                                                true
+                                            }
+                                        )
+                                    )
+                                }
+                            }
                         )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.node_entry_title)
-                    )
-                }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.node_entry_title)
+                        )
+                    }
                 }
             }
         },
