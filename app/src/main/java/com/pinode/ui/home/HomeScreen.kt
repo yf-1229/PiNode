@@ -126,6 +126,10 @@ fun HomeScreen(
         },
         floatingActionButton = {
             val listState = rememberLazyListState()
+            val items = listOf(
+                Icons.Default.Add to "Add",
+                Icons.Deafault.Thunder to "Fast Add"
+            )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
             BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
@@ -159,7 +163,8 @@ fun HomeScreen(
                     }
                 },
             ) {
-                FloatingActionButton(
+                items.forEachIndexed { i, item ->
+                    FloatingActionButton(
                     onClick = navigateToNodeEntry,
                     containerColor = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium,
@@ -173,6 +178,7 @@ fun HomeScreen(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(R.string.node_entry_title)
                     )
+                }
                 }
             }
         },
