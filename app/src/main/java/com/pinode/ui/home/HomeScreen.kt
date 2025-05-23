@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -34,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
+import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -55,6 +57,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -65,7 +68,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
@@ -127,8 +132,8 @@ fun HomeScreen(
         floatingActionButton = {
             val listState = rememberLazyListState()
             val items = listOf(
-                Icons.Default.Add to "Add",
-                Icons.Deafault.Thunder to "Fast Add"
+                Icons.Default.Add to "Add" to 0,
+                Icons.Default.Bolt to "Fast Add" to 1
             )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -137,8 +142,7 @@ fun HomeScreen(
                 expanded = fabMenuExpanded,
                 button = {
                     ToggleFloatingActionButton(
-                        modifier =
-                        Modifier.semantics {
+                        modifier = Modifier.semantics {
                             traversalIndex = -1f
                             stateDescription = if (fabMenuExpanded) "Expanded" else "Collapsed"
                             contentDescription = "Toggle menu"
@@ -165,35 +169,34 @@ fun HomeScreen(
             ) {
                 items.forEachIndexed { i, item ->
                     FloatingActionButtonMenuItem(
-                        onClick = navigateToNodeEntry,
+                        onClick = {
+                            if (item == "Add") {
+                                navigateToNodeEntry()
+                            } else (item == "")
+                        },
                         containerColor = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.medium,
+                        icon = { Icon(item.first, contentDescription = null) },
+                        text = { Text(text = item.second) },
                         modifier = Modifier
                             .padding(
                                 end = WindowInsets.safeDrawing.asPaddingValues()
-                                    .calculateEndPadding(LocalLayoutDirection.current)
+                                    .calculateEndPadding(LocalLayoutDirection.current))
                             .semantics {
-                                isTravelGroup = true
+                                isTraversalGroup= true
                                 if (i == items.size - 1) {
                                     customActions =
                                         listOf(
-                                        CustomAccessibilityAction(
-                                            label = "Close menu",
-                                            action = {
-                                                fabMenuExpanded = false
-                                                true
-                                            }
+                                            CustomAccessibilityAction(
+                                                label = "Close menu",
+                                                action = {
+                                                    fabMenuExpanded = false
+                                                    true
+                                                }
+                                            )
                                         )
-                                    )
                                 }
                             }
                         )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.node_entry_title)
-                        )
-                    }
                 }
             }
         },
