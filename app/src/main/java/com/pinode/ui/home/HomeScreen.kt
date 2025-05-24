@@ -132,8 +132,8 @@ fun HomeScreen(
         floatingActionButton = {
             val listState = rememberLazyListState()
             val items = listOf(
-                Icons.Default.Add to "Add" to 0,
-                Icons.Default.Bolt to "Fast Add" to 1
+                Icons.Default.Bolt to "Fast Add",
+                Icons.Default.Add to "Add"
             )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -170,9 +170,10 @@ fun HomeScreen(
                 items.forEachIndexed { i, item ->
                     FloatingActionButtonMenuItem(
                         onClick = {
-                            if (item == "Add") {
+                            if (items.indexOf(item) == 0) {
                                 navigateToNodeEntry()
-                            } else (item == "")
+                            } else (items.indexOf(item) == 1)
+                                navigateToNodeAdd()
                         },
                         containerColor = MaterialTheme.colorScheme.primary,
                         icon = { Icon(item.first, contentDescription = null) },

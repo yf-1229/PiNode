@@ -1,5 +1,6 @@
 package com.pinode.ui.navigation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -17,6 +18,7 @@ import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
 import com.pinode.ui.item.NodeEntryScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PiNodeNavHost(
     navController: NavHostController,
