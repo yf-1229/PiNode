@@ -13,10 +13,10 @@ import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
 import com.pinode.ui.item.NodeAddDestination
 import com.pinode.ui.item.NodeAddFastDestination
+import com.pinode.ui.item.NodeAddFastScreen
 import com.pinode.ui.item.NodeAddScreen
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
-import com.pinode.ui.item.NodeEntryScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
