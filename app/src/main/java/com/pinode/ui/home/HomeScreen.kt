@@ -108,7 +108,7 @@ object HomeDestination : NavigationDestination {
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
-    navigateToNodeEntry: () -> Unit,
+    navigateToNodeAddFast: () -> Unit,
     navigateToNodeAdd: () -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
@@ -171,7 +171,7 @@ fun HomeScreen(
                     FloatingActionButtonMenuItem(
                         onClick = {
                             if (i == 0) {
-                                navigateToNodeEntry()
+                                navigateToNodeAddFast()
                             } else if (i == 1) {
                                 navigateToNodeAdd()
                             }

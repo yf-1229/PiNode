@@ -51,7 +51,7 @@ private val TIME_OPTIONS = listOf(15, 30, 60) // For Fast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NodeEntryScreen(
+fun NodeAddFastScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
@@ -89,7 +89,7 @@ fun NodeEntryScreen(
 
 
 @Composable
-fun NodeAddFastBody( // Fast
+fun NodeAddFastBody(
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
@@ -134,7 +134,7 @@ fun NodeAddFastBody( // Fast
 }
 
 @Composable
-fun NodeAddFastInputForm( // Fast
+fun NodeAddFastInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     selectedMinutesChange: (Int) -> Unit,

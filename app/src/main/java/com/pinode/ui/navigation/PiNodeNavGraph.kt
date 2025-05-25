@@ -32,7 +32,7 @@ fun PiNodeNavHost(
         navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
             composable("homeScreen/${HomeDestination.route}") {
                 HomeScreen( // Home -> Today
-                    navigateToNodeEntry = { navController.navigate(NodeAddFastDestination.route) },
+                    navigateToNodeAddFast = { navController.navigate(NodeAddFastDestination.route) },
                     navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController
@@ -44,7 +44,7 @@ fun PiNodeNavHost(
         }
         // NodeEntry
         composable(route = NodeAddFastDestination.route) {
-            NodeEntryScreen(
+            NodeAddFastScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )
