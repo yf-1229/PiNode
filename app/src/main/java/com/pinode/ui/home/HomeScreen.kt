@@ -170,10 +170,11 @@ fun HomeScreen(
                 items.forEachIndexed { i, item ->
                     FloatingActionButtonMenuItem(
                         onClick = {
-                            if (items.indexOf(item) == 0) {
+                            if (i == 0) {
                                 navigateToNodeEntry()
-                            } else (items.indexOf(item) == 1)
+                            } else if (i == 1) {
                                 navigateToNodeAdd()
+                            }
                         },
                         containerColor = MaterialTheme.colorScheme.primary,
                         icon = { Icon(item.first, contentDescription = null) },

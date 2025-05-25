@@ -230,12 +230,12 @@ fun DatePickerChip(
     var selectedDate by remember { mutableStateOf<Long?>(null) }
     val datePickerState = rememberDatePickerState()
 
-    val formattedDate = SimpleDateFormat("MMM dd", Locale.getDefault()).format(selectedDate)
+
     AssistChip(
         onClick = { showModal = true },
         label = {
             if (selectedDate != null) {
-                Text(formattedDate)
+                Text("Selected")
             } else {
                 Text("Date")
             }
@@ -287,7 +287,13 @@ fun TimePickerChip(
 
     AssistChip(
         onClick = { showDial = true},
-        label = { Text("When is it?") },
+        label = {
+            if (selectedTime != null) {
+                Text("Selected")
+            } else {
+                Text("Date")
+            }
+        },
         leadingIcon = {
             Icon(
                 painter = painterResource(R.drawable.schedule_24),

@@ -48,7 +48,7 @@ interface NodeDao {
     suspend fun deleteNode(node: Node)
 
     @Query("SELECT * from nodes WHERE id = :id")
-    fun getNode(id: Int): Flow<Node>
+    fun getNode(id: Int): Flow<Node?>
 
     @Query("SELECT * from nodes ORDER BY title ASC")
     fun getAllItems(): Flow<List<Node>>
