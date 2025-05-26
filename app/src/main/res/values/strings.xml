@@ -1,4 +1,26 @@
 <resources>
     <string name="app_name">PiNode</string>
-    <string name="navigation_back">Back</string>
+    <string name="attention">Attention</string>
+    <string name="back_button">Back</string>
+    <string name="delete">Delete</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no_node_description">Oops!\nNo nodes in the inventory.\nTap + to add.</string>
+    <string name="node">Node</string>
+    <string name="node_detail_title">Node Details</string>
+    <string name="node_entry_title">Add Node</string>
+    <string name="edit_node_title">Edit Node</string>
+    <string name="node_title_req">Node Name*</string>
+    <string name="node_description_req">Node Description</string>
+    <string name="no">No</string>
+    <string name="node_details">Details</string>
+    <string name="in_stock">%d in stock</string>
+    <string name="quantity_req">Quantity in Stock*</string>
+    <string name="save_action">Save</string>
+    <string name="sell">Sell</string>
+    <string name="yes">Yes</string>
+    <string name="required_fields">*required fields</string>
+    <string name="complete">Complete</string>
+    <string name="today_title">Home</string>
+    <string name="yesterday_title">Yesterday</string>
+    <string name="scrap_title">Scrap</string>
 </resources>
