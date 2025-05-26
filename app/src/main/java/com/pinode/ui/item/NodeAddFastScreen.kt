@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -143,7 +144,8 @@ fun NodeAddFastInputForm(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = nodeDetails.title,
@@ -176,7 +178,9 @@ fun NodeAddFastInputForm(
         var selectedIndex by remember { mutableIntStateOf(0) }
 
         // 時間選択UI
-        SingleChoiceSegmentedButtonRow {
+        SingleChoiceSegmentedButtonRow (
+            modifier = Modifier.fillMaxWidth()
+        ){
             TIME_OPTIONS.forEachIndexed { index, minutes ->
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.itemShape(
@@ -189,7 +193,8 @@ fun NodeAddFastInputForm(
                         selectedMinutesChange(TIME_OPTIONS[index])
                     },
                     selected = index == selectedIndex,
-                    label = { Text(minutes.toString()) }
+                    label = { Text(minutes.toString()) },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
