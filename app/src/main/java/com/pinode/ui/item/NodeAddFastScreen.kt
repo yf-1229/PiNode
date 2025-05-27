@@ -173,6 +173,24 @@ fun NodeAddFastInputForm(
             enabled = enabled,
             singleLine = true
         )
+        
+        var checked by remember { mutableStateOf(false) }
+        onValueChange(nodeDetails.copy(priority = checked))
+        IconToggleButton(
+            checked = checked,
+            onCheckedChange = { checked = it }
+        ) {
+            if (checked) {
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
+                )
+            } else {
+                Icon(
+                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
+                )
+            }
+        }
+
 
         // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
         var selectedIndex by remember { mutableIntStateOf(0) }
@@ -199,22 +217,7 @@ fun NodeAddFastInputForm(
             }
         }
 
-        var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(priority = checked))
-        IconToggleButton(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        ) {
-            if (checked) {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
-                )
-            } else {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
-                )
-            }
-        }
+        
     }
 }
 
