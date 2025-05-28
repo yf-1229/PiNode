@@ -309,19 +309,23 @@ fun TimePickerChip(
             initialMinute = LocalDateTime.now().minute,
             is24Hour = true,
         )
-
-        Column {
-            TimePicker(
-                state = timePickerState,
-            )
-            Button(onClick = { showDial = false }) {
-                Text("Dismiss picker")
-            }
-            Button(onClick = {
-                selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
-                showDial = false
-            }) {
-                Text("Confirm selection")
+        Dialog(
+            onDismissRequest
+            
+        ) {
+            Column {
+                TimePicker(
+                    state = timePickerState,
+                )
+                Button(onClick = { showDial = false }) {
+                    Text("Dismiss picker")
+                }
+                Button(onClick = {
+                    selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
+                    showDial = false
+                }) {
+                    Text("Confirm selection")
+                }
             }
         }
     }
