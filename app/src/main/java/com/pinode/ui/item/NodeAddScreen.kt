@@ -1,5 +1,6 @@
 package com.pinode.ui.item
 
+import android.app.Dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -309,22 +311,21 @@ fun TimePickerChip(
             initialMinute = LocalDateTime.now().minute,
             is24Hour = true,
         )
-        Dialog(
-            onDismissRequest
-            
-        ) {
-            Column {
-                TimePicker(
-                    state = timePickerState,
-                )
-                Button(onClick = { showDial = false }) {
-                    Text("Dismiss picker")
-                }
-                Button(onClick = {
-                    selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
-                    showDial = false
-                }) {
-                    Text("Confirm selection")
+        Dialog(onDismissRequest = { showDial = false }) {
+            Card {
+                Column {
+                    TimePicker(
+                        state = timePickerState,
+                    )
+                    Button(onClick = { showDial = false }) {
+                        Text("Dismiss picker")
+                    }
+                    Button(onClick = {
+                        selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
+                        showDial = false
+                    }) {
+                        Text("Confirm selection")
+                    }
                 }
             }
         }
