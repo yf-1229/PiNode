@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
@@ -311,7 +312,7 @@ fun TimePickerChip(
             initialMinute = LocalDateTime.now().minute,
             is24Hour = true,
         )
-        Dialog(onDismissRequest = { showDial = false }) {
+        Dialog(onDismissRequest = { showDial = false}) {
             Card {
                 Column {
                     TimePicker(
@@ -329,5 +330,4 @@ fun TimePickerChip(
                 }
             }
         }
-    }
 }
