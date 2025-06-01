@@ -336,7 +336,7 @@ fun TimePickerChip(
                         )
                         showDial = false
                     }) {
-                        Text("Confirm selection")
+                        Text("Confirm")
                     }
                 }
             }
