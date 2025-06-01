@@ -230,15 +230,15 @@ fun DatePickerChip(
     selectedDateChange: (LocalDate?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedDateState by remember { mutableStateOf<LocalDate?>(null) }
     val datePickerState = rememberDatePickerState()
 
 
     AssistChip(
         onClick = { showModal = true },
         label = {
-            if (selectedDate != null) {
-                Text(selectedDate.toString())
+            if (selectedDateState != null) {
+                Text(selectedDateState.toString())
             } else {
                 Text("Date")
             }
@@ -258,7 +258,7 @@ fun DatePickerChip(
             confirmButton = {
                 TextButton(onClick = {
                     selectedDateChange(datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
-                    selectedDate = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
+                    selectedDateState = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
                     showModal = false
                 }
                 ) {
@@ -285,14 +285,14 @@ fun DatePickerChip(
 fun TimePickerChip(
     selectedTimeChange: (LocalTime?) -> Unit
 ) {
-    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    var selectedTimeState by remember { mutableStateOf<LocalTime?>(null) }
     var showDial by remember { mutableStateOf(false) }
 
     AssistChip(
         onClick = { showDial = true },
         label = {
-            if (selectedTime != null) {
-                Text(selectedTime.toString())
+            if (selectedTimeState != null) {
+                Text(selectedTimeState.toString())
             } else {
                 Text("Time")
             }
@@ -329,7 +329,7 @@ fun TimePickerChip(
                                 0
                             )
                         )
-                        selectedTime = LocalTime.of(
+                        selectedTimeState = LocalTime.of(
                             timePickerState.hour,
                             timePickerState.minute,
                             0
