@@ -512,7 +512,7 @@ fun PreviewHomeBody() {
             Node(
                 1,
                 NodeStatus.RED,
-                "Test1hdsuhcdsjcndjkcdsfdwfew",
+                "Test1",
                 "test",
                 deadline = dateTimeCtrl.getDeadlineByMinutes(5),
                 priority = false,

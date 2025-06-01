@@ -230,7 +230,7 @@ fun DatePickerChip(
     selectedDateChange: (LocalDate?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     val datePickerState = rememberDatePickerState()
 
 
@@ -238,7 +238,7 @@ fun DatePickerChip(
         onClick = { showModal = true },
         label = {
             if (selectedDate != null) {
-                Text("Selected")
+                Text(selectedDate.toString())
             } else {
                 Text("Date")
             }
@@ -258,7 +258,7 @@ fun DatePickerChip(
             confirmButton = {
                 TextButton(onClick = {
                     selectedDateChange(datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
-                    selectedDate = datePickerState.selectedDateMillis
+                    selectedDate = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
                     showModal = false
                 }
                 ) {
@@ -285,16 +285,16 @@ fun DatePickerChip(
 fun TimePickerChip(
     selectedTimeChange: (LocalTime?) -> Unit
 ) {
-    val selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
     var showDial by remember { mutableStateOf(false) }
 
     AssistChip(
-        onClick = { showDial = true},
+        onClick = { showDial = true },
         label = {
             if (selectedTime != null) {
-                Text("Selected")
+                Text(selectedTime.toString())
             } else {
-                Text("Date")
+                Text("Time")
             }
         },
         leadingIcon = {
@@ -312,7 +312,7 @@ fun TimePickerChip(
             initialMinute = LocalDateTime.now().minute,
             is24Hour = true,
         )
-        Dialog(onDismissRequest = { showDial = false}) {
+        Dialog(onDismissRequest = { showDial = false }) {
             Card {
                 Column {
                     TimePicker(
@@ -322,7 +322,18 @@ fun TimePickerChip(
                         Text("Dismiss picker")
                     }
                     Button(onClick = {
-                        selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
+                        selectedTimeChange(
+                            LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute,
+                                0
+                            )
+                        )
+                        selectedTime = LocalTime.of(
+                            timePickerState.hour,
+                            timePickerState.minute,
+                            0
+                        )
                         showDial = false
                     }) {
                         Text("Confirm selection")
@@ -330,4 +341,5 @@ fun TimePickerChip(
                 }
             }
         }
+    }
 }
