@@ -142,11 +142,12 @@ fun HomeScreen(
                 expanded = fabMenuExpanded,
                 button = {
                     ToggleFloatingActionButton(
-                        modifier = Modifier.semantics {
-                            traversalIndex = -1f
-                            stateDescription = if (fabMenuExpanded) "Expanded" else "Collapsed"
-                            contentDescription = "Toggle menu"
-                        }
+                        modifier = Modifier
+                            .semantics {
+                                traversalIndex = -1f
+                                stateDescription = if (fabMenuExpanded) "Expanded" else "Collapsed"
+                                contentDescription = "Toggle menu"
+                            }
                             .animateFloatingActionButton(
                                 visible = fabVisible || fabMenuExpanded,
                                 alignment = Alignment.BottomEnd
@@ -181,10 +182,12 @@ fun HomeScreen(
                         text = { Text(text = item.second) },
                         modifier = Modifier
                             .padding(
-                                end = WindowInsets.safeDrawing.asPaddingValues()
-                                    .calculateEndPadding(LocalLayoutDirection.current))
+                                end = WindowInsets.safeDrawing
+                                    .asPaddingValues()
+                                    .calculateEndPadding(LocalLayoutDirection.current)
+                            )
                             .semantics {
-                                isTraversalGroup= true
+                                isTraversalGroup = true
                                 if (i == items.size - 1) {
                                     customActions =
                                         listOf(
@@ -361,7 +364,12 @@ private fun PiNodeItem(
                 .clip(CircleShape)
                 .background(colorResource(item.status.color))
         )
-
+        var remaingTime = Duration(item.deadline,)
+        Text(
+            text = item.deadline.toString(), // TODO countdown
+            color = Color.Gray,
+            fontSize = 8.sp,
+        )
         Text(
             text = item.title,
             color = Color.White,
