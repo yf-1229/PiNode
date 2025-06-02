@@ -364,9 +364,11 @@ private fun PiNodeItem(
                 .clip(CircleShape)
                 .background(colorResource(item.status.color))
         )
-        var remaingTime = Duration(item.deadline,)
+        var remaingTime = Duration.between(
+        item.deadline, LocalDateTime.now)
+        
         Text(
-            text = item.deadline.toString(), // TODO countdown
+            text = remaingTime.toString(), // TODO countdown
             color = Color.Gray,
             fontSize = 8.sp,
         )
