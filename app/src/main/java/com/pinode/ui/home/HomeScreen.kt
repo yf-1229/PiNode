@@ -364,11 +364,14 @@ private fun PiNodeItem(
                 .clip(CircleShape)
                 .background(colorResource(item.status.color))
         )
-        var remaingTime = Duration.between(
-        item.deadline, LocalDateTime.now)
-        
+
+        val border: Long = 86399000 // 23H59M
+        val remainingTime = if (duration.toMillis() > border) {
+            Duration.ofDays()
+
+        }
         Text(
-            text = remaingTime.toString(), // TODO countdown
+            text = duration.toString(), // TODO countdown
             color = Color.Gray,
             fontSize = 8.sp,
         )
