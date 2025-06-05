@@ -97,6 +97,7 @@ import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.format.DateTimeFormatter
 
 
 object HomeDestination : NavigationDestination {
@@ -367,9 +368,12 @@ private fun PiNodeItem(
 
         val border: Long = 86399000 // 23H59M
         val remainingTime = if (duration.toMillis() > border) {
-            Duration.ofDays()
-
+            val durationHours = duration.toHours()
+            val durationMinutes = duration.toMinutes() % 60
+            val formatter = DateTimeFormatter.ofPattern("H 'hours' m 'minutes'")
+            formatter.format(duration)
         }
+
         Text(
             text = duration.toString(), // TODO countdown
             color = Color.Gray,
