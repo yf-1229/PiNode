@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -370,21 +371,18 @@ private fun PiNodeItem(
             formatter.format(item.deadline)
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .size(circleNowSize)
-                    .clip(CircleShape)
-                    .background(colorResource(item.status.color))
-            )
-            Spacer(Modifier.width(40.dp))
-            Text(
-                text = remainingTime.toString(),
-                color = Color.Gray,
-                fontSize = 16.sp,
-            )
-        }
-
+        Box(
+            modifier = Modifier
+                .size(circleNowSize)
+                .clip(CircleShape)
+                .background(colorResource(item.status.color))
+        )
+        Text(
+            text = remainingTime.toString(),
+            color = Color.Gray,
+            fontSize = 16.sp,
+        )
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = item.title,
             color = Color.White,
