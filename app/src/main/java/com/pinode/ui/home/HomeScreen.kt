@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -57,6 +58,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -344,7 +348,7 @@ private fun PiNodeItem(
 
     val circleNowSize = when {
         duration.isNegative -> 70.dp
-        duration <= Duration.ofMinutes(5) -> 70.dp
+        duration <= Duration.ofMinutes(5) -> 100.dp
         duration <= Duration.ofMinutes(10) -> 90.dp
         duration <= Duration.ofMinutes(15) -> 80.dp
         duration <= Duration.ofMinutes(30) -> 50.dp
@@ -356,28 +360,31 @@ private fun PiNodeItem(
     }
 
     Column(
-        verticalArrangement = Arrangement.Center,
         modifier = modifier.padding(vertical = 8.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(circleNowSize)
-                .clip(CircleShape)
-                .background(colorResource(item.status.color))
-        )
-
-        val border: Long = 86399000 // 23H59M
-        val remainingTime = if (duration.toMillis() > border) {
-            duration.get(Hours,Minutes)
+        val border: Long = 3540000
+        val remainingTime = if (duration.toMillis() < border) {
+            duration.toMinutes()
         } else {
-            
+            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+            formatter.format(item.deadline)
         }
 
-        Text(
-            text = duration.toString(), // TODO countdown
-            color = Color.Gray,
-            fontSize = 8.sp,
-        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .size(circleNowSize)
+                    .clip(CircleShape)
+                    .background(colorResource(item.status.color))
+            )
+            Spacer(Modifier.width(40.dp))
+            Text(
+                text = remainingTime.toString(),
+                color = Color.Gray,
+                fontSize = 16.sp,
+            )
+        }
+
         Text(
             text = item.title,
             color = Color.White,
