@@ -368,10 +368,9 @@ private fun PiNodeItem(
 
         val border: Long = 86399000 // 23H59M
         val remainingTime = if (duration.toMillis() > border) {
-            val durationHours = duration.toHours()
-            val durationMinutes = duration.toMinutes() % 60
-            val formatter = DateTimeFormatter.ofPattern("H 'hours' m 'minutes'")
-            formatter.format(duration)
+            duration.get(Hours,Minutes)
+        } else {
+            
         }
 
         Text(
