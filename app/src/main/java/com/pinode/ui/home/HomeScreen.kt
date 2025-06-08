@@ -331,7 +331,7 @@ private fun PiNodeItem(
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
         while(true) {
-            delay(1000) // 10秒ごとに更新
+            delay(100)
             currentTime = DateTimeCtrl().getNow()
         }
     }
@@ -348,28 +348,32 @@ private fun PiNodeItem(
     }
 
     val circleNowSize = when {
-        duration.isNegative -> 70.dp
+        duration.isNegative -> 100.dp
         duration <= Duration.ofMinutes(5) -> 100.dp
-        duration <= Duration.ofMinutes(10) -> 90.dp
-        duration <= Duration.ofMinutes(15) -> 80.dp
-        duration <= Duration.ofMinutes(30) -> 50.dp
-        duration <= Duration.ofMinutes(60) -> 40.dp
+        duration <= Duration.ofMinutes(10) -> 80.dp
+        duration <= Duration.ofMinutes(15) -> 70.dp
+        duration <= Duration.ofMinutes(30) -> 60.dp
+        duration <= Duration.ofMinutes(60) -> 50.dp
         duration <= Duration.ofMinutes(90) -> 35.dp
         duration <= Duration.ofMinutes(120) -> 30.dp
-        duration <= Duration.ofMinutes(150) -> 25.dp
         else -> 20.dp
     }
 
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
-        val border: Long = 3540000
-        val remainingTime = if (duration.toMillis() < border) {
+        val remainingTime = if (Duration.ZERO < duration && duration <= Duration.ofHours(2)) {
             duration.toMinutes()
+        } else if (duration == Duration.ZERO) {
+            "JUST!!"
+        } else if (duration < Duration.ZERO) {
+            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+            "TimeOUT-${formatter.format(item.deadline)}"
         } else {
             val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
             formatter.format(item.deadline)
         }
+
 
         Box(
             modifier = Modifier
