@@ -210,7 +210,7 @@ fun NodeAddFastInputForm(
                         // 選択された時間値を渡す
                         selectedMinutesChange(TIME_OPTIONS[index])
                     },
-                    selected = index == selectedIndex,
+                    selected = index == selectedIndex[TIME_OPTIONS],
                     label = { Text(minutes.toString()) },
                     modifier = Modifier.fillMaxWidth()
                 )
