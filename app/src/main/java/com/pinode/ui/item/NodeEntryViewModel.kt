@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -31,7 +30,7 @@ class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewMode
 
     private fun validateInput(uiState: NodeDetails = nodeUiState.nodeDetails): Boolean {
         return with(uiState) {
-            title.isNotBlank() && description.isNotBlank()
+            title.isNotBlank() && selectedIndex
         }
     }
 }
@@ -51,6 +50,7 @@ data class NodeDetails(
     val priority: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
+    val selectedIndex: Boolean = false, // TODO 不可能xx
 )
 
 
@@ -63,7 +63,7 @@ fun NodeDetails.toNode(): Node = Node(
     deadline = deadline,
     priority = priority,
     isCompleted = isCompleted,
-    isDeleted = isDeleted
+    isDeleted = isDeleted,
 )
 
 

@@ -193,7 +193,7 @@ fun NodeAddFastInputForm(
 
 
         // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
-        var selectedIndex by remember { mutableIntStateOf(0) }
+        var selectedIndex by remember { mutableIntStateOf(TIME_OPTIONS[0]) }
 
         // 時間選択UI
         SingleChoiceSegmentedButtonRow (
@@ -207,10 +207,11 @@ fun NodeAddFastInputForm(
                     ),
                     onClick = {
                         selectedIndex = index
+                        onValueChange(nodeDetails.copy(selectedIndex = true))
                         // 選択された時間値を渡す
                         selectedMinutesChange(TIME_OPTIONS[index])
                     },
-                    selected = index == selectedIndex[TIME_OPTIONS],
+                    selected = index == selectedIndex,
                     label = { Text(minutes.toString()) },
                     modifier = Modifier.fillMaxWidth()
                 )
