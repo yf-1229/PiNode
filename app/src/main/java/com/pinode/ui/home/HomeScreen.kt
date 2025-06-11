@@ -360,7 +360,7 @@ private fun PiNodeItem(
     }
 
     Column(
-        modifier = modifier.padding(vertical = 8.dp)
+        modifier = modifier.padding(vertical = 12.dp)
     ) {
         val remainingTime = if (Duration.ZERO < duration && duration <= Duration.ofHours(2)) {
             duration.toMinutes()
