@@ -28,7 +28,11 @@ class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewMode
         }
     }
 
-    private fun validateInput(uiState: NodeDetails = nodeUiState.nodeDetails): Boolean {
+    private fun validateInput(
+        uiState: NodeDetails = nodeUiState.nodeDetails
+        selectedIndex: Boolean
+        
+    ): Boolean {
         return with(uiState) {
             title.isNotBlank() && selectedIndex
         }
@@ -50,7 +54,6 @@ data class NodeDetails(
     val priority: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
-    val selectedIndex: Boolean = false, // TODO 不可能xx
 )
 
 
