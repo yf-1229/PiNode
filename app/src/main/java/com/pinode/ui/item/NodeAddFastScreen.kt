@@ -101,7 +101,7 @@ fun NodeAddFastBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         // 初期値を正しくTIME_OPTIONS[0]に設定
-        var selectedMinutes by remember { mutableIntStateOf(TIME_OPTIONS[0]) }
+        var selectedMinutes by remember { mutableIntStateOf(0) }
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
@@ -125,7 +125,7 @@ fun NodeAddFastBody(
 
         Button(
             onClick = onSaveClick,  // 保存時にはすでにdeadlineが更新済み
-            enabled = nodeUiState.isEntryValid,
+            enabled = nodeUiState.isEntryValid && selectedMinutes != 0,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -193,7 +193,7 @@ fun NodeAddFastInputForm(
 
 
         // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
-        var selectedIndex by remember { mutableIntStateOf(TIME_OPTIONS[0]) }
+        var selectedIndex by remember { mutableIntStateOf(0) }
 
         // 時間選択UI
         SingleChoiceSegmentedButtonRow (
@@ -207,7 +207,7 @@ fun NodeAddFastInputForm(
                     ),
                     onClick = {
                         selectedIndex = index
-                        onValueChange(nodeDetails.copy(selectedIndex = true))
+                        onValueChange(nodeDetails.copy())
                         // 選択された時間値を渡す
                         selectedMinutesChange(TIME_OPTIONS[index])
                     },
