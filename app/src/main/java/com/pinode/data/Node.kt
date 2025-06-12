@@ -1,6 +1,5 @@
 package com.pinode.data
 
-import androidx.graphics.shapes.RoundedPolygon
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -37,11 +36,11 @@ enum class NodeStatus(var color: Int){ // Node's color
 }
 
 enum class NodeLabel(var color: Int) {
-    RED(R.color.RED),
-    ORANGE(R.color.ORANGE),
+    CIRCLE(R.color.RED),
+    TRIANGLE(R.color.ORANGE),
     YELLOW(R.color.YELLOW),
     GREEN(R.color.GREEN),
-    BLUE(R.color.BLUE),
+    FAST(R.color.BLUE),
     PURPLE(R.color.PURPLE),
     PINK(R.color.PINK)
 }
