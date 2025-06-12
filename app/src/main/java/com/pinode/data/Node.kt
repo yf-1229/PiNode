@@ -1,5 +1,6 @@
 package com.pinode.data
 
+import androidx.graphics.shapes.RoundedPolygon
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -10,7 +11,6 @@ import androidx.room.Query
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -21,6 +21,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
+    val label: NodeLabel,
     val deadline: LocalDateTime,
     val priority: Boolean,
     var isCompleted: Boolean,
@@ -33,6 +34,16 @@ enum class NodeStatus(var color: Int){ // Node's color
     YELLOW(R.color.YELLOW),
     GREEN(R.color.GREEN),
     GRAY(R.color.GRAY)
+}
+
+enum class NodeLabel(var color: Int) {
+    RED(R.color.RED),
+    ORANGE(R.color.ORANGE),
+    YELLOW(R.color.YELLOW),
+    GREEN(R.color.GREEN),
+    BLUE(R.color.BLUE),
+    PURPLE(R.color.PURPLE),
+    PINK(R.color.PINK)
 }
 
 

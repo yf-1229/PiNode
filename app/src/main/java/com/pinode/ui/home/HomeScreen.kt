@@ -347,18 +347,6 @@ private fun PiNodeItem(
         item.status = NodeStatus.GRAY
     }
 
-    val circleNowSize = when {
-        duration.isNegative -> 100.dp
-        duration <= Duration.ofMinutes(5) -> 100.dp
-        duration <= Duration.ofMinutes(10) -> 80.dp
-        duration <= Duration.ofMinutes(15) -> 70.dp
-        duration <= Duration.ofMinutes(30) -> 60.dp
-        duration <= Duration.ofMinutes(60) -> 50.dp
-        duration <= Duration.ofMinutes(90) -> 35.dp
-        duration <= Duration.ofMinutes(120) -> 30.dp
-        else -> 20.dp
-    }
-
     Column(
         modifier = modifier.padding(vertical = 12.dp)
     ) {
@@ -377,7 +365,7 @@ private fun PiNodeItem(
 
         Box(
             modifier = Modifier
-                .size(circleNowSize)
+                .size(20.dp)
                 .clip(CircleShape)
                 .background(colorResource(item.status.color))
         )
