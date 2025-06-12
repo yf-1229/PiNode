@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeLabel
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
@@ -117,7 +118,10 @@ fun NodeAddFastBody(
                 selectedMinutes = minutes
                 val dateTimeCtrl = DateTimeCtrl()
                 val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
-                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
+                onNodeValueChange(nodeUiState.nodeDetails.copy(
+                    deadline = deadlineTime,
+                    label = NodeLabel.FAST
+                ))
             },
             onValueChange = onNodeValueChange,
             modifier = Modifier.fillMaxWidth()

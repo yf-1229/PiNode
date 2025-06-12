@@ -20,7 +20,7 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val label: NodeLabel,
+    val label: NodeLabel?,
     val deadline: LocalDateTime,
     val priority: Boolean,
     var isCompleted: Boolean,
