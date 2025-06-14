@@ -3,6 +3,7 @@ package com.pinode.ui.item
 import android.app.Dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
@@ -206,12 +208,14 @@ fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
 
-    DatePickerChip(
-        selectedDateChange = { selectedDate = it }
-    )
-    TimePickerChip(
-        selectedTimeChange = { selectedTime = it }
-    )
+    Row(modifier = Modifier.padding(horizontal =12.dp)) {
+        DatePickerChip(
+            selectedDateChange = { selectedDate = it }
+        )
+        TimePickerChip(
+            selectedTimeChange = { selectedTime = it }
+        )
+    }
 
     if (selectedTime == null && selectedDate == null) {
         deadline(null) // 期限なし
