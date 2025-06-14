@@ -93,6 +93,7 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
@@ -102,6 +103,7 @@ import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
@@ -337,7 +339,14 @@ private fun PiNodeItem(
     }
 
     val deadline = item.deadline
-    val duration = Duration.between(currentTime, deadline)
+    val duration = deadline?.let { dateTime ->
+        try {
+            Duration.between(dateTime, LocalDateTime.now())
+        } catch (e: Exception) {
+            Duration.ZERO
+        }
+    } ?: Duration.ZERO
+
 
     if (!item.isCompleted && item.priority) {
         item.status = NodeStatus.RED
@@ -350,11 +359,13 @@ private fun PiNodeItem(
     Column(
         modifier = modifier.padding(vertical = 12.dp)
     ) {
-        val remainingTime = if (Duration.ZERO < duration && duration <= Duration.ofHours(2)) {
+        val remainingTime = if (deadline == null) {
+            "No Deadline" // 期限なし
+        } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
             duration.toMinutes()
         } else if (duration == Duration.ZERO) {
             "JUST!!"
-        } else if (duration < Duration.ZERO) {
+        } else if (deadline < LocalDateTime.now()) {
             val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
             "TimeOUT-${formatter.format(item.deadline)}"
         } else {
@@ -527,6 +538,7 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test1",
                 "test",
+                label = NodeLabel.PINK,
                 deadline = dateTimeCtrl.getDeadlineByMinutes(5),
                 priority = false,
                 isCompleted = false,
@@ -537,6 +549,7 @@ fun PreviewHomeBody() {
                 NodeStatus.RED,
                 "Test2",
                 "test2",
+                label = NodeLabel.PINK,
                 deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
                 priority = false,
                 isCompleted = false,
