@@ -112,9 +112,7 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var deadline by remember { mutableStateOf(LocalDateTime.now()) }
-
-
+        var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
@@ -124,7 +122,7 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            deadline = { selectedDeadline: LocalDateTime ->
+            deadline = { selectedDeadline: LocalDateTime? ->
                 deadline = selectedDeadline
                 onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
             },
@@ -147,7 +145,7 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
-    deadline: (LocalDateTime) -> Unit,
+    deadline: (LocalDateTime?) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -204,9 +202,9 @@ fun NodeAddInputForm(
 
 
 @Composable
-fun PickerChip(deadline: (LocalDateTime) -> Unit) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
 
     DatePickerChip(
         selectedDateChange = { selectedDate = it }
@@ -215,12 +213,14 @@ fun PickerChip(deadline: (LocalDateTime) -> Unit) {
         selectedTimeChange = { selectedTime = it }
     )
 
-    if (selectedTime == null) {
-        val selectedDeadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
-        deadline(selectedDeadlineAllDay)
+    if (selectedTime == null && selectedDate == null) {
+        deadline(null) // 期限なし
     } else if (selectedTime != null) {
-        val selectedDeadline: LocalDateTime = selectedDate.atTime(selectedTime)
+        val selectedDeadline: LocalDateTime = selectedDate!!.atTime(selectedTime)
         deadline(selectedDeadline)
+    } else if (selectedTime == null) {
+        val selectedDeadlineAllDay: LocalDateTime = selectedDate!!.atTime(23, 59, 59)
+        deadline(selectedDeadlineAllDay)
     }
 }
 
