@@ -341,7 +341,7 @@ private fun PiNodeItem(
     val deadline = item.deadline
     val duration = deadline?.let { dateTime ->
         try {
-            Duration.between(dateTime, LocalDateTime.now())
+            Duration.between(LocalDateTime.now(), dateTime)
         } catch (e: Exception) {
             Duration.ZERO
         }
