@@ -354,7 +354,7 @@ private fun PiNodeItem(
         item.status = NodeStatus.GREEN
     } else {
         item.status = NodeStatus.GRAY
-    }
+    } //
 
     Column(
         modifier = modifier.padding(vertical = 12.dp)
