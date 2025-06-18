@@ -317,6 +317,7 @@ private fun PiNodeList(
                     onTap = { onItemTap(item) },
                     onPress = {onItemPress(item)}
                 )
+                AnimatedVisibility(emotions = {})
             }
         }
 
@@ -454,11 +455,13 @@ private fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
+            HorizontalDivider(thickness = 2.dp)
         }
 
         // 絵文字セレクター
         AnimatedVisibility(
             visible = showEmojiSelector,
+            emotions: () -> Unit?,
             enter = fadeIn(tween(200)) + expandIn(tween(200), clip = false),
             exit = fadeOut(tween(200)) + shrinkOut(tween(200), clip = false),
             modifier = Modifier
