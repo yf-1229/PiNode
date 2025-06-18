@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 
 @Database(entities = [Node::class], version = 1, exportSchema = false)
-@TypeConverters(DateTimeConverter::class)
+@TypeConverters(Converter::class)
 abstract class PiNodeDatabase : RoomDatabase() {
     abstract fun nodeDao(): NodeDao
 
@@ -20,7 +20,7 @@ abstract class PiNodeDatabase : RoomDatabase() {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, PiNodeDatabase::class.java, "node_database")
-                    .fallbackToDestructiveMigration() // TODO
+                    .fallbackToDestructiveMigration(false) // TODO
                     .build()
                     .also { Instance = it }
             }

@@ -2,6 +2,12 @@ package com.pinode.ui.home
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +22,17 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,7 +43,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
@@ -59,16 +66,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.Start
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -76,6 +82,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
@@ -83,9 +90,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -93,18 +101,17 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
-import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 
 object HomeDestination : NavigationDestination {
@@ -220,13 +227,13 @@ fun HomeScreen(
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
             nodeList = homeUiState.nodeList,
-            onItemClick = { nodeId ->
+            onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                     showDialog = true
                 }
             },
-            onItemLongClick = { nodeId ->
+            onItemPress = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                     viewModel.completeNode()
@@ -260,8 +267,8 @@ fun HomeScreen(
 @Composable
 private fun HomeBody(
     nodeList: List<Node>,
-    onItemClick: (Int) -> Unit,
-    onItemLongClick: (Int) -> Unit,
+    onItemTap: (Int) -> Unit,
+    onItemPress: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -280,8 +287,8 @@ private fun HomeBody(
             Box {
                 PiNodeList(
                     nodeList = nodeList,
-                    onItemClick = { onItemClick(it.id)},
-                    onItemLongClick = { onItemLongClick(it.id) },
+                    onItemTap = { onItemTap(it.id)},
+                    onItemPress = { onItemPress(it.id) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
@@ -294,8 +301,8 @@ private fun HomeBody(
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
-    onItemClick: (Node) -> Unit?,
-    onItemLongClick: (Node) -> Unit?,
+    onItemTap: (Node) -> Unit?,
+    onItemPress: (Node) -> Unit?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -307,13 +314,8 @@ private fun PiNodeList(
             items(items = nodeList, { it.id }) { item ->
                 PiNodeItem(
                     item = item,
-                    modifier = Modifier
-                        .pointerInput(item) {
-                            detectTapGestures(
-                                onTap = { onItemClick(item) },
-                                onLongPress = { onItemLongClick(item) }
-                            )
-                        }
+                    onTap = { onItemTap(item) },
+                    onPress = {onItemPress(item)}
                 )
             }
         }
@@ -325,10 +327,18 @@ private fun PiNodeList(
 @Composable
 private fun PiNodeItem(
     item: Node,
-    modifier: Modifier = Modifier
+    onTap: () -> Unit?,
+    onPress: () -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
+
+    // 絵文字セレクターの表示状態
+    var showEmojiSelector by remember { mutableStateOf(false) }
+
+    // アイテムの位置を追跡するための状態
+    var itemPosition by remember { mutableStateOf(Offset.Zero) }
+    var itemSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
 
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
@@ -356,45 +366,169 @@ private fun PiNodeItem(
         item.status = NodeStatus.GRAY
     } //
 
-    Column(
-        modifier = modifier.padding(vertical = 12.dp)
-    ) {
-        val remainingTime = if (deadline == null) {
-            "No Deadline" // 期限なし
-        } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
-            duration.toMinutes()
-        } else if (duration == Duration.ZERO) {
-            "JUST!!"
-        } else if (deadline < LocalDateTime.now()) {
-            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-            "TimeOUT-${formatter.format(item.deadline)}"
-        } else {
-            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-            formatter.format(item.deadline)
+    Box {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 12.dp)
+
+                .onGloballyPositioned { coordinates ->
+                    // アイテムの位置とサイズを取得
+                    itemPosition = coordinates.positionInRoot()
+                    itemSize = coordinates.size.toSize()
+            }
+                .pointerInput(item) {
+                    detectTapGestures(
+                        onTap = { onTap() },
+                        onLongPress = {
+                            onPress()
+                            // 長押し時に絵文字セレクターを表示
+                            showEmojiSelector = true
+                        }
+                    )
+                }
+        ) {
+            val remainingTime = if (deadline == null) {
+                "No Deadline" // 期限なし
+            } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
+                duration.toMinutes()
+            } else if (duration == Duration.ZERO) {
+                "JUST!!"
+            } else if (deadline < LocalDateTime.now()) {
+                val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+                "TimeOUT-${formatter.format(item.deadline)}"
+            } else {
+                val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+                formatter.format(item.deadline)
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(colorResource(item.status.color))
+                )
+
+                // アイテムに付いているリアクションを表示（存在する場合）
+                val reactions = item.reactions
+                if (reactions != null && reactions.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .background(
+                                color = Color(0x33FFFFFF),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        reactions.forEach { (emoji, count) ->
+                            Text(text = emoji, fontSize = 14.sp)
+                            if (count > 1) {
+                                Text(
+                                    text = count.toString(),
+                                    fontSize = 12.sp,
+                                    color = Color.White.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Text(
+                text = remainingTime.toString(),
+                color = Color.Gray,
+                fontSize = 16.sp,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = item.title,
+                color = Color.White,
+                fontSize = 32.sp,
+                modifier = Modifier.padding(start = 8.dp),
+                style = TextStyle.Default.copy(
+                    lineBreak = LineBreak.Heading
+                )
+            )
         }
 
-
-        Box(
+        // 絵文字セレクター
+        AnimatedVisibility(
+            visible = showEmojiSelector,
+            enter = fadeIn(tween(200)) + expandIn(tween(200), clip = false),
+            exit = fadeOut(tween(200)) + shrinkOut(tween(200), clip = false),
             modifier = Modifier
-                .size(20.dp)
-                .clip(CircleShape)
-                .background(colorResource(item.status.color))
-        )
-        Text(
-            text = remainingTime.toString(),
-            color = Color.Gray,
-            fontSize = 16.sp,
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = item.title,
-            color = Color.White,
-            fontSize = 32.sp,
-            modifier = Modifier.padding(start = 8.dp),
-            style = TextStyle.Default.copy(
-                lineBreak = LineBreak.Heading
+                .offset {
+                    IntOffset(
+                        x = (itemPosition.x + itemSize.width / 2 - 100).roundToInt(),
+                        y = (itemPosition.y - 60).roundToInt()
+                    )
+                }
+        ) {
+            EmojiSelector(
+                onEmojiSelected = { emoji ->
+                    // ノードに絵文字リアクションを追加するロジック
+                    val currentReactions = item.reactions?.toMutableMap() ?: mutableMapOf()
+                    currentReactions[emoji] = (currentReactions[emoji] ?: 0) + 1
+                    item.reactions = currentReactions
+                    showEmojiSelector = false
+                },
+                onDismiss = { showEmojiSelector = false }
             )
-        )
+        }
+    }
+}
+
+// 絵文字セレクターのUIコンポーネント
+@Composable
+fun EmojiSelector(
+    onEmojiSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val emojis = listOf("❤️", "😂", "😮", "😢", "👍", "🔥")
+
+    Box(
+        modifier = Modifier
+            .size(200.dp, 50.dp)
+            .background(Color(0xE5333333), RoundedCornerShape(24.dp))
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { onDismiss() })
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            emojis.forEach { emoji ->
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(Color.Transparent)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {
+                                    onEmojiSelected(emoji)
+                                }
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = emoji,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -527,34 +661,34 @@ private fun DeleteConfirmationDialog(
 }
 
 
-@Preview
-@Composable
-fun PreviewHomeBody() {
-    val dateTimeCtrl = DateTimeCtrl()
-    PiNodeTheme {
-        HomeBody(listOf(
-            Node(
-                1,
-                NodeStatus.RED,
-                "Test1",
-                "test",
-                label = NodeLabel.PINK,
-                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
-                priority = false,
-                isCompleted = false,
-                isDeleted = false
-            ),
-            Node(
-                2,
-                NodeStatus.RED,
-                "Test2",
-                "test2",
-                label = NodeLabel.PINK,
-                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
-                priority = false,
-                isCompleted = false,
-                isDeleted = false
-            ),
-        ), onItemClick = {}, onItemLongClick = {})
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewHomeBody() {
+//    val dateTimeCtrl = DateTimeCtrl()
+//    PiNodeTheme {
+//        HomeBody(listOf(
+//            Node(
+//                1,
+//                NodeStatus.RED,
+//                "Test1",
+//                "test",
+//                label = NodeLabel.PINK,
+//                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
+//                priority = false,
+//                isCompleted = false,
+//                isDeleted = false
+//            ),
+//            Node(
+//                2,
+//                NodeStatus.RED,
+//                "Test2",
+//                "test2",
+//                label = NodeLabel.PINK,
+//                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
+//                priority = false,
+//                isCompleted = false,
+//                isDeleted = false
+//            ),
+//        ), onItemTap = {}, onItemPress = {})
+//    }
+//}

@@ -23,6 +23,7 @@ data class Node(
     val label: NodeLabel?,
     val deadline: LocalDateTime?,
     val priority: Boolean,
+    var reactions: MutableMap<String, Int>?,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
