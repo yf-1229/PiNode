@@ -45,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -317,7 +318,6 @@ private fun PiNodeList(
                     onTap = { onItemTap(item) },
                     onPress = {onItemPress(item)}
                 )
-                AnimatedVisibility(emotions = {})
             }
         }
 
@@ -461,7 +461,6 @@ private fun PiNodeItem(
         // 絵文字セレクター
         AnimatedVisibility(
             visible = showEmojiSelector,
-            emotions: () -> Unit?,
             enter = fadeIn(tween(200)) + expandIn(tween(200), clip = false),
             exit = fadeOut(tween(200)) + shrinkOut(tween(200), clip = false),
             modifier = Modifier

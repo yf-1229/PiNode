@@ -72,7 +72,7 @@ class HomeViewModel(
             if (!currentItem.isCompleted) {
                 currentItem.isCompleted = true
                 currentItem.status = NodeStatus.GRAY
-                currentItem.emotions = // ホイスト？
+                currentItem.reactions =  // ホイスト？
                 nodesRepository.updateNode(currentItem)
             }
         }
