@@ -304,6 +304,7 @@ private fun PiNodeList(
     nodeList: List<Node>,
     onItemTap: (Node) -> Unit?,
     onItemPress: (Node) -> Unit?,
+    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -316,7 +317,8 @@ private fun PiNodeList(
                 PiNodeItem(
                     item = item,
                     onTap = { onItemTap(item) },
-                    onPress = {onItemPress(item)}
+                    onPress = {onItemPress(item)},
+                    selectedReactions = { selectedReactions() }
                 )
             }
         }
@@ -329,7 +331,7 @@ private fun PiNodeList(
 private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
-    onPress: () -> Unit?
+    selectedReactions: (MutableMap<String, Int>?) -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -381,7 +383,6 @@ private fun PiNodeItem(
                     detectTapGestures(
                         onTap = { onTap() },
                         onLongPress = {
-                            onPress()
                             // 長押し時に絵文字セレクターを表示
                             showEmojiSelector = true
                         }
@@ -477,6 +478,7 @@ private fun PiNodeItem(
                     val currentReactions = item.reactions?.toMutableMap() ?: mutableMapOf()
                     currentReactions[emoji] = (currentReactions[emoji] ?: 0) + 1
                     item.reactions = currentReactions
+                    selectedReactions(currentReactions)
                     showEmojiSelector = false
                 },
                 onDismiss = { showEmojiSelector = false }
