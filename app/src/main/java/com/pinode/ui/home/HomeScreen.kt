@@ -1,5 +1,6 @@
 package com.pinode.ui.home
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -236,9 +237,11 @@ fun HomeScreen(
             },
             onItemPress = { nodeId ->
                 coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId)
-                    viewModel.completeNode()
+                    viewModel.updateNodeId(nodeId) // update NodeId
                 }
+            },
+            selectedReactions = { reactions ->
+                viewModel.completeNode(reactions) // update node.reactions
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -270,6 +273,7 @@ private fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit,
     onItemPress: (Int) -> Unit,
+    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -290,6 +294,7 @@ private fun HomeBody(
                     nodeList = nodeList,
                     onItemTap = { onItemTap(it.id)},
                     onItemPress = { onItemPress(it.id) },
+                    selectedReactions = { selectedReactions(it) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
@@ -318,7 +323,7 @@ private fun PiNodeList(
                     item = item,
                     onTap = { onItemTap(item) },
                     onPress = {onItemPress(item)},
-                    selectedReactions = { selectedReactions() }
+                    selectedReactions = { selectedReactions(it) }
                 )
             }
         }
@@ -331,6 +336,7 @@ private fun PiNodeList(
 private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
+    onPress: () -> Unit?,
     selectedReactions: (MutableMap<String, Int>?) -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
@@ -367,7 +373,7 @@ private fun PiNodeItem(
         item.status = NodeStatus.GREEN
     } else {
         item.status = NodeStatus.GRAY
-    } //
+    }
 
     Box {
         Column(
@@ -381,10 +387,9 @@ private fun PiNodeItem(
             }
                 .pointerInput(item) {
                     detectTapGestures(
-                        onTap = { onTap() },
+                        onTap = { onTap() }, // To NodeDetails
                         onLongPress = {
-                            // 長押し時に絵文字セレクターを表示
-                            showEmojiSelector = true
+                            showEmojiSelector = true // To EmojiSelector
                         }
                     )
                 }
@@ -456,7 +461,6 @@ private fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
-            HorizontalDivider(thickness = 2.dp)
         }
 
         // 絵文字セレクター
@@ -472,13 +476,20 @@ private fun PiNodeItem(
                     )
                 }
         ) {
+            // PiNodeItem内の関連部分を修正
             EmojiSelector(
                 onEmojiSelected = { emoji ->
-                    // ノードに絵文字リアクションを追加するロジック
+                    // リアクションを更新
                     val currentReactions = item.reactions?.toMutableMap() ?: mutableMapOf()
                     currentReactions[emoji] = (currentReactions[emoji] ?: 0) + 1
-                    item.reactions = currentReactions
+
+                    // ViewModelにリアクションを送信して保存
                     selectedReactions(currentReactions)
+
+                    // デバッグ用のログ
+                    Log.d("PiNodeItem", "Selected emoji: $emoji, reactions: $currentReactions")
+
+                    onPress()
                     showEmojiSelector = false
                 },
                 onDismiss = { showEmojiSelector = false }

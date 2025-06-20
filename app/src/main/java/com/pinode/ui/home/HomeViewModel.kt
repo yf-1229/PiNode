@@ -66,14 +66,13 @@ class HomeViewModel(
             initialValue = UiState()
         )
 
-    fun completeNode() {
+    fun completeNode(selectedReactions: (MutableMap<String, Int>?)) {
         viewModelScope.launch {
             val currentItem = uiState.value.nodeDetails.toNode()
             if (!currentItem.isCompleted) {
                 currentItem.isCompleted = true
                 currentItem.status = NodeStatus.GRAY
-                currentItem.reactions =  // ホイスト？
-                nodesRepository.updateNode(currentItem)
+                currentItem.reactions = selectedReactions
             }
         }
     }
