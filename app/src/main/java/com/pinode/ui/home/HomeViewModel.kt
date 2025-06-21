@@ -1,11 +1,9 @@
 package com.pinode.ui.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.saveable
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
@@ -13,11 +11,10 @@ import com.pinode.ui.item.NodeDetails
 import com.pinode.ui.item.toNode
 import com.pinode.ui.item.toNodeDetails
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -66,17 +63,28 @@ class HomeViewModel(
             initialValue = UiState()
         )
 
-    fun completeNode(selectedReactions: (MutableMap<String, Int>?)) {
+
+    fun completeNode(reactions: MutableMap<String, Int>?) {
+        val nodeId = uiState.value.nodeDetails.id
         viewModelScope.launch {
-            val currentItem = uiState.value.nodeDetails.toNode()
-            if (!currentItem.isCompleted) {
-                currentItem.isCompleted = true
-                currentItem.status = NodeStatus.GRAY
-                currentItem.reactions = selectedReactions
+            try {
+                // 現在のノードを取得
+                val currentNode = nodesRepository.getNodeStream(nodeId).first()
+
+                // リアクションのみを更新（完了状態は変更しない）
+                val updatedNode = currentNode!!.copy(
+                    reactions = reactions,
+                    isCompleted = true
+                )
+
+                // 更新を保存
+                nodesRepository.updateNode(updatedNode)
+
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to update reactions", e)
             }
         }
     }
-
     suspend fun deleteNode() {
         nodesRepository.deleteNode(uiState.value.nodeDetails.toNode())
     }

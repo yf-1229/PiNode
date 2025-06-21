@@ -1,16 +1,11 @@
 package com.pinode.ui.home
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,7 +41,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -97,6 +91,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
@@ -366,7 +361,6 @@ private fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-
     if (!item.isCompleted && item.priority) {
         item.status = NodeStatus.RED
     } else if (!item.isCompleted) {
@@ -375,39 +369,47 @@ private fun PiNodeItem(
         item.status = NodeStatus.GRAY
     }
 
-    Box {
+    val remainingTime = if (deadline == null) {
+        "No Deadline" // 期限なし
+    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
+        duration.toMinutes()
+    } else if (duration == Duration.ZERO) {
+        "JUST!!"
+    } else if (deadline < LocalDateTime.now()) {
+        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+        "TimeOUT-${formatter.format(item.deadline)}"
+    } else {
+        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+        formatter.format(item.deadline)
+    }
+
+    // 重要: Box全体をタップ可能にする
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp) // 十分な間隔を確保
+            .clickable(
+                indication = null, // リップル効果なし
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onTap() // タップで詳細を表示
+            }
+    ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 12.dp)
-
+                .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
                     // アイテムの位置とサイズを取得
                     itemPosition = coordinates.positionInRoot()
                     itemSize = coordinates.size.toSize()
-            }
-                .pointerInput(item) {
+                }
+                // 長押しのみここで処理
+                .pointerInput(item.id) {
                     detectTapGestures(
-                        onTap = { onTap() }, // To NodeDetails
-                        onLongPress = {
-                            showEmojiSelector = true // To EmojiSelector
-                        }
+                        onLongPress = { showEmojiSelector = true }
                     )
                 }
         ) {
-            val remainingTime = if (deadline == null) {
-                "No Deadline" // 期限なし
-            } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
-                duration.toMinutes()
-            } else if (duration == Duration.ZERO) {
-                "JUST!!"
-            } else if (deadline < LocalDateTime.now()) {
-                val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-                "TimeOUT-${formatter.format(item.deadline)}"
-            } else {
-                val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-                formatter.format(item.deadline)
-            }
-
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -463,32 +465,14 @@ private fun PiNodeItem(
             )
         }
 
-        // 絵文字セレクター
-        AnimatedVisibility(
-            visible = showEmojiSelector,
-            enter = fadeIn(tween(200)) + expandIn(tween(200), clip = false),
-            exit = fadeOut(tween(200)) + shrinkOut(tween(200), clip = false),
-            modifier = Modifier
-                .offset {
-                    IntOffset(
-                        x = (itemPosition.x + itemSize.width / 2 - 100).roundToInt(),
-                        y = (itemPosition.y - 60).roundToInt()
-                    )
-                }
-        ) {
-            // PiNodeItem内の関連部分を修正
-            EmojiSelector(
+        // 絵文字セレクターをDialogで実装
+        if (showEmojiSelector) {
+            EmojiSelectorDialog(
                 onEmojiSelected = { emoji ->
-                    // リアクションを更新
+                    // ノードに絵文字リアクションを追加するロジック
                     val currentReactions = item.reactions?.toMutableMap() ?: mutableMapOf()
                     currentReactions[emoji] = (currentReactions[emoji] ?: 0) + 1
-
-                    // ViewModelにリアクションを送信して保存
                     selectedReactions(currentReactions)
-
-                    // デバッグ用のログ
-                    Log.d("PiNodeItem", "Selected emoji: $emoji, reactions: $currentReactions")
-
                     onPress()
                     showEmojiSelector = false
                 },
@@ -498,55 +482,46 @@ private fun PiNodeItem(
     }
 }
 
-// 絵文字セレクターのUIコンポーネント
 @Composable
-fun EmojiSelector(
+fun EmojiSelectorDialog(
     onEmojiSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     val emojis = listOf("❤️", "😂", "😮", "😢", "👍", "🔥")
 
-    Box(
-        modifier = Modifier
-            .size(200.dp, 50.dp)
-            .background(Color(0xE5333333), RoundedCornerShape(24.dp))
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { onDismiss() })
-            }
-    ) {
-        Row(
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 10.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .size(240.dp, 60.dp)
+                .background(Color(0xE5333333), RoundedCornerShape(24.dp))
         ) {
-            emojis.forEach { emoji ->
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color.Transparent)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = {
-                                    onEmojiSelected(emoji)
-                                }
-                            )
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = emoji,
-                        fontSize = 20.sp
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                emojis.forEach { emoji ->
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { onEmojiSelected(emoji) }
+                            .background(Color(0x33FFFFFF)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = emoji,
+                            fontSize = 24.sp
+                        )
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun NodeDetailsDialog(
