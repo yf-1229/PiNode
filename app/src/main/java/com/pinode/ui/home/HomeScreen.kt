@@ -18,17 +18,15 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +37,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
@@ -62,9 +61,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.Start
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -78,7 +80,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
@@ -86,29 +87,29 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
+import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 
 object HomeDestination : NavigationDestination {
@@ -337,13 +338,6 @@ private fun PiNodeItem(
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
 
-    // 絵文字セレクターの表示状態
-    var showEmojiSelector by remember { mutableStateOf(false) }
-
-    // アイテムの位置を追跡するための状態
-    var itemPosition by remember { mutableStateOf(Offset.Zero) }
-    var itemSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
-
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
         while(true) {
@@ -383,7 +377,7 @@ private fun PiNodeItem(
         formatter.format(item.deadline)
     }
 
-    // 重要: Box全体をタップ可能にする
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,56 +392,13 @@ private fun PiNodeItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    // アイテムの位置とサイズを取得
-                    itemPosition = coordinates.positionInRoot()
-                    itemSize = coordinates.size.toSize()
-                }
                 // 長押しのみここで処理
                 .pointerInput(item.id) {
                     detectTapGestures(
-                        onLongPress = { showEmojiSelector = true }
+                        onLongPress = { }
                     )
                 }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(item.status.color))
-                )
-
-                // アイテムに付いているリアクションを表示（存在する場合）
-                val reactions = item.reactions
-                if (reactions != null && reactions.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .background(
-                                color = Color(0x33FFFFFF),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 6.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        reactions.forEach { (emoji, count) ->
-                            Text(text = emoji, fontSize = 14.sp)
-                            if (count > 1) {
-                                Text(
-                                    text = count.toString(),
-                                    fontSize = 12.sp,
-                                    color = Color.White.copy(alpha = 0.7f)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
             Text(
                 text = remainingTime.toString(),
                 color = Color.Gray,
@@ -463,62 +414,6 @@ private fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
-        }
-
-        // 絵文字セレクターをDialogで実装
-        if (showEmojiSelector) {
-            EmojiSelectorDialog(
-                onEmojiSelected = { emoji ->
-                    // ノードに絵文字リアクションを追加するロジック
-                    val currentReactions = item.reactions?.toMutableMap() ?: mutableMapOf()
-                    currentReactions[emoji] = (currentReactions[emoji] ?: 0) + 1
-                    selectedReactions(currentReactions)
-                    onPress()
-                    showEmojiSelector = false
-                },
-                onDismiss = { showEmojiSelector = false }
-            )
-        }
-    }
-}
-
-@Composable
-fun EmojiSelectorDialog(
-    onEmojiSelected: (String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val emojis = listOf("❤️", "😂", "😮", "😢", "👍", "🔥")
-
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .size(240.dp, 60.dp)
-                .background(Color(0xE5333333), RoundedCornerShape(24.dp))
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                emojis.forEach { emoji ->
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .clickable { onEmojiSelected(emoji) }
-                            .background(Color(0x33FFFFFF)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = emoji,
-                            fontSize = 24.sp
-                        )
-                    }
-                }
-            }
         }
     }
 }
@@ -682,3 +577,4 @@ private fun DeleteConfirmationDialog(
 //        ), onItemTap = {}, onItemPress = {})
 //    }
 //}
+
