@@ -1,5 +1,6 @@
 package com.pinode.ui.home
 
+import android.widget.Space
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
@@ -401,7 +402,7 @@ private fun PiNodeItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                onTap()
+                onTap() // TODO
             }
     ) {
         Column(
@@ -409,10 +410,12 @@ private fun PiNodeItem(
                 .fillMaxWidth()
                 .pointerInput(item.id) {
                     detectTapGestures(
-                        onLongPress = { }
+                        onLongPress = { } // TODO
                     )
                 }
         ) {
+            HorizontalDivider(thickness = (0.7).dp)
+            Spacer(modifier = Modifier.height(8.dp))
             // ここでRowを使って左右に分ける
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -431,16 +434,16 @@ private fun PiNodeItem(
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
-                        .height(30.dp)
+                        .height(40.dp)
                 ) {
                     var checked by remember { mutableStateOf(false) }
 
                     SplitButtonLayout(
-                        modifier = Modifier.height(30.dp),
+                        modifier = Modifier.height(40.dp),
                         leadingButton = {
                             SplitButtonDefaults.LeadingButton(
                                 onClick = { },
-                                modifier = Modifier.height(30.dp)
+                                modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(
                                     Icons.Filled.Edit,
@@ -456,7 +459,7 @@ private fun PiNodeItem(
                                 checked = checked,
                                 onCheckedChange = { checked = it },
                                 modifier = Modifier
-                                    .height(30.dp)
+                                    .height(40.dp)
                                     .semantics {
                                         stateDescription = if (checked) "Expanded" else "Collapsed"
                                         contentDescription = "Toggle Button"
@@ -480,21 +483,24 @@ private fun PiNodeItem(
                     )
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
-                            text = { Text("Edit", fontSize = 12.sp) },
+                            text = { Text("Working", fontSize = 12.sp) },
                             onClick = { /* Handle edit! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Settings", fontSize = 12.sp) },
+                            text = { Text("Pause", fontSize = 12.sp) },
                             onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
-                        HorizontalDivider()
                         DropdownMenuItem(
-                            text = { Text("Send Feedback", fontSize = 12.sp) },
-                            onClick = { /* Handle send feedback! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, modifier = Modifier.size(16.dp)) },
-                            trailingIcon = { Text("F11", fontSize = 10.sp, textAlign = TextAlign.Center) },
+                            text = { Text("Complete", fontSize = 12.sp) },
+                            onClick = { /* Handle settings! */ },
+                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Canceled", fontSize = 12.sp) },
+                            onClick = { /* Handle settings! */ },
+                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
                 }
