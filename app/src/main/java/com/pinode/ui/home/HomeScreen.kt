@@ -37,6 +37,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -394,66 +396,83 @@ private fun PiNodeItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp) // 十分な間隔を確保
+            .padding(vertical = 8.dp)
             .clickable(
-                indication = null, // リップル効果なし
+                indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                onTap() // タップで詳細を表示
+                onTap()
             }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                // 長押しのみここで処理
                 .pointerInput(item.id) {
                     detectTapGestures(
                         onLongPress = { }
                     )
                 }
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                var checked by remember { mutableStateOf(false) }
+            // ここでRowを使って左右に分ける
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,  // 要素を左右に分ける
+                modifier = Modifier.fillMaxWidth()  // 幅いっぱいに広げる
+            ) {
+                // 左側のステータスインジケーター
                 Box(
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
                         .background(colorResource(item.status.color))
                 )
-                Box(modifier = Modifier.fillMaxSize().wrapContentSize()) {
+
+                // 右側のSplitButton
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .height(30.dp)
+                ) {
+                    var checked by remember { mutableStateOf(false) }
+
                     SplitButtonLayout(
+                        modifier = Modifier.height(30.dp),
                         leadingButton = {
-                            SplitButtonDefaults.LeadingButton(onClick = { }) {
+                            SplitButtonDefaults.LeadingButton(
+                                onClick = { },
+                                modifier = Modifier.height(30.dp)
+                            ) {
                                 Icon(
                                     Icons.Filled.Edit,
-                                    modifier = Modifier.size(SplitButtonDefaults.LeadingIconSize),
+                                    modifier = Modifier.size(16.dp),
                                     contentDescription = "Localized description",
                                 )
-                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                Text("My Button")
+                                Spacer(Modifier.size(4.dp))
+                                Text("My Button", fontSize = 12.sp)
                             }
                         },
                         trailingButton = {
                             SplitButtonDefaults.TrailingButton(
                                 checked = checked,
                                 onCheckedChange = { checked = it },
-                                modifier =
-                                Modifier.semantics {
-                                    stateDescription = if (checked) "Expanded" else "Collapsed"
-                                    contentDescription = "Toggle Button"
-                                },
+                                modifier = Modifier
+                                    .height(30.dp)
+                                    .semantics {
+                                        stateDescription = if (checked) "Expanded" else "Collapsed"
+                                        contentDescription = "Toggle Button"
+                                    },
                             ) {
-                                val rotation: Float by
-                                animateFloatAsState(
+                                val rotation: Float by animateFloatAsState(
                                     targetValue = if (checked) 180f else 0f,
                                     label = "Trailing Icon Rotation",
                                 )
                                 Icon(
                                     Icons.Filled.KeyboardArrowDown,
-                                    modifier =
-                                    Modifier.size(SplitButtonDefaults.TrailingIconSize).graphicsLayer {
-                                        this.rotationZ = rotation
-                                    },
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .graphicsLayer {
+                                            this.rotationZ = rotation
+                                        },
                                     contentDescription = "Localized description",
                                 )
                             }
@@ -461,26 +480,27 @@ private fun PiNodeItem(
                     )
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
-                            text = { Text("Edit") },
+                            text = { Text("Edit", fontSize = 12.sp) },
                             onClick = { /* Handle edit! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
+                            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Settings") },
+                            text = { Text("Settings", fontSize = 12.sp) },
                             onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
+                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(16.dp)) },
                         )
                         HorizontalDivider()
                         DropdownMenuItem(
-                            text = { Text("Send Feedback") },
+                            text = { Text("Send Feedback", fontSize = 12.sp) },
                             onClick = { /* Handle send feedback! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
-                            trailingIcon = { Text("F11", textAlign = TextAlign.Center) },
+                            leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                            trailingIcon = { Text("F11", fontSize = 10.sp, textAlign = TextAlign.Center) },
                         )
                     }
                 }
-
             }
+
+            // 残りのテキスト要素（以前と同じ）
             Text(
                 text = remainingTime.toString(),
                 color = Color.Gray,
