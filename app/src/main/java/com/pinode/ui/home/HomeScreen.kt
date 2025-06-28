@@ -37,8 +37,13 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.EditCalendar
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -485,22 +490,22 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
                             onClick = { /* Handle edit! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                            leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp) },
                             onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                            leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Carry over", fontSize = 12.sp) },
+                            onClick = { /* Handle settings! */ },
+                            leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Complete", fontSize = 12.sp) },
                             onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Canceled", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                            leadingIcon = { Icon(Icons.Outlined.DoneOutline, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
                 }
