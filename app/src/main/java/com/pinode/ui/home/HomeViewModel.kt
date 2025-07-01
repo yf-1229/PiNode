@@ -83,8 +83,6 @@ class HomeViewModel(
                     Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
                 }
 
-                // 更新を保存
-                nodesRepository.updateNode(updatedNode)
 
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to update reactions", e)
