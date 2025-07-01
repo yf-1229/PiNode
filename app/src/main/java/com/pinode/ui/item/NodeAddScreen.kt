@@ -220,11 +220,15 @@ fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
     if (selectedTime == null && selectedDate == null) {
         deadline(null) // 期限なし
     } else if (selectedTime != null) {
-        val selectedDeadline: LocalDateTime = selectedDate!!.atTime(selectedTime)
-        deadline(selectedDeadline)
+        selectedDate?.let { date ->
+            val selectedDeadline: LocalDateTime = date.atTime(selectedTime)
+            deadline(selectedDeadline)
+        }
     } else if (selectedTime == null) {
-        val selectedDeadlineAllDay: LocalDateTime = selectedDate!!.atTime(23, 59, 59)
-        deadline(selectedDeadlineAllDay)
+        selectedDate?.let { date ->
+            val selectedDeadlineAllDay: LocalDateTime = date.atTime(23, 59, 59)
+            deadline(selectedDeadlineAllDay)
+        }
     }
 }
 
