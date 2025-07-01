@@ -1,7 +1,9 @@
 package com.pinode.ui.item
 
+import android.app.Dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +42,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
@@ -109,9 +114,7 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-        var deadline by remember { mutableStateOf(LocalDateTime.now()) }
-
-
+        var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
@@ -121,7 +124,7 @@ fun NodeAddBody(
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
-            deadline = { selectedDeadline: LocalDateTime ->
+            deadline = { selectedDeadline: LocalDateTime? ->
                 deadline = selectedDeadline
                 onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
             },
@@ -144,7 +147,7 @@ fun NodeAddInputForm(
     nodeDetails: NodeDetails,
     modifier: Modifier = Modifier,
     onValueChange: (NodeDetails) -> Unit = {},
-    deadline: (LocalDateTime) -> Unit,
+    deadline: (LocalDateTime?) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -201,23 +204,31 @@ fun NodeAddInputForm(
 
 
 @Composable
-fun PickerChip(deadline: (LocalDateTime) -> Unit) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
 
-    DatePickerChip(
-        selectedDateChange = { selectedDate = it }
-    )
-    TimePickerChip(
-        selectedTimeChange = { selectedTime = it }
-    )
+    Row(modifier = Modifier.padding(horizontal =12.dp)) {
+        DatePickerChip(
+            selectedDateChange = { selectedDate = it }
+        )
+        TimePickerChip(
+            selectedTimeChange = { selectedTime = it }
+        )
+    }
 
-    if (selectedTime == null) {
-        val selectedDeadlineAllDay: LocalDateTime = selectedDate.atTime(23, 59, 59)
-        deadline(selectedDeadlineAllDay)
+    if (selectedTime == null && selectedDate == null) {
+        deadline(null) // 期限なし
     } else if (selectedTime != null) {
-        val selectedDeadline: LocalDateTime = selectedDate.atTime(selectedTime)
-        deadline(selectedDeadline)
+        selectedDate?.let { date ->
+            val selectedDeadline: LocalDateTime = date.atTime(selectedTime)
+            deadline(selectedDeadline)
+        }
+    } else if (selectedTime == null) {
+        selectedDate?.let { date ->
+            val selectedDeadlineAllDay: LocalDateTime = date.atTime(23, 59, 59)
+            deadline(selectedDeadlineAllDay)
+        }
     }
 }
 
@@ -227,15 +238,15 @@ fun DatePickerChip(
     selectedDateChange: (LocalDate?) -> Unit
 ) {
     var showModal by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    var selectedDateState by remember { mutableStateOf<LocalDate?>(null) }
     val datePickerState = rememberDatePickerState()
 
 
     AssistChip(
         onClick = { showModal = true },
         label = {
-            if (selectedDate != null) {
-                Text("Selected")
+            if (selectedDateState != null) {
+                Text(selectedDateState.toString())
             } else {
                 Text("Date")
             }
@@ -255,7 +266,7 @@ fun DatePickerChip(
             confirmButton = {
                 TextButton(onClick = {
                     selectedDateChange(datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() })
-                    selectedDate = datePickerState.selectedDateMillis
+                    selectedDateState = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
                     showModal = false
                 }
                 ) {
@@ -282,16 +293,16 @@ fun DatePickerChip(
 fun TimePickerChip(
     selectedTimeChange: (LocalTime?) -> Unit
 ) {
-    val selectedTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var selectedTimeState by remember { mutableStateOf<LocalTime?>(null) }
     var showDial by remember { mutableStateOf(false) }
 
     AssistChip(
-        onClick = { showDial = true},
+        onClick = { showDial = true },
         label = {
-            if (selectedTime != null) {
-                Text("Selected")
+            if (selectedTimeState != null) {
+                Text(selectedTimeState.toString())
             } else {
-                Text("Date")
+                Text("Time")
             }
         },
         leadingIcon = {
@@ -309,19 +320,33 @@ fun TimePickerChip(
             initialMinute = LocalDateTime.now().minute,
             is24Hour = true,
         )
-
-        Column {
-            TimePicker(
-                state = timePickerState,
-            )
-            Button(onClick = { showDial = false }) {
-                Text("Dismiss picker")
-            }
-            Button(onClick = {
-                selectedTimeChange(LocalTime.of(timePickerState.hour, timePickerState.minute, 0))
-                showDial = false
-            }) {
-                Text("Confirm selection")
+        Dialog(onDismissRequest = { showDial = false }) {
+            Card {
+                Column {
+                    TimePicker(
+                        state = timePickerState,
+                    )
+                    Button(onClick = { showDial = false }) {
+                        Text("Dismiss picker")
+                    }
+                    Button(onClick = {
+                        selectedTimeChange(
+                            LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute,
+                                0
+                            )
+                        )
+                        selectedTimeState = LocalTime.of(
+                            timePickerState.hour,
+                            timePickerState.minute,
+                            0
+                        )
+                        showDial = false
+                    }) {
+                        Text("Confirm")
+                    }
+                }
             }
         }
     }

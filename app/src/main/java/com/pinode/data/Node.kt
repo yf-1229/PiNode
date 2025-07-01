@@ -1,5 +1,6 @@
 package com.pinode.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -10,7 +11,6 @@ import androidx.room.Query
 import androidx.room.Update
 import com.pinode.R
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -21,8 +21,11 @@ data class Node(
     var status: NodeStatus,
     val title: String,
     val description: String,
-    val deadline: LocalDateTime,
+    val label: NodeLabel?,
+    val deadline: LocalDateTime?,
     val priority: Boolean,
+    @ColumnInfo(name = "reactions")
+    var reactions: MutableMap<String, Int>?,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
@@ -33,6 +36,16 @@ enum class NodeStatus(var color: Int){ // Node's color
     YELLOW(R.color.YELLOW),
     GREEN(R.color.GREEN),
     GRAY(R.color.GRAY)
+}
+
+enum class NodeLabel(var color: Int) {
+    CIRCLE(R.color.RED),
+    TRIANGLE(R.color.ORANGE),
+    YELLOW(R.color.YELLOW),
+    GREEN(R.color.GREEN),
+    FAST(R.color.BLUE),
+    PURPLE(R.color.PURPLE),
+    PINK(R.color.PINK)
 }
 
 

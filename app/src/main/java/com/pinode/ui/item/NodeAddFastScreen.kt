@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeLabel
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
@@ -100,7 +102,7 @@ fun NodeAddFastBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         // 初期値を正しくTIME_OPTIONS[0]に設定
-        var selectedMinutes by remember { mutableIntStateOf(TIME_OPTIONS[0]) }
+        var selectedMinutes by remember { mutableIntStateOf(0) }
 
         // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
@@ -116,7 +118,10 @@ fun NodeAddFastBody(
                 selectedMinutes = minutes
                 val dateTimeCtrl = DateTimeCtrl()
                 val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
-                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
+                onNodeValueChange(nodeUiState.nodeDetails.copy(
+                    deadline = deadlineTime,
+                    label = NodeLabel.FAST
+                ))
             },
             onValueChange = onNodeValueChange,
             modifier = Modifier.fillMaxWidth()
@@ -124,7 +129,7 @@ fun NodeAddFastBody(
 
         Button(
             onClick = onSaveClick,  // 保存時にはすでにdeadlineが更新済み
-            enabled = nodeUiState.isEntryValid,
+            enabled = nodeUiState.isEntryValid && selectedMinutes != 0,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -143,7 +148,8 @@ fun NodeAddFastInputForm(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = nodeDetails.title,
@@ -171,29 +177,7 @@ fun NodeAddFastInputForm(
             enabled = enabled,
             singleLine = true
         )
-
-        // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
-        var selectedIndex by remember { mutableIntStateOf(0) }
-
-        // 時間選択UI
-        SingleChoiceSegmentedButtonRow {
-            TIME_OPTIONS.forEachIndexed { index, minutes ->
-                SegmentedButton(
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = TIME_OPTIONS.size
-                    ),
-                    onClick = {
-                        selectedIndex = index
-                        // 選択された時間値を渡す
-                        selectedMinutesChange(TIME_OPTIONS[index])
-                    },
-                    selected = index == selectedIndex,
-                    label = { Text(minutes.toString()) }
-                )
-            }
-        }
-
+        
         var checked by remember { mutableStateOf(false) }
         onValueChange(nodeDetails.copy(priority = checked))
         IconToggleButton(
@@ -210,6 +194,35 @@ fun NodeAddFastInputForm(
                 )
             }
         }
+
+
+        // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
+        var selectedIndex by remember { mutableIntStateOf(0) }
+
+        // 時間選択UI
+        SingleChoiceSegmentedButtonRow (
+            modifier = Modifier.fillMaxWidth()
+        ){
+            TIME_OPTIONS.forEachIndexed { index, minutes ->
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = TIME_OPTIONS.size
+                    ),
+                    onClick = {
+                        selectedIndex = index
+                        // Removed redundant call to onValueChange with unmodified copy
+                        // 選択された時間値を渡す
+                        selectedMinutesChange(TIME_OPTIONS[index])
+                    },
+                    selected = index == selectedIndex,
+                    label = { Text(minutes.toString()) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        
     }
 }
 
