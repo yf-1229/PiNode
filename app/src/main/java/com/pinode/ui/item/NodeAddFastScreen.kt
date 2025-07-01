@@ -211,7 +211,7 @@ fun NodeAddFastInputForm(
                     ),
                     onClick = {
                         selectedIndex = index
-                        onValueChange(nodeDetails.copy())
+                        // Removed redundant call to onValueChange with unmodified copy
                         // 選択された時間値を渡す
                         selectedMinutesChange(TIME_OPTIONS[index])
                     },
