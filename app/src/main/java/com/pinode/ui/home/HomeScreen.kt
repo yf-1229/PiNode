@@ -103,6 +103,7 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
@@ -322,7 +323,7 @@ private fun PiNodeList(
                     item = item,
                     onTap = { onItemTap(item) },
                     onPress = {onItemPress(item)},
-                    selectedReactions = { selectedReactions(it) }
+                    selectedReactions = { ) }
                 )
             }
         }
@@ -337,7 +338,7 @@ private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
     onPress: () -> Unit?,
-    selectedStatus : () -> Unit?
+    selectedLabel: (NodeLabel) -> NodeLabel?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -472,7 +473,7 @@ private fun PiNodeItem(
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { SelectedStatus(NodeStatus.WORKIN) },
+                            onClick = { selectedLabel(NodeLabel.WORKING) },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
