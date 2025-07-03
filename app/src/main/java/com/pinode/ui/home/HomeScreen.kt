@@ -337,7 +337,7 @@ private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
     onPress: () -> Unit?,
-    selectedStatus : (MutableMap<String, Int>?) -> Unit?
+    selectedStatus : () -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -472,7 +472,7 @@ private fun PiNodeItem(
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { SelectedStatus() },
+                            onClick = { SelectedStatus(NodeStatus.WORKIN) },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
