@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
@@ -64,7 +65,7 @@ class HomeViewModel(
         )
 
 
-    fun completeNode(reactions: MutableMap<String, Int>?) {
+    fun changeNode(label: NodeLabel?) {
         val nodeId = uiState.value.nodeDetails.id
         viewModelScope.launch {
             try {
@@ -72,13 +73,21 @@ class HomeViewModel(
                 val currentNode = nodesRepository.getNodeStream(nodeId).first()
 
                 // リアクションのみを更新（完了状態は変更しない）
-                if (currentNode != null) {
+                if (currentNode != null && label == NodeLabel.COMPLETE) {
                     val updatedNode = currentNode.copy(
-                        reactions = reactions,
+                        label = label,
                         isCompleted = true
                     )
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
+
+                } else if (currentNode != null) {
+                    val updatedNode = currentNode.copy(
+                        label = label,
+                    )
+                    // 更新を保存
+                    nodesRepository.updateNode(updatedNode)
+
                 } else {
                     Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
                 }

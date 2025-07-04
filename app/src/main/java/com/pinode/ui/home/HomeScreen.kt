@@ -240,8 +240,8 @@ fun HomeScreen(
                     viewModel.updateNodeId(nodeId) // update NodeId
                 }
             },
-            selectedReactions = { reactions ->
-                viewModel.completeNode(reactions) // update node.reactions
+            selectedLabel = { label ->
+                viewModel.changeNode(label) // update node.reactions
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -273,7 +273,7 @@ private fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit,
     onItemPress: (Int) -> Unit,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    selectedLabel: (NodeLabel) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -294,7 +294,7 @@ private fun HomeBody(
                     nodeList = nodeList,
                     onItemTap = { onItemTap(it.id)},
                     onItemPress = { onItemPress(it.id) },
-                    selectedReactions = { selectedReactions(it) },
+                    selectedLabel = { selectedLabel(it) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
@@ -309,7 +309,7 @@ private fun PiNodeList(
     nodeList: List<Node>,
     onItemTap: (Node) -> Unit?,
     onItemPress: (Node) -> Unit?,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    selectedLabel: (NodeLabel) -> Unit?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -322,8 +322,8 @@ private fun PiNodeList(
                 PiNodeItem(
                     item = item,
                     onTap = { onItemTap(item) },
-                    onPress = {onItemPress(item)},
-                    selectedReactions = { ) }
+                    onPress = { onItemPress(item) },
+                    selectedLabel = { selectedLabel(it) }
                 )
             }
         }
@@ -338,7 +338,7 @@ private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
     onPress: () -> Unit?,
-    selectedLabel: (NodeLabel) -> NodeLabel?
+    selectedLabel: (NodeLabel) -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -483,12 +483,12 @@ private fun PiNodeItem(
                         )
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { selectedLabel(NodeLabel.CARRYOVER) },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Complete", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { selectedLabel(NodeLabel.COMPLETE) },
                             leadingIcon = { Icon(Icons.Outlined.DoneOutline, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }

@@ -1,6 +1,5 @@
 package com.pinode.data
 
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -24,8 +23,6 @@ data class Node(
     val label: NodeLabel?,
     val deadline: LocalDateTime?,
     val priority: Boolean,
-    @ColumnInfo(name = "reactions")
-    var reactions: MutableMap<String, Int>?,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
@@ -40,11 +37,11 @@ enum class NodeStatus(var color: Int){ // Node's color
 
 enum class NodeLabel(var color: Int) {
     CIRCLE(R.color.RED),
-    TRIANGLE(R.color.ORANGE),
+    PAUSE(R.color.ORANGE),
     WORKING(R.color.YELLOW),
-    GREEN(R.color.GREEN),
+    COMPLETE(R.color.GREEN),
     FAST(R.color.BLUE),
-    PURPLE(R.color.PURPLE),
+    CARRYOVER(R.color.PURPLE),
     PINK(R.color.PINK)
 }
 
