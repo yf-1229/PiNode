@@ -478,7 +478,7 @@ private fun PiNodeItem(
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { selectedLabel(NodeLabel.PAUSE) },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
