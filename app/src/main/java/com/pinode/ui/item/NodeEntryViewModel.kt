@@ -50,7 +50,6 @@ data class NodeDetails(
     val label: NodeLabel? = null,
     val deadline: LocalDateTime? = null,
     val priority: Boolean = false,
-    var reactions: MutableMap<String, Int>? = null,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -65,7 +64,6 @@ fun NodeDetails.toNode(): Node = Node(
     label = label,
     deadline = deadline,
     priority = priority,
-    reactions = reactions,
     isCompleted = isCompleted,
     isDeleted = isDeleted,
 )
@@ -84,7 +82,6 @@ fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     label = label,
     deadline = deadline,
     priority = priority,
-    reactions = reactions,
     isCompleted = isCompleted,
     isDeleted = isDeleted
 )
