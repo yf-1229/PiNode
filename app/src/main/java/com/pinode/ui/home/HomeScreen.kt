@@ -39,6 +39,7 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -431,7 +432,7 @@ private fun PiNodeItem(
                         modifier = Modifier.height(40.dp),
                         leadingButton = {
                             SplitButtonDefaults.LeadingButton(
-                                onClick = { },
+                                onClick = { selectedLabel(NodeLabel.COMPLETE) },
                                 modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(
@@ -487,9 +488,9 @@ private fun PiNodeItem(
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Complete", fontSize = 12.sp) },
-                            onClick = { selectedLabel(NodeLabel.COMPLETE) },
-                            leadingIcon = { Icon(Icons.Outlined.DoneOutline, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                            text = { Text("Emergency", fontSize = 12.sp) },
+                            onClick = { selectedLabel(NodeLabel.EMERGENCY) },
+                            leadingIcon = { Icon(Icons.Outlined.Warning, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
                 }
