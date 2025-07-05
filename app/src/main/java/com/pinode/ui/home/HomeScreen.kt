@@ -377,7 +377,7 @@ private fun PiNodeItem(
         "JUST!!"
     } else if (deadline < LocalDateTime.now()) {
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        "TimeOUT-${formatter.format(item.deadline)}"
+        "-${formatter.format(item.deadline)}-"
     } else {
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
         formatter.format(item.deadline)
