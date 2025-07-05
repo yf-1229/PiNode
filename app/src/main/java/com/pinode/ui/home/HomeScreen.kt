@@ -32,12 +32,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
@@ -236,13 +236,13 @@ fun HomeScreen(
                     showDialog = true
                 }
             },
-            onItemPress = { nodeId ->
+            selectedItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId) // update NodeId
                 }
             },
             selectedLabel = { label ->
-                viewModel.changeNode(label) // update node.reactions
+                viewModel.changeNode(label)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -273,7 +273,7 @@ fun HomeScreen(
 private fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit,
-    onItemPress: (Int) -> Unit,
+    selectedItem: (Int) -> Unit,
     selectedLabel: (NodeLabel) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -294,7 +294,7 @@ private fun HomeBody(
                 PiNodeList(
                     nodeList = nodeList,
                     onItemTap = { onItemTap(it.id)},
-                    onItemPress = { onItemPress(it.id) },
+                    selectedItem = { selectedItem(it.id) },
                     selectedLabel = { selectedLabel(it) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -309,7 +309,7 @@ private fun HomeBody(
 private fun PiNodeList(
     nodeList: List<Node>,
     onItemTap: (Node) -> Unit?,
-    onItemPress: (Node) -> Unit?,
+    selectedItem: (Node) -> Unit?,
     selectedLabel: (NodeLabel) -> Unit?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -323,7 +323,7 @@ private fun PiNodeList(
                 PiNodeItem(
                     item = item,
                     onTap = { onItemTap(item) },
-                    onPress = { onItemPress(item) },
+                    selectedItem = { selectedItem(item) },
                     selectedLabel = { selectedLabel(it) }
                 )
             }
@@ -338,7 +338,7 @@ private fun PiNodeList(
 private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
-    onPress: () -> Unit?,
+    selectedItem: () -> Unit?,
     selectedLabel: (NodeLabel) -> Unit?
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
@@ -392,18 +392,11 @@ private fun PiNodeItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                onTap() // TODO
+                onTap()
             }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerInput(item.id) {
-                    detectTapGestures(
-                        onLongPress = { } // TODO
-                    )
-                }
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+
             HorizontalDivider(thickness = (0.7).dp)
             Spacer(modifier = Modifier.height(8.dp))
             // ここでRowを使って左右に分ける
@@ -432,11 +425,13 @@ private fun PiNodeItem(
                         modifier = Modifier.height(40.dp),
                         leadingButton = {
                             SplitButtonDefaults.LeadingButton(
-                                onClick = { selectedLabel(NodeLabel.COMPLETE) },
+                                onClick = {
+                                    selectedItem()
+                                    selectedLabel(NodeLabel.COMPLETE) },
                                 modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(
-                                    Icons.Filled.Edit,
+                                    Icons.Filled.Check,
                                     modifier = Modifier.size(16.dp),
                                     contentDescription = "Localized description",
                                 )
@@ -474,22 +469,30 @@ private fun PiNodeItem(
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { selectedLabel(NodeLabel.WORKING) },
+                            onClick = {
+                                selectedItem()
+                                selectedLabel(NodeLabel.WORKING) },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp) },
-                            onClick = { selectedLabel(NodeLabel.PAUSE) },
+                            onClick = {
+                                selectedItem()
+                                selectedLabel(NodeLabel.PAUSE) },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp) },
-                            onClick = { selectedLabel(NodeLabel.CARRYOVER) },
+                            onClick = {
+                                selectedItem()
+                                selectedLabel(NodeLabel.CARRYOVER) },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Emergency", fontSize = 12.sp) },
-                            onClick = { selectedLabel(NodeLabel.EMERGENCY) },
+                            onClick = {
+                                selectedItem()
+                                selectedLabel(NodeLabel.EMERGENCY) },
                             leadingIcon = { Icon(Icons.Outlined.Warning, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
