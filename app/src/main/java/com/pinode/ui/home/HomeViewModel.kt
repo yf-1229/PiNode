@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
@@ -13,6 +14,7 @@ import com.pinode.ui.item.toNodeDetails
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -30,22 +32,39 @@ class HomeViewModel(
 
     private val nodeIdKey = "node_id"
     private val nodeId = savedStateHandle.getStateFlow<Int?>(nodeIdKey, null) // null が初期値
+    
+    private val selectedLabelKey = "selected_label"
+    private val selectedLabel = savedStateHandle.getStateFlow<NodeLabel?>(selectedLabelKey, null)
 
     // nodeIdを更新するメソッド
     fun updateNodeId(id: Int) {
         savedStateHandle[nodeIdKey] = id
+    }
+    
+    // 選択されたラベルを更新するメソッド
+    fun updateSelectedLabel(label: NodeLabel?) {
+        savedStateHandle[selectedLabelKey] = label
     }
 
     /**
      * [HomeUiState]
      */
     val homeUiState: StateFlow<HomeUiState> =
-        nodesRepository.getAllNodesStream().map { HomeUiState(it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = HomeUiState()
-            )
+        combine(
+            nodesRepository.getAllNodesStream(),
+            selectedLabel
+        ) { allNodes, currentSelectedLabel ->
+            val filteredNodes = if (currentSelectedLabel != null) {
+                allNodes.filter { it.label == currentSelectedLabel }
+            } else {
+                allNodes
+            }
+            HomeUiState(nodeList = filteredNodes, selectedLabel = currentSelectedLabel)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = HomeUiState()
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<UiState> = nodeId
@@ -103,7 +122,8 @@ class HomeViewModel(
  * Ui State for HomeScreen
  */
 data class HomeUiState(
-    val nodeList: List<Node> = listOf()
+    val nodeList: List<Node> = listOf(),
+    val selectedLabel: NodeLabel? = null
 )
 
 data class UiState(

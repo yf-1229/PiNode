@@ -103,6 +103,7 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
@@ -228,6 +229,7 @@ fun HomeScreen(
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
             nodeList = homeUiState.nodeList,
+            selectedLabel = homeUiState.selectedLabel,
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -241,6 +243,9 @@ fun HomeScreen(
             },
             selectedReactions = { reactions ->
                 viewModel.completeNode(reactions) // update node.reactions
+            },
+            onLabelChange = { label ->
+                viewModel.updateSelectedLabel(label)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -270,9 +275,11 @@ fun HomeScreen(
 @Composable
 private fun HomeBody(
     nodeList: List<Node>,
+    selectedLabel: NodeLabel?,
     onItemTap: (Int) -> Unit,
     onItemPress: (Int) -> Unit,
     selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    onLabelChange: (NodeLabel?) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -280,6 +287,15 @@ private fun HomeBody(
         horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
+        // ノードラベルフィルター用のドロップダウン
+        NodeLabelDropdown(
+            selectedLabel = selectedLabel,
+            onLabelSelected = onLabelChange,
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                .padding(top = contentPadding.calculateTopPadding())
+        )
+        
         if (nodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
@@ -294,7 +310,11 @@ private fun HomeBody(
                     onItemTap = { onItemTap(it.id)},
                     onItemPress = { onItemPress(it.id) },
                     selectedReactions = { selectedReactions(it) },
-                    contentPadding = contentPadding,
+                    contentPadding = PaddingValues(
+                        start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                        end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
+                        bottom = contentPadding.calculateBottomPadding()
+                    ),
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
             }
@@ -639,6 +659,58 @@ private fun DeleteConfirmationDialog(
             }
         }
     )
+}
+
+
+@Composable
+private fun NodeLabelDropdown(
+    selectedLabel: NodeLabel?,
+    onLabelSelected: (NodeLabel?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    
+    Box(modifier = modifier) {
+        OutlinedButton(
+            onClick = { expanded = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = selectedLabel?.name ?: stringResource(R.string.all_labels),
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                Icons.Filled.KeyboardArrowDown,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+        
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            // "All Labels" option
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.all_labels)) },
+                onClick = {
+                    onLabelSelected(null)
+                    expanded = false
+                }
+            )
+            
+            // Individual label options
+            NodeLabel.values().forEach { label ->
+                DropdownMenuItem(
+                    text = { Text(label.name) },
+                    onClick = {
+                        onLabelSelected(label)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
 
 

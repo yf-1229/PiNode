@@ -23,4 +23,5 @@
     <string name="today_title">Home</string>
     <string name="yesterday_title">Yesterday</string>
     <string name="scrap_title">Scrap</string>
+    <string name="all_labels">All Labels</string>
 </resources>
