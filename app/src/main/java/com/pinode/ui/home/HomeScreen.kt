@@ -95,6 +95,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -110,6 +111,7 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
+import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -499,7 +501,6 @@ private fun PiNodeItem(
                 }
             }
 
-            // 残りのテキスト要素（以前と同じ）
             Text(
                 text = remainingTime.toString(),
                 color = Color.Gray,
@@ -507,7 +508,7 @@ private fun PiNodeItem(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = item.title,
+                text = item.id.toString(),
                 color = Color.White,
                 fontSize = 32.sp,
                 modifier = Modifier.padding(start = 8.dp),
@@ -645,37 +646,3 @@ private fun DeleteConfirmationDialog(
         }
     )
 }
-
-
-//@Preview
-//@Composable
-//fun PreviewHomeBody() {
-//    val dateTimeCtrl = DateTimeCtrl()
-//    PiNodeTheme {
-//        HomeBody(listOf(
-//            Node(
-//                1,
-//                NodeStatus.RED,
-//                "Test1",
-//                "test",
-//                label = NodeLabel.PINK,
-//                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
-//                priority = false,
-//                isCompleted = false,
-//                isDeleted = false
-//            ),
-//            Node(
-//                2,
-//                NodeStatus.RED,
-//                "Test2",
-//                "test2",
-//                label = NodeLabel.PINK,
-//                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
-//                priority = false,
-//                isCompleted = false,
-//                isDeleted = false
-//            ),
-//        ), onItemTap = {}, onItemPress = {})
-//    }
-//}
-
