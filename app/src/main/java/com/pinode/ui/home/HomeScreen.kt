@@ -108,6 +108,7 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
+import com.pinode.ui.components.DirectoryTreeDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -226,6 +227,7 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
+        var showDirectoryDialog by remember { mutableStateOf(false) }
         HomeBody(
             nodeList = homeUiState.nodeList,
             onItemTap = { nodeId ->
@@ -242,6 +244,7 @@ fun HomeScreen(
             selectedReactions = { reactions ->
                 viewModel.completeNode(reactions) // update node.reactions
             },
+            onShowDirectoryTree = { showDirectoryDialog = true },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
@@ -264,6 +267,11 @@ fun HomeScreen(
                     .verticalScroll(rememberScrollState())
             )
         }
+        if (showDirectoryDialog) {
+            DirectoryTreeDialog(
+                onDismissRequest = { showDirectoryDialog = false }
+            )
+        }
     }
 }
 
@@ -273,6 +281,7 @@ private fun HomeBody(
     onItemTap: (Int) -> Unit,
     onItemPress: (Int) -> Unit,
     selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    onShowDirectoryTree: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -280,6 +289,14 @@ private fun HomeBody(
         horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
+        // Test button for directory tree
+        TextButton(
+            onClick = onShowDirectoryTree,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Text("📁 Open File Explorer")
+        }
+        
         if (nodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
