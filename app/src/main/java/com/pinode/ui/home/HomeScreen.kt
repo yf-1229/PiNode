@@ -320,18 +320,18 @@ private fun PiNodeList(
     // Group nodes by their label and sort groups
     val groupedNodes = remember(nodeList) {
         val grouped = nodeList.groupBy { it.label }
-        // Sort groups: labeled groups first (by name), then uncategorized
+        // Sort groups: labeled groups first (alphabetically), then uncategorized last
         grouped.toList().sortedWith { (labelA, _), (labelB, _) ->
             when {
                 labelA == null && labelB == null -> 0
                 labelA == null -> 1  // uncategorized comes last
-                labelB == null -> -1
-                else -> labelA.name.compareTo(labelB.name)
+                labelB == null -> -1 // labeled groups come first
+                else -> labelA.name.compareTo(labelB.name) // alphabetical within labeled groups
             }
         }
     }
 
-    // State to track which groups are expanded (default: all expanded)
+    // State to track which groups are expanded (default: all expanded for better UX)
     val expandedGroups = remember { 
         mutableStateOf(groupedNodes.map { it.first }.toSet())
     }
@@ -341,42 +341,45 @@ private fun PiNodeList(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            // Render each group
+            // Render each group if it has items
             groupedNodes.forEach { (label, nodesInGroup) ->
-                val groupKey = label?.name ?: "uncategorized"
-                val isExpanded = expandedGroups.value.contains(label)
-                
-                // Group header
-                item(key = "header_$groupKey") {
-                    NodeLabelGroupHeader(
-                        label = label,
-                        nodeCount = nodesInGroup.size,
-                        isExpanded = isExpanded,
-                        onToggleExpanded = {
-                            expandedGroups.value = if (isExpanded) {
-                                expandedGroups.value - label
-                            } else {
-                                expandedGroups.value + label
+                if (nodesInGroup.isNotEmpty()) {
+                    val groupKey = label?.name ?: "uncategorized"
+                    val isExpanded = expandedGroups.value.contains(label)
+                    
+                    // Group header (folder)
+                    item(key = "header_$groupKey") {
+                        NodeLabelGroupHeader(
+                            label = label,
+                            nodeCount = nodesInGroup.size,
+                            isExpanded = isExpanded,
+                            onToggleExpanded = {
+                                expandedGroups.value = if (isExpanded) {
+                                    expandedGroups.value - label
+                                } else {
+                                    expandedGroups.value + label
+                                }
                             }
-                        }
-                    )
-                }
-                
-                // Group items (only if expanded)
-                if (isExpanded) {
-                    items(
-                        items = nodesInGroup,
-                        key = { "item_${it.id}" }
-                    ) { item ->
-                        Box(
-                            modifier = Modifier.padding(start = 24.dp)
-                        ) {
-                            PiNodeItem(
-                                item = item,
-                                onTap = { onItemTap(item) },
-                                onPress = { onItemPress(item) },
-                                selectedReactions = { selectedReactions(it) }
-                            )
+                        )
+                    }
+                    
+                    // Group items (only if expanded)
+                    if (isExpanded) {
+                        items(
+                            items = nodesInGroup,
+                            key = { "item_${it.id}" }
+                        ) { item ->
+                            // Indent child items to show hierarchy
+                            Box(
+                                modifier = Modifier.padding(start = 24.dp)
+                            ) {
+                                PiNodeItem(
+                                    item = item,
+                                    onTap = { onItemTap(item) },
+                                    onPress = { onItemPress(item) },
+                                    selectedReactions = { selectedReactions(it) }
+                                )
+                            }
                         }
                     }
                 }
@@ -396,7 +399,7 @@ private fun NodeLabelGroupHeader(
     val labelName = label?.name ?: "未分類"
     val labelColor = label?.color ?: com.pinode.R.color.GRAY
     
-    // Animated rotation for the arrow
+    // Animated rotation for the arrow (0° collapsed, 90° expanded)
     val rotation by animateFloatAsState(
         targetValue = if (isExpanded) 90f else 0f,
         label = "Arrow rotation"
@@ -409,7 +412,8 @@ private fun NodeLabelGroupHeader(
             .clickable { onToggleExpanded() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -419,9 +423,10 @@ private fun NodeLabelGroupHeader(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
-                // Folder icon
+                // Folder icon with label color
                 Icon(
                     imageVector = if (isExpanded) Icons.Filled.FolderOpen else Icons.Filled.Folder,
                     contentDescription = null,
@@ -435,28 +440,30 @@ private fun NodeLabelGroupHeader(
                 Text(
                     text = labelName,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 
                 Spacer(modifier = Modifier.width(8.dp))
                 
-                // Node count
+                // Node count badge
                 Text(
                     text = "($nodeCount)",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
-            )
+            }
             
-            // Expand/collapse arrow with animation
+            // Expand/collapse arrow with smooth animation
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = if (isExpanded) "Collapse" else "Expand",
+                contentDescription = if (isExpanded) "Collapse group" else "Expand group",
                 modifier = Modifier
                     .size(20.dp)
                     .graphicsLayer {
                         rotationZ = rotation
-                    }
+                    },
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -776,15 +783,15 @@ private fun DeleteConfirmationDialog(
 
 //@Preview
 //@Composable
-//fun PreviewHomeBody() {
+//fun PreviewGroupedNodeList() {
 //    val dateTimeCtrl = DateTimeCtrl()
 //    PiNodeTheme {
 //        HomeBody(listOf(
 //            Node(
 //                1,
 //                NodeStatus.RED,
-//                "Test1",
-//                "test",
+//                "Pink Node 1",
+//                "First pink node",
 //                label = NodeLabel.PINK,
 //                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
 //                priority = false,
@@ -793,16 +800,38 @@ private fun DeleteConfirmationDialog(
 //            ),
 //            Node(
 //                2,
-//                NodeStatus.RED,
-//                "Test2",
-//                "test2",
+//                NodeStatus.GREEN,
+//                "Pink Node 2", 
+//                "Second pink node",
 //                label = NodeLabel.PINK,
-//                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
+//                deadline = dateTimeCtrl.getDeadlineByMinutes(50),
 //                priority = false,
 //                isCompleted = false,
 //                isDeleted = false
 //            ),
-//        ), onItemTap = {}, onItemPress = {})
+//            Node(
+//                3,
+//                NodeStatus.YELLOW,
+//                "Green Node 1",
+//                "A green node",
+//                label = NodeLabel.GREEN,
+//                deadline = dateTimeCtrl.getDeadlineByMinutes(30),
+//                priority = true,
+//                isCompleted = false,
+//                isDeleted = false
+//            ),
+//            Node(
+//                4,
+//                NodeStatus.GRAY,
+//                "Uncategorized Node",
+//                "Node without label",
+//                label = null,
+//                deadline = null,
+//                priority = false,
+//                isCompleted = false,
+//                isDeleted = false
+//            ),
+//        ), onItemTap = {}, onItemPress = {}, selectedReactions = {})
 //    }
 //}
 
