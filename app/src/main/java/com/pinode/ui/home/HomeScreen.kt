@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +36,9 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.DoneOutline
@@ -103,6 +107,7 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
@@ -312,21 +317,148 @@ private fun PiNodeList(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    // Group nodes by their label and sort groups
+    val groupedNodes = remember(nodeList) {
+        val grouped = nodeList.groupBy { it.label }
+        // Sort groups: labeled groups first (by name), then uncategorized
+        grouped.toList().sortedWith { (labelA, _), (labelB, _) ->
+            when {
+                labelA == null && labelB == null -> 0
+                labelA == null -> 1  // uncategorized comes last
+                labelB == null -> -1
+                else -> labelA.name.compareTo(labelB.name)
+            }
+        }
+    }
+
+    // State to track which groups are expanded (default: all expanded)
+    val expandedGroups = remember { 
+        mutableStateOf(groupedNodes.map { it.first }.toSet())
+    }
+
     Box {
         LazyColumn(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            items(items = nodeList, { it.id }) { item ->
-                PiNodeItem(
-                    item = item,
-                    onTap = { onItemTap(item) },
-                    onPress = {onItemPress(item)},
-                    selectedReactions = { selectedReactions(it) }
-                )
+            // Render each group
+            groupedNodes.forEach { (label, nodesInGroup) ->
+                val groupKey = label?.name ?: "uncategorized"
+                val isExpanded = expandedGroups.value.contains(label)
+                
+                // Group header
+                item(key = "header_$groupKey") {
+                    NodeLabelGroupHeader(
+                        label = label,
+                        nodeCount = nodesInGroup.size,
+                        isExpanded = isExpanded,
+                        onToggleExpanded = {
+                            expandedGroups.value = if (isExpanded) {
+                                expandedGroups.value - label
+                            } else {
+                                expandedGroups.value + label
+                            }
+                        }
+                    )
+                }
+                
+                // Group items (only if expanded)
+                if (isExpanded) {
+                    items(
+                        items = nodesInGroup,
+                        key = { "item_${it.id}" }
+                    ) { item ->
+                        Box(
+                            modifier = Modifier.padding(start = 24.dp)
+                        ) {
+                            PiNodeItem(
+                                item = item,
+                                onTap = { onItemTap(item) },
+                                onPress = { onItemPress(item) },
+                                selectedReactions = { selectedReactions(it) }
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
+}
 
+@Composable
+private fun NodeLabelGroupHeader(
+    label: NodeLabel?,
+    nodeCount: Int,
+    isExpanded: Boolean,
+    onToggleExpanded: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val labelName = label?.name ?: "未分類"
+    val labelColor = label?.color ?: com.pinode.R.color.GRAY
+    
+    // Animated rotation for the arrow
+    val rotation by animateFloatAsState(
+        targetValue = if (isExpanded) 90f else 0f,
+        label = "Arrow rotation"
+    )
+    
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onToggleExpanded() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Folder icon
+                Icon(
+                    imageVector = if (isExpanded) Icons.Filled.FolderOpen else Icons.Filled.Folder,
+                    contentDescription = null,
+                    tint = colorResource(labelColor),
+                    modifier = Modifier.size(24.dp)
+                )
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                // Label name
+                Text(
+                    text = labelName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                // Node count
+                Text(
+                    text = "($nodeCount)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
+            
+            // Expand/collapse arrow with animation
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = if (isExpanded) "Collapse" else "Expand",
+                modifier = Modifier
+                    .size(20.dp)
+                    .graphicsLayer {
+                        rotationZ = rotation
+                    }
+            )
+        }
     }
 }
 
