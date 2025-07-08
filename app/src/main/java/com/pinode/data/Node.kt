@@ -28,11 +28,11 @@ data class Node(
 
 enum class NodeLabel(var color: Int) {
     EMERGENCY(R.color.RED),
-    PAUSE(R.color.ORANGE),
-    WORKING(R.color.YELLOW),
+    PAUSE(R.color.YELLOW),
+    WORKING(R.color.GREEN),
     FAST(R.color.BLUE),
     CARRYOVER(R.color.PURPLE),
-    DEFAULT(R.color.GREEN),
+    DEFAULT(R.color.WHITE),
     COMPLETE(R.color.GRAY)
 }
 

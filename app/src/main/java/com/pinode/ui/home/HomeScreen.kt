@@ -439,7 +439,11 @@ private fun PiNodeItem(
                         trailingButton = {
                             SplitButtonDefaults.TrailingButton(
                                 checked = checked,
-                                onCheckedChange = { checked = it },
+                                onCheckedChange = { 
+                                    checked = it 
+                                    selectedItem()
+                                    
+                                },
                                 modifier = Modifier
                                     .height(40.dp)
                                     .semantics {
