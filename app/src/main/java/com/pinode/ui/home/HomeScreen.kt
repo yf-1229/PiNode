@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -79,7 +77,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -95,7 +92,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -106,12 +102,10 @@ import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
 import com.pinode.data.NodeLabel
-import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
-import com.pinode.ui.theme.PiNodeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -363,13 +357,6 @@ private fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-    if (!item.isCompleted && item.priority) {
-        item.status = NodeStatus.RED
-    } else if (!item.isCompleted) {
-        item.status = NodeStatus.GREEN
-    } else {
-        item.status = NodeStatus.GRAY
-    }
 
     val remainingTime = if (deadline == null) {
         "No Deadline" // 期限なし
@@ -412,7 +399,16 @@ private fun PiNodeItem(
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(colorResource(item.status.color))
+                        .background(
+                                if (item.label != null) {
+                                    colorResource(item.label.color)
+                                } else if (item.isCompleted) {
+                                    Color.Gray
+                                } else {
+                                    Color.Green
+                                }
+
+                        )
                 )
 
                 // 右側のSplitButton
@@ -429,7 +425,7 @@ private fun PiNodeItem(
                             SplitButtonDefaults.LeadingButton(
                                 onClick = {
                                     selectedItem()
-                                    selectedLabel(NodeLabel.COMPLETE) },
+                                    },
                                 modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(

@@ -17,32 +17,22 @@ import java.time.LocalDateTime
 data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    var status: NodeStatus,
     val title: String,
     val description: String,
     val label: NodeLabel?,
     val deadline: LocalDateTime?,
-    val priority: Boolean,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
 
 
-enum class NodeStatus(var color: Int){ // Node's color
-    RED(R.color.RED),
-    YELLOW(R.color.YELLOW),
-    GREEN(R.color.GREEN),
-    GRAY(R.color.GRAY)
-}
-
 enum class NodeLabel(var color: Int) {
     EMERGENCY(R.color.RED),
     PAUSE(R.color.ORANGE),
     WORKING(R.color.YELLOW),
-    COMPLETE(R.color.GREEN),
     FAST(R.color.BLUE),
     CARRYOVER(R.color.PURPLE),
-    PINK(R.color.PINK)
+    DEFAULT(R.color.GREEN),
 }
 
 

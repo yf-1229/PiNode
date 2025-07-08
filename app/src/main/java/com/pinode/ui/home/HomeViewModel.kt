@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
 import com.pinode.data.NodeLabel
-import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
 import com.pinode.ui.item.toNode
@@ -72,7 +71,6 @@ class HomeViewModel(
                 // 現在のノードを取得
                 val currentNode = nodesRepository.getNodeStream(nodeId).first()
 
-                // リアクションのみを更新（完了状態は変更しない）
                 if (currentNode != null && label == NodeLabel.COMPLETE) {
                     val updatedNode = currentNode.copy(
                         label = label,

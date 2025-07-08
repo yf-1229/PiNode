@@ -58,12 +58,10 @@ data class NodeDetails(
 
 fun NodeDetails.toNode(): Node = Node(
     id = id,
-    status = status,
     title = title,
     description = description,
     label = label,
     deadline = deadline,
-    priority = priority,
     isCompleted = isCompleted,
     isDeleted = isDeleted,
 )
