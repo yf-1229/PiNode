@@ -402,8 +402,6 @@ private fun PiNodeItem(
                         .background(
                                 if (item.label != null) {
                                     colorResource(item.label.color)
-                                } else if (item.isCompleted) {
-                                    Color.Gray
                                 } else {
                                     Color.Green
                                 }
@@ -425,6 +423,7 @@ private fun PiNodeItem(
                             SplitButtonDefaults.LeadingButton(
                                 onClick = {
                                     selectedItem()
+                                    selectedLabel(NodeLabel.COMPLETE)
                                     },
                                 modifier = Modifier.height(40.dp)
                             ) {

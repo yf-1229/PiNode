@@ -33,6 +33,7 @@ enum class NodeLabel(var color: Int) {
     FAST(R.color.BLUE),
     CARRYOVER(R.color.PURPLE),
     DEFAULT(R.color.GREEN),
+    COMPLETE(R.color.GRAY)
 }
 
 
