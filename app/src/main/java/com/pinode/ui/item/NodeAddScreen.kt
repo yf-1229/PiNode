@@ -180,24 +180,6 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
-
-        var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(priority = checked))
-        IconToggleButton(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        ) {
-            if (checked) {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
-                )
-            } else {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
-                )
-            }
-        }
-
         PickerChip(deadline = deadline)
     }
 }

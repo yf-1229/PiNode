@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
@@ -490,11 +491,11 @@ private fun PiNodeItem(
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Emergency", fontSize = 12.sp, color = colorResource(NodeLabel.EMERGENCY.color)) },
+                            text = { Text("Fast", fontSize = 12.sp, color = colorResource(NodeLabel.FAST.color)) },
                             onClick = {
                                 selectedItem()
-                                selectedLabel(NodeLabel.EMERGENCY) },
-                            leadingIcon = { Icon(Icons.Outlined.Warning, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                                selectedLabel(NodeLabel.FAST) },
+                            leadingIcon = { Icon(Icons.Outlined.FlashOn, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
                 }
