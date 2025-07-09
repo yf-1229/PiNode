@@ -6,4 +6,3 @@ import androidx.navigation.NavController
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 
-@Compose

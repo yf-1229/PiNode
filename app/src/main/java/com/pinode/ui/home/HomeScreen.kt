@@ -469,28 +469,28 @@ private fun PiNodeItem(
                     )
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
-                            text = { Text("Working", fontSize = 12.sp) },
+                            text = { Text("Working", fontSize = 12.sp, color = colorResource(NodeLabel.WORKING.color)) },
                             onClick = {
                                 selectedItem()
                                 selectedLabel(NodeLabel.WORKING) },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Pause", fontSize = 12.sp) },
+                            text = { Text("Pause", fontSize = 12.sp, color = colorResource(NodeLabel.PAUSE.color)) },
                             onClick = {
                                 selectedItem()
                                 selectedLabel(NodeLabel.PAUSE) },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Carry over", fontSize = 12.sp) },
+                            text = { Text("Carry over", fontSize = 12.sp, color = colorResource(NodeLabel.CARRYOVER.color)) },
                             onClick = {
                                 selectedItem()
                                 selectedLabel(NodeLabel.CARRYOVER) },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Emergency", fontSize = 12.sp) },
+                            text = { Text("Emergency", fontSize = 12.sp, color = colorResource(NodeLabel.EMERGENCY.color)) },
                             onClick = {
                                 selectedItem()
                                 selectedLabel(NodeLabel.EMERGENCY) },
