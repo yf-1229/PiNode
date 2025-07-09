@@ -38,7 +38,6 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -279,7 +278,8 @@ private fun HomeBody(
         horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
-        if (nodeList.isEmpty()) {
+        val incompleteNodeList = nodeList.filter { !it.isCompleted }
+        if (incompleteNodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
                 textAlign = TextAlign.Center,
@@ -289,7 +289,7 @@ private fun HomeBody(
         } else {
             Box {
                 PiNodeList(
-                    nodeList = nodeList,
+                    nodeList = incompleteNodeList,
                     onItemTap = { onItemTap(it.id)},
                     selectedItem = { selectedItem(it.id) },
                     selectedLabel = { selectedLabel(it) },

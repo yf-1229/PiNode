@@ -53,5 +53,4 @@ interface NodeDao {
 
     @Query("SELECT * from nodes ORDER BY title ASC")
     fun getAllItems(): Flow<List<Node>>
-
 }
