@@ -266,7 +266,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HomeBody(
+fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit,
     selectedItem: (Int) -> Unit,
