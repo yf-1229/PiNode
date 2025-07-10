@@ -38,7 +38,7 @@ fun PiNodeNavHost(
                     navController = navController
                 )
             }
-            composable("afterTomorrow") {
+            composable("homeScreen/${HomeDestination.route}") {
 
             }
         }
