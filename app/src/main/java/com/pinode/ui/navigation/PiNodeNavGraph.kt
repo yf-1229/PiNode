@@ -39,7 +39,13 @@ fun PiNodeNavHost(
                 )
             }
             composable("homeScreen/${HomeDestination.route}") {
-
+                ScrapScreen(
+                    navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
+                    navController = navController
+                )
+            }
+            composable("homeScreen/${HomeDestination.route}") {
+                
             }
         }
         // NodeEntry
