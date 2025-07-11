@@ -35,7 +35,7 @@ object ScrapDestination : NavigationDestination {
 @Composable
 fun ScrapScreen(
     navigateToNodeEdit: (Int) -> Unit,
-    navController: NavController,
+    navigateToDestination: (String) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -54,7 +54,7 @@ fun ScrapScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            BottomNavigationBar(destination = navigateToDestination)
         }
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
