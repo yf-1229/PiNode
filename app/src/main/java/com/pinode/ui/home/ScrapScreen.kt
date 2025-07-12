@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 object ScrapDestination : NavigationDestination {
     override val route = "scrap"
-    override val titleRes = R.string.today_title // TODO
+    override val titleRes = R.string.scrap_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
