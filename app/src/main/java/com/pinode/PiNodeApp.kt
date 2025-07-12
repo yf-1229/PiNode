@@ -64,37 +64,33 @@ fun PiNodeTopAppBar(
 
 
 @Composable
-fun BottomNavigationBar(navController: NavController) { // TODO なんかガクガクする
-    val items = listOf(
-        stringResource(HomeDestination.titleRes),
-        "Yesterday",
-        stringResource(ScrapDestination.titleRes)
-    )
-    val itemsDestination = listOf(
-        "homeScreen/${HomeDestination.route}", // "homeScreen/home"
-        "homeScreen/yesterday",
-        "homeScreen/${ScrapDestination.route}" // "homeScreen/scrap"
-    )
-    val selectedIcons = listOf(Icons.Filled.Home, Icons.Filled.Favorite, Icons.Filled.Star)
-    val unselectedIcons = listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
+fun BottomNavigationBar(navController: NavController) {
+    // 定数を remember で最適化
+    val navigationItems = remember {
+        listOf(
+            Triple("Home", "homeScreen/home", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
+            Triple("Yesterday", "homeScreen/yesterday", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
+            Triple("Scrap", "homeScreen/scrap", Pair(Icons.Filled.Star, Icons.Outlined.Star))
+        )
+    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar {
-        items.forEachIndexed { index, item ->
+        navigationItems.forEach { (title, route, icons) ->
             NavigationBarItem(
                 icon = {
                     Icon(
-                        if (currentRoute == itemsDestination[index]) selectedIcons[index] else unselectedIcons[index],
-                        contentDescription = item
+                        if (currentRoute == route) icons.first else icons.second,
+                        contentDescription = title
                     )
                 },
-                label = { Text(item) },
-                selected = currentRoute == itemsDestination[index],
+                label = { Text(title) },
+                selected = currentRoute == route,
                 onClick = {
-                    if (currentRoute != itemsDestination[index]) {
-                        navController.navigate(itemsDestination[index]) {
+                    if (currentRoute != route) {
+                        navController.navigate(route) {
                             popUpTo("homeScreen") {
                                 saveState = true
                             }

@@ -1,5 +1,8 @@
 package com.pinode.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,7 +39,11 @@ fun PiNodeNavHost(
         modifier = modifier
     ) {
         navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
-            composable("homeScreen/${HomeDestination.route}") {
+            composable(
+                "homeScreen/${HomeDestination.route}",
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) }
+            ) {
                 HomeScreen(
                     navigateToNodeAddFast = { navController.navigate(NodeAddFastDestination.route) },
                     navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
@@ -49,7 +56,11 @@ fun PiNodeNavHost(
                 // TODO: YesterdayScreenを実装
             }
 
-            composable("homeScreen/${ScrapDestination.route}") {
+            composable(
+                "homeScreen/${ScrapDestination.route}",
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) }
+            ) {
                 ScrapScreen(
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController

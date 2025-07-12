@@ -225,7 +225,7 @@ fun HomeScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList,
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted }, // ! isCompleted
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -278,8 +278,7 @@ fun HomeBody(
         horizontalAlignment = Alignment.Start,
         modifier = modifier,
     ) {
-        val incompleteNodeList = nodeList.filter { !it.isCompleted }
-        if (incompleteNodeList.isEmpty()) {
+        if (nodeList.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_node_description),
                 textAlign = TextAlign.Center,
@@ -289,7 +288,7 @@ fun HomeBody(
         } else {
             Box {
                 PiNodeList(
-                    nodeList = incompleteNodeList,
+                    nodeList = nodeList,
                     onItemTap = { onItemTap(it.id)},
                     selectedItem = { selectedItem(it.id) },
                     selectedLabel = { selectedLabel(it) },

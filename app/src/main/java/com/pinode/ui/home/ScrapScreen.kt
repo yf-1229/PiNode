@@ -59,7 +59,7 @@ fun ScrapScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList,
+            nodeList = homeUiState.nodeList.filter { it.isCompleted },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
