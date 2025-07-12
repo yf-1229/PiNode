@@ -23,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.ScrapDestination
@@ -62,37 +64,46 @@ fun PiNodeTopAppBar(
 
 
 @Composable
-fun BottomNavigationBar(
-    destination: (String) -> Unit = {}
-) {
-    var selectedItem by remember { mutableIntStateOf(0) }
+fun BottomNavigationBar(navController: NavController) { // TODO なんかガクガクする
     val items = listOf(
-        stringResource(HomeDestination.titleRes), "Yesterday", stringResource(ScrapDestination.titleRes)
+        stringResource(HomeDestination.titleRes),
+        "Yesterday",
+        stringResource(ScrapDestination.titleRes)
     )
     val itemsDestination = listOf(
-        HomeDestination.route, "yesterday", ScrapDestination.route
+        "homeScreen/${HomeDestination.route}", // "homeScreen/home"
+        "homeScreen/yesterday",
+        "homeScreen/${ScrapDestination.route}" // "homeScreen/scrap"
     )
     val selectedIcons = listOf(Icons.Filled.Home, Icons.Filled.Favorite, Icons.Filled.Star)
-    val unselectedIcons =
-        listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
+    val unselectedIcons = listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {
                     Icon(
-                        if (selectedItem == index) selectedIcons[index] else unselectedIcons[index],
+                        if (currentRoute == itemsDestination[index]) selectedIcons[index] else unselectedIcons[index],
                         contentDescription = item
                     )
                 },
                 label = { Text(item) },
-                selected = selectedItem == index,
+                selected = currentRoute == itemsDestination[index],
                 onClick = {
-                    selectedItem = index
-                    destination(itemsDestination[index])
+                    if (currentRoute != itemsDestination[index]) {
+                        navController.navigate(itemsDestination[index]) {
+                            popUpTo("homeScreen") {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 }
             )
         }
     }
 }
-

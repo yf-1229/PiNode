@@ -20,6 +20,10 @@ import com.pinode.ui.item.NodeAddScreen
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
 
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PiNodeNavHost(
@@ -33,22 +37,25 @@ fun PiNodeNavHost(
     ) {
         navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
             composable("homeScreen/${HomeDestination.route}") {
-                HomeScreen( // Home -> Today
+                HomeScreen(
                     navigateToNodeAddFast = { navController.navigate(NodeAddFastDestination.route) },
                     navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
-                    navigateToDestination = { navController.navigate("homeScreen/${it}") }
+                    navController = navController
                 )
             }
+
+            composable("homeScreen/yesterday") {
+                // TODO: YesterdayScreenを実装
+            }
+
             composable("homeScreen/${ScrapDestination.route}") {
                 ScrapScreen(
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
-                    navigateToDestination = { navController.navigate("homeScreen/${it}") }
+                    navController = navController
                 )
             }
         }
-
-        // NodeEntry
         composable(route = NodeAddFastDestination.route) {
             NodeAddFastScreen(
                 navigateBack = { navController.popBackStack() },

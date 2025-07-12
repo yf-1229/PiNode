@@ -125,7 +125,7 @@ fun HomeScreen(
     navigateToNodeAddFast: () -> Unit,
     navigateToNodeAdd: () -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
-    navigateToDestination: (String) -> Unit,
+    navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
@@ -220,7 +220,7 @@ fun HomeScreen(
             }
         },
         bottomBar = {
-            BottomNavigationBar(destination = navigateToDestination)
+            BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
