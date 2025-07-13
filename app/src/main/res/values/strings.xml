@@ -21,6 +21,6 @@
     <string name="required_fields">*required fields</string>
     <string name="complete">Complete</string>
     <string name="today_title">Home</string>
-    <string name="yesterday_title">Yesterday</string>
+    <string name="three_title">Three</string>
     <string name="scrap_title">Scrap</string>
 </resources>

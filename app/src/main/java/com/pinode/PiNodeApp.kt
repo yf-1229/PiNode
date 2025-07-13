@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.ScrapDestination
+import com.pinode.ui.home.ThreeDaysDestination
 import com.pinode.ui.navigation.PiNodeNavHost
 
 
@@ -68,9 +69,9 @@ fun BottomNavigationBar(navController: NavController) {
     // 定数を remember で最適化
     val navigationItems = remember {
         listOf(
-            Triple("Home", "homeScreen/home", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
-            Triple("Yesterday", "homeScreen/yesterday", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
-            Triple("Scrap", "homeScreen/scrap", Pair(Icons.Filled.Star, Icons.Outlined.Star))
+            Triple("Home", "homeScreen/${HomeDestination.route}", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
+            Triple("Three", "homeScreen/${ThreeDaysDestination.route}", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
+            Triple("Scrap", "homeScreen/${ScrapDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star))
         )
     }
 

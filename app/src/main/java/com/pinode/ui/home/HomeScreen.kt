@@ -225,7 +225,7 @@ fun HomeScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted }, // ! isCompleted
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -233,7 +233,7 @@ fun HomeScreen(
                 }
             },
             selectedItem = { nodeId ->
-                viewModel.updateNodeId(nodeId) // update NodeId
+                viewModel.updateNodeId(nodeId)
             },
             selectedLabel = { label ->
                 viewModel.changeNode(label)
@@ -355,7 +355,6 @@ private fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-
     val remainingTime = if (deadline == null) {
         "No Deadline" // 期限なし
     } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
@@ -369,7 +368,6 @@ private fun PiNodeItem(
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
         formatter.format(item.deadline)
     }
-
 
     Box(
         modifier = Modifier
@@ -398,11 +396,11 @@ private fun PiNodeItem(
                         .size(20.dp)
                         .clip(CircleShape)
                         .background(
-                                if (item.label != null) {
-                                    colorResource(item.label.color)
-                                } else {
-                                    Color.White
-                                }
+                            if (item.label != null) {
+                                colorResource(item.label.color)
+                            } else {
+                                Color.White
+                            }
 
                         )
                 )
@@ -420,9 +418,10 @@ private fun PiNodeItem(
                         leadingButton = {
                             SplitButtonDefaults.LeadingButton(
                                 onClick = {
-                                    selectedItem()
-                                    selectedLabel(NodeLabel.COMPLETE)
-                                    },
+                                    // 同期的に状態を更新
+                                    selectedItem.invoke()
+                                    selectedLabel.invoke(NodeLabel.COMPLETE)
+                                },
                                 modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(
@@ -437,9 +436,8 @@ private fun PiNodeItem(
                         trailingButton = {
                             SplitButtonDefaults.TrailingButton(
                                 checked = checked,
-                                onCheckedChange = { 
+                                onCheckedChange = {
                                     checked = it
-                                    
                                 },
                                 modifier = Modifier
                                     .height(40.dp)
@@ -468,29 +466,37 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp, color = colorResource(NodeLabel.WORKING.color)) },
                             onClick = {
-                                selectedItem()
-                                selectedLabel(NodeLabel.WORKING) },
+                                selectedItem.invoke()
+                                selectedLabel.invoke(NodeLabel.WORKING)
+                                checked = false // メニューを閉じる
+                            },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp, color = colorResource(NodeLabel.PAUSE.color)) },
                             onClick = {
-                                selectedItem()
-                                selectedLabel(NodeLabel.PAUSE) },
+                                selectedItem.invoke()
+                                selectedLabel.invoke(NodeLabel.PAUSE)
+                                checked = false // メニューを閉じる
+                            },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp, color = colorResource(NodeLabel.CARRYOVER.color)) },
                             onClick = {
-                                selectedItem()
-                                selectedLabel(NodeLabel.CARRYOVER) },
+                                selectedItem.invoke()
+                                selectedLabel.invoke(NodeLabel.CARRYOVER)
+                                checked = false // メニューを閉じる
+                            },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Fast", fontSize = 12.sp, color = colorResource(NodeLabel.FAST.color)) },
                             onClick = {
-                                selectedItem()
-                                selectedLabel(NodeLabel.FAST) },
+                                selectedItem.invoke()
+                                selectedLabel.invoke(NodeLabel.FAST)
+                                checked = false // メニューを閉じる
+                            },
                             leadingIcon = { Icon(Icons.Outlined.FlashOn, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
@@ -504,7 +510,7 @@ private fun PiNodeItem(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = item.id.toString(),
+                text = item.title,
                 color = Color.White,
                 fontSize = 32.sp,
                 modifier = Modifier.padding(start = 8.dp),
