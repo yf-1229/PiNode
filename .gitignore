@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.class
+META-INF/
+*.jar
