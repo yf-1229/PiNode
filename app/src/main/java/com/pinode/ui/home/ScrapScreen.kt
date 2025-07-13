@@ -67,9 +67,7 @@ fun ScrapScreen(
                 }
             },
             selectedItem = { nodeId ->
-                coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId) // update NodeId
-                }
+                viewModel.updateNodeId(nodeId) // update NodeId
             },
             selectedLabel = { label ->
                 viewModel.changeNode(label)
