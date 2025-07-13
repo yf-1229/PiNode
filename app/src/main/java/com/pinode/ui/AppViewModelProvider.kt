@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pinode.PiNodeApplication
 import com.pinode.ui.home.HomeViewModel
+import com.pinode.ui.home.YesterdayViewModel
 import com.pinode.ui.item.NodeEditViewModel
 import com.pinode.ui.item.NodeEntryViewModel
 
@@ -32,6 +33,14 @@ object AppViewModelProvider {
         initializer {
 
             HomeViewModel(
+                this.createSavedStateHandle(),
+                pinodeApplication().container.nodesRepository
+            )
+        }
+        
+        // Initializer for YesterdayViewModel
+        initializer {
+            YesterdayViewModel(
                 this.createSavedStateHandle(),
                 pinodeApplication().container.nodesRepository
             )

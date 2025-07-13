@@ -16,6 +16,8 @@ import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
 import com.pinode.ui.home.ScrapDestination
 import com.pinode.ui.home.ScrapScreen
+import com.pinode.ui.home.YesterdayDestination
+import com.pinode.ui.home.YesterdayScreen
 import com.pinode.ui.item.NodeAddDestination
 import com.pinode.ui.item.NodeAddFastDestination
 import com.pinode.ui.item.NodeAddFastScreen
@@ -53,7 +55,10 @@ fun PiNodeNavHost(
             }
 
             composable("homeScreen/yesterday") {
-                // TODO: YesterdayScreenを実装
+                YesterdayScreen(
+                    navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
+                    navController = navController
+                )
             }
 
             composable(
