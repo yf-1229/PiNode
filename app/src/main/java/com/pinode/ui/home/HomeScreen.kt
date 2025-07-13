@@ -430,7 +430,7 @@ private fun PiNodeItem(
                         modifier = Modifier.height(40.dp),
                         leadingButton = {
                             SplitButtonDefaults.LeadingButton(
-                                onClick = { },
+                                onClick = { onPress() },
                                 modifier = Modifier.height(40.dp)
                             ) {
                                 Icon(
@@ -472,22 +472,35 @@ private fun PiNodeItem(
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { /* Handle edit! */ },
+                            onClick = { 
+                                // Handle working status
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { 
+                                // Handle pause status
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { 
+                                // Handle carry over status
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Complete", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { 
+                                // Handle complete status
+                                selectedReactions(null)
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.DoneOutline, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                     }
