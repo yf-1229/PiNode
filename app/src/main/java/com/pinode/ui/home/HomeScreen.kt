@@ -233,9 +233,7 @@ fun HomeScreen(
                 }
             },
             selectedItem = { nodeId ->
-                coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId) // update NodeId
-                }
+                viewModel.updateNodeId(nodeId) // update NodeId
             },
             selectedLabel = { label ->
                 viewModel.changeNode(label)
@@ -403,7 +401,7 @@ private fun PiNodeItem(
                                 if (item.label != null) {
                                     colorResource(item.label.color)
                                 } else {
-                                    Color.Green
+                                    Color.White
                                 }
 
                         )
@@ -413,7 +411,7 @@ private fun PiNodeItem(
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
-                        .height(40.dp)
+                        .height(40.dp),
                 ) {
                     var checked by remember { mutableStateOf(false) }
 
@@ -440,8 +438,7 @@ private fun PiNodeItem(
                             SplitButtonDefaults.TrailingButton(
                                 checked = checked,
                                 onCheckedChange = { 
-                                    checked = it 
-                                    selectedItem()
+                                    checked = it
                                     
                                 },
                                 modifier = Modifier

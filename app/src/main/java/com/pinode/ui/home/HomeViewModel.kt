@@ -83,6 +83,7 @@ class HomeViewModel(
                 } else if (currentNode != null) {
                     val updatedNode = currentNode.copy(
                         label = label,
+                        isCompleted = false,
                     )
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
