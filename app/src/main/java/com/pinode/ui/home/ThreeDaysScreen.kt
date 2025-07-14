@@ -58,6 +58,7 @@ import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.Duration.*
 import java.time.LocalDateTime
 
 object ThreeDaysDestination : NavigationDestination {
@@ -162,7 +163,11 @@ fun ThreeDaysScreen(
 
         HomeBody(
             nodeList = homeUiState.nodeList.filter {
-                !it.isCompleted && it.deadline != LocalDateTime.now() }, // TODO
+                !it.isCompleted && it.deadline?.let { deadline ->
+                    val duration = Duration.between(deadline, LocalDateTime.now())
+                    duration != Duration.ofDays(3)
+                } ?: false
+            }, // TODO
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)

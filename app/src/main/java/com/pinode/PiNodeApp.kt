@@ -70,8 +70,8 @@ fun BottomNavigationBar(navController: NavController) {
     val navigationItems = remember {
         listOf(
             Triple("Home", "homeScreen/${HomeDestination.route}", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
+            Triple("Scrap", "homeScreen/${ScrapDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star)),
             Triple("Three", "homeScreen/${ThreeDaysDestination.route}", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
-            Triple("Scrap", "homeScreen/${ScrapDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star))
         )
     }
 
