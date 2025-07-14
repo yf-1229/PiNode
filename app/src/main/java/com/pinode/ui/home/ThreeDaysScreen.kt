@@ -169,11 +169,11 @@ fun ThreeDaysScreen(
                     showDialog = true
                 }
             },
-            selectedItem = { nodeId ->
-                viewModel.updateNodeId(nodeId) // update NodeId
-            },
-            selectedLabel = { label ->
-                viewModel.changeNode(label)
+            selectedItem = { nodeId, label ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.changeNode(nodeId, label)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -186,9 +186,9 @@ fun ThreeDaysScreen(
                     navigateToNodeEdit(uiState.nodeDetails.id)
                     showDialog = false
                 },
-                onDelete = {
+                onDelete = { item ->
                     coroutineScope.launch {
-                        viewModel.deleteNode()
+                        viewModel.deleteNode(item)
                         showDialog = false
                     }
                 },

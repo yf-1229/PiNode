@@ -64,12 +64,11 @@ class HomeViewModel(
         )
 
 
-    fun changeNode(label: NodeLabel?) {
-        val nodeId = uiState.value.nodeDetails.id
+    fun changeNode(id: Int, label: NodeLabel?) {
         viewModelScope.launch {
             try {
                 // 現在のノードを取得
-                val currentNode = nodesRepository.getNodeStream(nodeId).first()
+                val currentNode = nodesRepository.getNodeStream(id).first()
 
                 if (currentNode != null && label == NodeLabel.COMPLETE) {
                     val updatedNode = currentNode.copy(
@@ -97,8 +96,8 @@ class HomeViewModel(
             }
         }
     }
-    suspend fun deleteNode() {
-        nodesRepository.deleteNode(uiState.value.nodeDetails.toNode())
+    suspend fun deleteNode(item: Node) {
+        nodesRepository.deleteNode(item)
     }
 
     companion object {

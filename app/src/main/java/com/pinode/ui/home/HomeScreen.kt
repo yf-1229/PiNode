@@ -232,11 +232,11 @@ fun HomeScreen(
                     showDialog = true
                 }
             },
-            selectedItem = { nodeId ->
-                viewModel.updateNodeId(nodeId)
-            },
-            selectedLabel = { label ->
-                viewModel.changeNode(label)
+            selectedItem = { nodeId, label ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.changeNode(nodeId, label)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -249,9 +249,9 @@ fun HomeScreen(
                     navigateToNodeEdit(uiState.nodeDetails.id)
                     showDialog = false
                          },
-                onDelete = {
+                onDelete = { item ->
                     coroutineScope.launch {
-                        viewModel.deleteNode()
+                        viewModel.deleteNode(item)
                         showDialog = false
                     }
                 },
@@ -267,8 +267,7 @@ fun HomeScreen(
 fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit,
-    selectedItem: (Int) -> Unit,
-    selectedLabel: (NodeLabel) -> Unit,
+    selectedItem: (Int, NodeLabel) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -287,9 +286,8 @@ fun HomeBody(
             Box {
                 PiNodeList(
                     nodeList = nodeList,
-                    onItemTap = { onItemTap(it.id)},
-                    selectedItem = { selectedItem(it.id) },
-                    selectedLabel = { selectedLabel(it) },
+                    onItemTap = { onItemTap(it.id) },
+                    selectedItem = { node, label -> selectedItem(node.id, label) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                 )
@@ -302,9 +300,8 @@ fun HomeBody(
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
-    onItemTap: (Node) -> Unit?,
-    selectedItem: (Node) -> Unit?,
-    selectedLabel: (NodeLabel) -> Unit?,
+    onItemTap: (Node) -> Unit,
+    selectedItem: (Node, NodeLabel) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -317,8 +314,7 @@ private fun PiNodeList(
                 PiNodeItem(
                     item = item,
                     onTap = { onItemTap(item) },
-                    selectedItem = { selectedItem(item) },
-                    selectedLabel = { selectedLabel(it) }
+                    selectedItem = { node, label -> selectedItem(node, label) },
                 )
             }
         }
@@ -331,9 +327,8 @@ private fun PiNodeList(
 @Composable
 private fun PiNodeItem(
     item: Node,
-    onTap: () -> Unit?,
-    selectedItem: () -> Unit?,
-    selectedLabel: (NodeLabel) -> Unit?
+    onTap: () -> Unit,
+    selectedItem: (Node, NodeLabel) -> Unit,
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -419,8 +414,7 @@ private fun PiNodeItem(
                             SplitButtonDefaults.LeadingButton(
                                 onClick = {
                                     // 同期的に状態を更新
-                                    selectedItem.invoke()
-                                    selectedLabel.invoke(NodeLabel.COMPLETE)
+                                    selectedItem(item, NodeLabel.COMPLETE)
                                 },
                                 modifier = Modifier.height(40.dp)
                             ) {
@@ -466,8 +460,7 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp, color = colorResource(NodeLabel.WORKING.color)) },
                             onClick = {
-                                selectedItem.invoke()
-                                selectedLabel.invoke(NodeLabel.WORKING)
+                                selectedItem(item, NodeLabel.WORKING)
                                 checked = false // メニューを閉じる
                             },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
@@ -475,8 +468,7 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp, color = colorResource(NodeLabel.PAUSE.color)) },
                             onClick = {
-                                selectedItem.invoke()
-                                selectedLabel.invoke(NodeLabel.PAUSE)
+                                selectedItem(item, NodeLabel.PAUSE)
                                 checked = false // メニューを閉じる
                             },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
@@ -484,8 +476,7 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp, color = colorResource(NodeLabel.CARRYOVER.color)) },
                             onClick = {
-                                selectedItem.invoke()
-                                selectedLabel.invoke(NodeLabel.CARRYOVER)
+                                selectedItem(item, NodeLabel.CARRYOVER)
                                 checked = false // メニューを閉じる
                             },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
@@ -493,8 +484,7 @@ private fun PiNodeItem(
                         DropdownMenuItem(
                             text = { Text("Fast", fontSize = 12.sp, color = colorResource(NodeLabel.FAST.color)) },
                             onClick = {
-                                selectedItem.invoke()
-                                selectedLabel.invoke(NodeLabel.FAST)
+                                selectedItem(item, NodeLabel.FAST)
                                 checked = false // メニューを閉じる
                             },
                             leadingIcon = { Icon(Icons.Outlined.FlashOn, contentDescription = null, modifier = Modifier.size(20.dp)) },
@@ -527,7 +517,7 @@ fun NodeDetailsDialog(
     item: Node,
     onDismissRequest: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit,
+    onDelete: (Node) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
@@ -561,7 +551,7 @@ fun NodeDetailsDialog(
                 DeleteConfirmationDialog(
                     onDeleteConfirm = {
                         deleteConfirmationRequired = false
-                        onDelete()
+                        onDelete(item)
                     },
                     onDeleteCancel = { deleteConfirmationRequired = false },
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
