@@ -62,13 +62,13 @@ import java.time.Duration.*
 import java.time.LocalDateTime
 
 object ThreeDaysDestination : NavigationDestination {
-    override val route = "three"
+    override val route = "nottodo"
     override val titleRes = R.string.three_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ThreeDaysScreen(
+fun WhatNotToDoScreen(
     navigateToNodeAdd: () -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
