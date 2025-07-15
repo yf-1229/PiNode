@@ -61,7 +61,7 @@ import java.time.Duration
 import java.time.Duration.*
 import java.time.LocalDateTime
 
-object ThreeDaysDestination : NavigationDestination {
+object WhatNotToDoDestination : NavigationDestination {
     override val route = "nottodo"
     override val titleRes = R.string.three_title
 }
@@ -162,12 +162,7 @@ fun WhatNotToDoScreen(
 
 
         HomeBody(
-            nodeList = homeUiState.nodeList.filter {
-                !it.isCompleted && it.deadline?.let { deadline ->
-                    val duration = Duration.between(deadline, LocalDateTime.now())
-                    duration != Duration.ofDays(3)
-                } ?: false
-            }, // TODO
+            nodeList = homeUiState.nodeList.filter { it.id == null}, // TODO
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)

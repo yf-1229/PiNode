@@ -16,8 +16,8 @@ import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
 import com.pinode.ui.home.ScrapDestination
 import com.pinode.ui.home.ScrapScreen
-import com.pinode.ui.home.ThreeDaysDestination
-import com.pinode.ui.home.ThreeDaysScreen
+import com.pinode.ui.home.WhatNotToDoDestination
+import com.pinode.ui.home.WhatNotToDoScreen
 import com.pinode.ui.item.NodeAddDestination
 import com.pinode.ui.item.NodeAddFastDestination
 import com.pinode.ui.item.NodeAddFastScreen
@@ -55,11 +55,11 @@ fun PiNodeNavHost(
             }
 
             composable(
-                "homeScreen/${ThreeDaysDestination.route}",
+                "homeScreen/${WhatNotToDoDestination.route}",
                 enterTransition = { fadeIn(animationSpec = tween(200)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) }
             ) {
-                ThreeDaysScreen(
+                WhatNotToDoScreen(
                     navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController

@@ -32,7 +32,8 @@ enum class NodeLabel(var color: Int) {
     WORKING(R.color.GREEN),
     FAST(R.color.BLUE),
     CARRYOVER(R.color.PURPLE),
-    DEFAULT(R.color.WHITE),
+    DEFAULT(R.color.teal_700),
+    NOTTODO(R.color.WHITE),
     COMPLETE(R.color.GRAY)
 }
 
