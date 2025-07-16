@@ -67,6 +67,7 @@ fun NodeAddScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
+    to Do: Boolean, 
     viewModel: NodeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -104,6 +105,7 @@ fun NodeAddBody(
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
+    toDo: Boolean, 
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -115,6 +117,10 @@ fun NodeAddBody(
         remember {
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
             true // Rememberブロックに値を返す
+        }
+        
+        if (toDo == True) {
+            Text("What not to do?")
         }
 
         NodeAddInputForm(
