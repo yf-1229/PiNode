@@ -29,7 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
@@ -107,6 +111,13 @@ fun NodeAddFastBody(
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
             true // Rememberブロックに値を返す
         }
+
+        Text("Fast!!",
+            fontSize = 60.sp, fontFamily = FontFamily.Serif,
+            style = TextStyle.Default.copy(
+                lineBreak = LineBreak.Heading
+            )
+        )
 
         NodeAddFastInputForm(
             nodeDetails = nodeUiState.nodeDetails,
