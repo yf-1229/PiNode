@@ -127,7 +127,7 @@ fun WhatNotToDoScreen(
                 },
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { navigateToNodeAdd(toDo = false) },
+                    onClick = { navigateToNodeAdd(false) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     icon = { Icon(item.first, contentDescription = null) },
                     text = { Text(text = item.second) },

@@ -21,6 +21,7 @@ import com.pinode.ui.home.WhatNotToDoScreen
 import com.pinode.ui.item.NodeAddDestination
 import com.pinode.ui.item.NodeAddFastDestination
 import com.pinode.ui.item.NodeAddFastScreen
+import com.pinode.ui.item.NodeAddNotToDoDestination
 import com.pinode.ui.item.NodeAddScreen
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
@@ -60,7 +61,7 @@ fun PiNodeNavHost(
                 exitTransition = { fadeOut(animationSpec = tween(200)) }
             ) {
                 WhatNotToDoScreen(
-                    navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
+                    navigateToNodeAdd = { navController.navigate(NodeAddNotToDoDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController
                 )
@@ -88,9 +89,18 @@ fun PiNodeNavHost(
             NodeAddScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() },
-                toDo = it
+                toDo = true
             )
         }
+
+        composable(route = NodeAddNotToDoDestination.route) {
+            NodeAddScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() },
+                toDo = false
+            )
+        }
+
 
         composable( // NodeEdit
             route = NodeEditDestination.routeWithArgs,

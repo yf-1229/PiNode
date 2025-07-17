@@ -40,7 +40,11 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
@@ -60,6 +64,10 @@ object NodeAddDestination : NavigationDestination {
     override val titleRes = R.string.node_entry_title
 }
 
+object NodeAddNotToDoDestination : NavigationDestination {
+    override val route = "node_add_not"
+    override val titleRes = R.string.node_entry_title // TODO
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +96,7 @@ fun NodeAddScreen(
                     navigateBack()
                 }
             },
+            toDo = toDo,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -119,10 +128,20 @@ fun NodeAddBody(
             true // Rememberブロックに値を返す
         }
         
-        if (toDo == true) {
-            Text("What to do?", fontSize = 60.sp, fontFamily = FontFamily.Serif)
-        } else if (toDo == false) {
-            Text("What not to do?", fontSize =60.sp, fontFamily = FontFamily.Serif)
+        if (toDo) {
+            Text("What to do?",
+                fontSize = 60.sp, fontFamily = FontFamily.Serif,
+                style = TextStyle.Default.copy(
+                    lineBreak = LineBreak.Heading
+                )
+            )
+        } else if (!toDo) {
+            Text("What not to do?",
+                fontSize = 50.sp, fontFamily = FontFamily.Serif,
+                style = TextStyle.Default.copy(
+                    lineBreak = LineBreak.Heading
+                )
+            )
         }
         
 

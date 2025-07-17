@@ -123,7 +123,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToNodeAddFast: () -> Unit,
-    navigateToNodeAdd: () -> Unit,
+    navigateToNodeAdd: (Boolean) -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -188,7 +188,7 @@ fun HomeScreen(
                             if (i == 0) {
                                 navigateToNodeAddFast()
                             } else if (i == 1) {
-                                navigateToNodeAdd(toDo = true)
+                                navigateToNodeAdd(true)
                             }
                         },
                         containerColor = MaterialTheme.colorScheme.primary,
