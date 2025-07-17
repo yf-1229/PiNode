@@ -129,6 +129,7 @@ fun NodeAddBody(
         }
         
         if (toDo) {
+           onNodeValueChange(nodeUiState.nodeDetails.copy(label = DEFAULT)),
             Text("What to do?",
                 fontSize = 60.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
@@ -136,6 +137,7 @@ fun NodeAddBody(
                 )
             )
         } else if (!toDo) {
+            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NOTTODO)
             Text("What not to do?",
                 fontSize = 50.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
