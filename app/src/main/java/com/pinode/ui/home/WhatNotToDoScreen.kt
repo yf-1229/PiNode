@@ -69,7 +69,7 @@ object WhatNotToDoDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WhatNotToDoScreen(
-    navigateToNodeAdd: () -> Unit,
+    navigateToNodeAdd: (Boolean) -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -127,7 +127,7 @@ fun WhatNotToDoScreen(
                 },
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { navigateToNodeAdd() },
+                    onClick = { navigateToNodeAdd(toDo = false) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     icon = { Icon(item.first, contentDescription = null) },
                     text = { Text(text = item.second) },

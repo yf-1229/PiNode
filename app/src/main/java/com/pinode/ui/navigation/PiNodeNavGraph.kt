@@ -87,7 +87,8 @@ fun PiNodeNavHost(
         composable(route = NodeAddDestination.route) {
             NodeAddScreen(
                 navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
+                toDo = it
             )
         }
 

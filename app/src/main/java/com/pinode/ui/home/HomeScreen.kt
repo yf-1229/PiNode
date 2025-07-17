@@ -188,7 +188,7 @@ fun HomeScreen(
                             if (i == 0) {
                                 navigateToNodeAddFast()
                             } else if (i == 1) {
-                                navigateToNodeAdd()
+                                navigateToNodeAdd(toDo = true)
                             }
                         },
                         containerColor = MaterialTheme.colorScheme.primary,

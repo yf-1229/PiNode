@@ -67,7 +67,7 @@ fun NodeAddScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
-    to Do: Boolean, 
+    toDo: Boolean, 
     viewModel: NodeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -112,16 +112,19 @@ fun NodeAddBody(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
+    
         var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
-        // 初期値として選択されたミニッツに応じてdeadlineを設定
         remember {
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
             true // Rememberブロックに値を返す
         }
         
-        if (toDo == True) {
-            Text("What not to do?")
+        if (toDo == true) {
+            Text("What to do?", fontSize = 60.sp, fontFamily = FontFamily.Serif)
+        } else if (toDo == false) {
+            Text("What not to do?", fontSize =60.sp, fontFamily = FontFamily.Serif)
         }
+        
 
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
