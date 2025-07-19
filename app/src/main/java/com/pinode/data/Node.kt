@@ -39,6 +39,8 @@ enum class NodeStatus(var color: Int){ // Node's color
 }
 
 enum class NodeLabel(var color: Int) {
+    DEFAULT(R.color.GREEN),
+    NOTTODO(R.color.RED),
     CIRCLE(R.color.RED),
     TRIANGLE(R.color.ORANGE),
     YELLOW(R.color.YELLOW),

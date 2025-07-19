@@ -47,6 +47,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeLabel
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
@@ -71,6 +72,7 @@ fun NodeAddScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
+    toDo: Boolean = true,
     viewModel: NodeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -91,6 +93,7 @@ fun NodeAddScreen(
                     navigateBack()
                 }
             },
+            toDo = toDo, // Pass through the toDo parameter
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -108,6 +111,7 @@ fun NodeAddBody(
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
+    toDo: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -119,6 +123,23 @@ fun NodeAddBody(
         remember {
             onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
             true // Rememberブロックに値を返す
+        }
+
+        // Display appropriate text and set label based on toDo parameter
+        if (toDo) {
+            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NodeLabel.DEFAULT))
+            Text(
+                text = "What to do?",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small))
+            )
+        } else {
+            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NodeLabel.NOTTODO))
+            Text(
+                text = "What not to do?",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small))
+            )
         }
 
         NodeAddInputForm(
