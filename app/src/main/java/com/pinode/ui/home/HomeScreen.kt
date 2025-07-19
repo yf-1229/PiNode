@@ -394,7 +394,7 @@ private fun PiNodeItem(
                             if (item.label != null) {
                                 colorResource(item.label.color)
                             } else {
-                                Color.White
+                                Color.Black
                             }
 
                         )
@@ -500,7 +500,7 @@ private fun PiNodeItem(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = item.title,
+                text = item.label.toString(),
                 color = Color.White,
                 fontSize = 32.sp,
                 modifier = Modifier.padding(start = 8.dp),

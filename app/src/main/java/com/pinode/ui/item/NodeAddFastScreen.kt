@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,15 +103,7 @@ fun NodeAddFastBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         // 初期値を正しくTIME_OPTIONS[0]に設定
-        var selectedMinutes by remember { mutableIntStateOf(0) }
-
-        // 初期値として選択されたミニッツに応じてdeadlineを設定
-        remember {
-            val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = selectedMinutes.toLong())
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
-            true // Rememberブロックに値を返す
-        }
+        var selectedMinutes by rememberSaveable { mutableIntStateOf(0) }
 
         Text("Fast!!",
             fontSize = 60.sp, fontFamily = FontFamily.Serif,
@@ -186,7 +179,7 @@ fun NodeAddFastInputForm(
         )
 
         // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
-        var selectedIndex by remember { mutableIntStateOf(0) }
+        var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
         // 時間選択UI
         SingleChoiceSegmentedButtonRow (

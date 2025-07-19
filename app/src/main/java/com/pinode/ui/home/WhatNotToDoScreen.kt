@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeLabel
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
@@ -158,11 +159,8 @@ fun WhatNotToDoScreen(
         }
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
-
-
-
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { it.id == null}, // TODO
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.label == NodeLabel.NOTTODO },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)

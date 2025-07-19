@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -49,6 +50,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeLabel
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
@@ -114,30 +116,23 @@ fun NodeAddBody(
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
-    toDo: Boolean, 
+    toDo: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
-    
         var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
-        remember {
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
-            true // Rememberブロックに値を返す
-        }
         
         if (toDo) {
-           onNodeValueChange(nodeUiState.nodeDetails.copy(label = DEFAULT)),
             Text("What to do?",
                 fontSize = 60.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
                     lineBreak = LineBreak.Heading
                 )
             )
-        } else if (!toDo) {
-            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NOTTODO))
+        } else {
             Text("What not to do?",
                 fontSize = 50.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
@@ -145,14 +140,17 @@ fun NodeAddBody(
                 )
             )
         }
-        
 
+        val label = if (toDo) NodeLabel.DEFAULT else NodeLabel.NOTTODO
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
             deadline = { selectedDeadline: LocalDateTime? ->
                 deadline = selectedDeadline
-                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
+                onNodeValueChange(nodeUiState.nodeDetails.copy(
+                    label = label,
+                    deadline = selectedDeadline
+                ))
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -213,8 +211,8 @@ fun NodeAddInputForm(
 
 @Composable
 fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    var selectedDate by rememberSaveable { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by rememberSaveable { mutableStateOf<LocalTime?>(null) }
 
     Row(modifier = Modifier.padding(horizontal =12.dp)) {
         DatePickerChip(
