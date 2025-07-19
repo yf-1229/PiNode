@@ -137,7 +137,7 @@ fun NodeAddBody(
                 )
             )
         } else if (!toDo) {
-            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NOTTODO)
+            onNodeValueChange(nodeUiState.nodeDetails.copy(label = NOTTODO))
             Text("What not to do?",
                 fontSize = 50.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
