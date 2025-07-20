@@ -225,7 +225,7 @@ fun HomeScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted },
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.label != NodeLabel.NOTTODO },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -500,7 +500,7 @@ private fun PiNodeItem(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = item.label.toString(),
+                text = item.title,
                 color = Color.White,
                 fontSize = 32.sp,
                 modifier = Modifier.padding(start = 8.dp),
