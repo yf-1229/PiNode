@@ -553,11 +553,12 @@ private fun PiNodeItem(
                     text = item.description,
                     color = Color.White,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = 16.dp),
                     style = TextStyle.Default.copy(
                         lineBreak = LineBreak.Heading
                     )
                 )
+                // TODO Sub Todo List
             }
         }
     }
