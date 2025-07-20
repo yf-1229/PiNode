@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -58,9 +57,6 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
-import java.time.Duration
-import java.time.Duration.*
-import java.time.LocalDateTime
 
 object WhatNotToDoDestination : NavigationDestination {
     override val route = "nottodo"
@@ -176,24 +172,5 @@ fun WhatNotToDoScreen(
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
-        if (showDialog) {
-            NodeDetailsDialog(
-                item = uiState.nodeDetails.toNode(),
-                onDismissRequest = { showDialog = false },
-                onEdit = {
-                    navigateToNodeEdit(uiState.nodeDetails.id)
-                    showDialog = false
-                },
-                onDelete = { item ->
-                    coroutineScope.launch {
-                        viewModel.deleteNode(item)
-                        showDialog = false
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
-        }
     }
 }

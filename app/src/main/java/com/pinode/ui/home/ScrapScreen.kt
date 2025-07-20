@@ -75,24 +75,5 @@ fun ScrapScreen(
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
-        if (showDialog) {
-            NodeDetailsDialog(
-                item = uiState.nodeDetails.toNode(),
-                onDismissRequest = { showDialog = false },
-                onEdit = {
-                    navigateToNodeEdit(uiState.nodeDetails.id)
-                    showDialog = false
-                },
-                onDelete = { item ->
-                    coroutineScope.launch {
-                        viewModel.deleteNode(item)
-                        showDialog = false
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
-        }
     }
 }

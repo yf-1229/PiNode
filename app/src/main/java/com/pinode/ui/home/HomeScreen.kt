@@ -3,6 +3,7 @@ package com.pinode.ui.home
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,7 +41,9 @@ import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +53,9 @@ import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SplitButtonDefaults
 import androidx.compose.material3.SplitButtonLayout
@@ -191,7 +196,7 @@ fun HomeScreen(
                                 navigateToNodeAdd(true)
                             }
                         },
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = colorScheme.primary,
                         icon = { Icon(item.first, contentDescription = null) },
                         text = { Text(text = item.second) },
                         modifier = Modifier
@@ -241,25 +246,6 @@ fun HomeScreen(
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
-        if (showDialog) {
-            NodeDetailsDialog(
-                item = uiState.nodeDetails.toNode(),
-                onDismissRequest = { showDialog = false },
-                onEdit = {
-                    navigateToNodeEdit(uiState.nodeDetails.id)
-                    showDialog = false
-                         },
-                onDelete = { item ->
-                    coroutineScope.launch {
-                        viewModel.deleteNode(item)
-                        showDialog = false
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
-        }
     }
 }
 
@@ -313,7 +299,6 @@ private fun PiNodeList(
             items(items = nodeList, { it.id }) { item ->
                 PiNodeItem(
                     item = item,
-                    onTap = { onItemTap(item) },
                     selectedItem = { node, label -> selectedItem(node, label) },
                 )
             }
@@ -327,7 +312,6 @@ private fun PiNodeList(
 @Composable
 private fun PiNodeItem(
     item: Node,
-    onTap: () -> Unit,
     selectedItem: (Node, NodeLabel) -> Unit,
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
@@ -364,256 +348,210 @@ private fun PiNodeItem(
         formatter.format(item.deadline)
     }
 
-    Box(
+    var showDetails: Boolean = false
+
+    OutlinedCard(
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, Color.White),
         modifier = Modifier
+            .padding(bottom = 6.dp)
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                onTap()
-            }
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-
-            HorizontalDivider(thickness = (0.7).dp)
-            Spacer(modifier = Modifier.height(8.dp))
-            // ここでRowを使って左右に分ける
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,  // 要素を左右に分ける
-                modifier = Modifier.fillMaxWidth()  // 幅いっぱいに広げる
-            ) {
-                // 左側のステータスインジケーター
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (item.label != null) {
-                                colorResource(item.label.color)
-                            } else {
-                                Color.Black
-                            }
-
-                        )
-                )
-
-                // 右側のSplitButton
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .height(40.dp),
+        Box(
+            modifier = Modifier
+                .padding(6.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    var checked by remember { mutableStateOf(false) }
+                    showDetails = true
 
-                    SplitButtonLayout(
-                        modifier = Modifier.height(40.dp),
-                        leadingButton = {
-                            SplitButtonDefaults.LeadingButton(
-                                onClick = {
-                                    // 同期的に状態を更新
-                                    selectedItem(item, NodeLabel.COMPLETE)
-                                },
-                                modifier = Modifier.height(40.dp)
-                            ) {
-                                Icon(
-                                    Icons.Filled.Check,
-                                    modifier = Modifier.size(16.dp),
-                                    contentDescription = "Localized description",
-                                )
-                                Spacer(Modifier.size(4.dp))
-                                Text("Complete", fontSize = 12.sp)
-                            }
-                        },
-                        trailingButton = {
-                            SplitButtonDefaults.TrailingButton(
-                                checked = checked,
-                                onCheckedChange = {
-                                    checked = it
-                                },
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .semantics {
-                                        stateDescription = if (checked) "Expanded" else "Collapsed"
-                                        contentDescription = "Toggle Button"
-                                    },
-                            ) {
-                                val rotation: Float by animateFloatAsState(
-                                    targetValue = if (checked) 180f else 0f,
-                                    label = "Trailing Icon Rotation",
-                                )
-                                Icon(
-                                    Icons.Filled.KeyboardArrowDown,
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .graphicsLayer {
-                                            this.rotationZ = rotation
-                                        },
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        },
+                }
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                // ここでRowを使って左右に分ける
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,  // 要素を左右に分ける
+                    modifier = Modifier.fillMaxWidth()  // 幅いっぱいに広げる
+                ) {
+                    // 左側のステータスインジケーター
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (item.label != null) {
+                                    colorResource(item.label.color)
+                                } else {
+                                    Color.Black
+                                }
+
+                            )
                     )
-                    DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
-                        DropdownMenuItem(
-                            text = { Text("Working", fontSize = 12.sp, color = colorResource(NodeLabel.WORKING.color)) },
-                            onClick = {
-                                selectedItem(item, NodeLabel.WORKING)
-                                checked = false // メニューを閉じる
+
+                    // 右側のSplitButton
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .height(40.dp),
+                    ) {
+                        var checked by remember { mutableStateOf(false) }
+
+                        SplitButtonLayout(
+                            modifier = Modifier.height(40.dp),
+                            leadingButton = {
+                                SplitButtonDefaults.LeadingButton(
+                                    onClick = {
+                                        // 同期的に状態を更新
+                                        selectedItem(item, NodeLabel.COMPLETE)
+                                    },
+                                    modifier = Modifier.height(40.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Check,
+                                        modifier = Modifier.size(16.dp),
+                                        contentDescription = "Localized description",
+                                    )
+                                    Spacer(Modifier.size(4.dp))
+                                    Text("Complete", fontSize = 12.sp)
+                                }
                             },
-                            leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Pause", fontSize = 12.sp, color = colorResource(NodeLabel.PAUSE.color)) },
-                            onClick = {
-                                selectedItem(item, NodeLabel.PAUSE)
-                                checked = false // メニューを閉じる
+                            trailingButton = {
+                                SplitButtonDefaults.TrailingButton(
+                                    checked = checked,
+                                    onCheckedChange = {
+                                        checked = it
+                                    },
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .semantics {
+                                            stateDescription =
+                                                if (checked) "Expanded" else "Collapsed"
+                                            contentDescription = "Toggle Button"
+                                        },
+                                ) {
+                                    val rotation: Float by animateFloatAsState(
+                                        targetValue = if (checked) 180f else 0f,
+                                        label = "Trailing Icon Rotation",
+                                    )
+                                    Icon(
+                                        Icons.Filled.KeyboardArrowDown,
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .graphicsLayer {
+                                                this.rotationZ = rotation
+                                            },
+                                        contentDescription = "Localized description",
+                                    )
+                                }
                             },
-                            leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
-                        DropdownMenuItem(
-                            text = { Text("Carry over", fontSize = 12.sp, color = colorResource(NodeLabel.CARRYOVER.color)) },
-                            onClick = {
-                                selectedItem(item, NodeLabel.CARRYOVER)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Fast", fontSize = 12.sp, color = colorResource(NodeLabel.FAST.color)) },
-                            onClick = {
-                                selectedItem(item, NodeLabel.FAST)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = { Icon(Icons.Outlined.FlashOn, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
+                        DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Working",
+                                        fontSize = 12.sp,
+                                        color = colorResource(NodeLabel.WORKING.color)
+                                    )
+                                },
+                                onClick = {
+                                    selectedItem(item, NodeLabel.WORKING)
+                                    checked = false // メニューを閉じる
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.ArrowUpward,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Pause",
+                                        fontSize = 12.sp,
+                                        color = colorResource(NodeLabel.PAUSE.color)
+                                    )
+                                },
+                                onClick = {
+                                    selectedItem(item, NodeLabel.PAUSE)
+                                    checked = false // メニューを閉じる
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Pause,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Carry over",
+                                        fontSize = 12.sp,
+                                        color = colorResource(NodeLabel.CARRYOVER.color)
+                                    )
+                                },
+                                onClick = {
+                                    selectedItem(item, NodeLabel.CARRYOVER)
+                                    checked = false // メニューを閉じる
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.CalendarMonth,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Fast",
+                                        fontSize = 12.sp,
+                                        color = colorResource(NodeLabel.FAST.color)
+                                    )
+                                },
+                                onClick = {
+                                    selectedItem(item, NodeLabel.FAST)
+                                    checked = false // メニューを閉じる
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.FlashOn,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                            )
+                        }
                     }
                 }
-            }
 
-            Text(
-                text = remainingTime.toString(),
-                color = Color.Gray,
-                fontSize = 16.sp,
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = item.title,
-                color = Color.White,
-                fontSize = 32.sp,
-                modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle.Default.copy(
-                    lineBreak = LineBreak.Heading
+                Text(
+                    text = remainingTime.toString(),
+                    color = Color.Gray,
+                    fontSize = 16.sp,
                 )
-            )
-        }
-    }
-}
-
-@Composable
-fun NodeDetailsDialog(
-    item: Node,
-    onDismissRequest: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: (Node) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
-
-        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-
-        Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(32.dp)
-        ) {
-            NodeDetails(
-                node = item, modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedButton(
-                onClick = { onEdit() },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.edit_node_title))
-            }
-            OutlinedButton(
-                onClick = { deleteConfirmationRequired = true },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.delete))
-            }
-            if (deleteConfirmationRequired) {
-                DeleteConfirmationDialog(
-                    onDeleteConfirm = {
-                        deleteConfirmationRequired = false
-                        onDelete(item)
-                    },
-                    onDeleteCancel = { deleteConfirmationRequired = false },
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun NodeDetails(
-    node: Node, modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            NodeDetailsRow(
-                labelResID = R.string.node,
-                itemDetail = node.title,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = item.title,
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    modifier = Modifier.padding(start = 8.dp),
+                    style = TextStyle.Default.copy(
+                        lineBreak = LineBreak.Heading
                     )
                 )
-            )
-            NodeDetailsRow(
-                labelResID = R.string.node_description_req,
-                itemDetail = node.description,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
+            }
         }
-
-    }
-}
-
-
-@Composable
-private fun NodeDetailsRow(
-    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier) {
-        Text(text = stringResource(labelResID), fontSize = 20.sp)
-        Spacer(modifier = Modifier.weight(2f))
-        Text(text = itemDetail, fontWeight = FontWeight.Bold, fontSize = 30.sp)
     }
 }
 
