@@ -322,7 +322,8 @@ private fun PiNodeList(
                     item = item,
                     onTap = { onItemTap(item) },
                     onPress = {onItemPress(item)},
-                    selectedReactions = { selectedReactions(it) }
+                    selectedReactions = { selectedReactions(it) },
+                    onStatusChange = null // TODO: Implement status change callback
                 )
             }
         }
@@ -337,7 +338,8 @@ private fun PiNodeItem(
     item: Node,
     onTap: () -> Unit?,
     onPress: () -> Unit?,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?
+    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    onStatusChange: ((NodeStatus) -> Unit)? = null
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -359,11 +361,24 @@ private fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-    if (!item.isCompleted && item.priority) {
-        item.status = NodeStatus.EMERGENCY
-    } else if (!item.isCompleted) {
-        item.status = NodeStatus.DEFAULT
+    // Enhanced status assignment logic
+    if (!item.isCompleted) {
+        when {
+            // Emergency: overdue items or very urgent (within 30 minutes)
+            deadline != null && (deadline < LocalDateTime.now() || duration <= Duration.ofMinutes(30)) -> {
+                item.status = NodeStatus.EMERGENCY
+            }
+            // Fast: high priority items or items due within 2 hours
+            item.priority || (deadline != null && duration <= Duration.ofHours(2)) -> {
+                item.status = NodeStatus.FAST
+            }
+            // Default: normal incomplete items
+            else -> {
+                item.status = NodeStatus.DEFAULT
+            }
+        }
     } else {
+        // Completed items are carryover
         item.status = NodeStatus.CARRYOVER
     }
 
@@ -472,17 +487,26 @@ private fun PiNodeItem(
                     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
                         DropdownMenuItem(
                             text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { /* Handle edit! */ },
+                            onClick = { 
+                                onStatusChange?.invoke(NodeStatus.WORKING)
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Pause", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { 
+                                onStatusChange?.invoke(NodeStatus.PAUSE)
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
                             text = { Text("Carry over", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
+                            onClick = { 
+                                onStatusChange?.invoke(NodeStatus.CARRYOVER)
+                                checked = false
+                            },
                             leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
                         )
                         DropdownMenuItem(
