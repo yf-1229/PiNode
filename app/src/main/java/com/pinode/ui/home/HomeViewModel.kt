@@ -8,7 +8,6 @@ import com.pinode.data.Node
 import com.pinode.data.NodeLabel
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
-import com.pinode.ui.item.toNode
 import com.pinode.ui.item.toNodeDetails
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,7 +69,7 @@ class HomeViewModel(
                 // 現在のノードを取得
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
-                if (currentNode != null && label == NodeLabel.COMPLETE) {
+                if (currentNode != null && label == NodeLabel.COMPLETED) {
                     val updatedNode = currentNode.copy(
                         label = label,
                         isCompleted = true

@@ -26,15 +26,14 @@ data class Node(
 )
 
 
-enum class NodeLabel(var color: Int) {
-    EMERGENCY(R.color.RED),
-    PAUSE(R.color.YELLOW),
-    WORKING(R.color.GREEN),
-    FAST(R.color.BLUE),
-    CARRYOVER(R.color.PURPLE),
-    DEFAULT(R.color.teal_700),
-    NOTTODO(R.color.WHITE),
-    COMPLETE(R.color.GRAY)
+enum class NodeLabel(val color: Int, val text: String) {
+    PAUSE(R.color.YELLOW, "Pause"),
+    WORKING(R.color.GREEN, "Green"),
+    FAST(R.color.BLUE, "Fast"),
+    CARRYOVER(R.color.PURPLE, "Carry Over"),
+    DEFAULT(R.color.teal_700, "Default"),
+    NOTTODO(R.color.WHITE, "Not to do"),
+    COMPLETED(R.color.GRAY, "Completed")
 }
 
 
