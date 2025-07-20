@@ -360,11 +360,11 @@ private fun PiNodeItem(
     } ?: Duration.ZERO
 
     if (!item.isCompleted && item.priority) {
-        item.status = NodeStatus.RED
+        item.status = NodeStatus.EMERGENCY
     } else if (!item.isCompleted) {
-        item.status = NodeStatus.GREEN
+        item.status = NodeStatus.DEFAULT
     } else {
-        item.status = NodeStatus.GRAY
+        item.status = NodeStatus.CARRYOVER
     }
 
     val remainingTime = if (deadline == null) {
