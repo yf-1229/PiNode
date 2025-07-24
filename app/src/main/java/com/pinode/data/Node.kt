@@ -28,7 +28,7 @@ data class Node(
 
 enum class NodeLabel(val color: Int, val text: String) {
     PAUSE(R.color.YELLOW, "Pause"),
-    WORKING(R.color.GREEN, "Green"),
+    WORKING(R.color.GREEN, "Working"),
     FAST(R.color.BLUE, "Fast"),
     CARRYOVER(R.color.PURPLE, "Carry Over"),
     DEFAULT(R.color.teal_700, "Default"),
