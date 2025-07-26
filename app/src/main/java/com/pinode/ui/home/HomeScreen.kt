@@ -398,14 +398,9 @@ private fun PiNodeItem(
                     }
                 }
 
-                // 右側のSplitButton
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .height(40.dp),
-                ) {
+                // SplitButton
+                Box(modifier = Modifier.wrapContentSize().height(40.dp)) {
                     SplitButton(item = item, selectedItem = selectedItem)
-
                 }
             }
             Text(
