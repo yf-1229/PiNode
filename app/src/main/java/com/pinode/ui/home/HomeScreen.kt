@@ -351,13 +351,18 @@ private fun PiNodeItem(
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
-            ) { showDetails = true }
+            ) {
+                if (showDetails) {
+                    showDetails = false
+                } else if (!showDetails) {
+                    showDetails = true
+                }
+            }
     ) {
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp)
         ) {
-            Spacer(modifier = Modifier.height(6.dp))
             // ここでRowを使って左右に分ける
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -368,6 +373,7 @@ private fun PiNodeItem(
                 Row {
                     Box(
                         modifier = Modifier
+                            .padding(start = 6.dp, top = 6.dp)
                             .size(20.dp)
                             .clip(CircleShape)
                             .background(
