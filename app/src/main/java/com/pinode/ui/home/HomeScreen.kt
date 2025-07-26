@@ -284,27 +284,42 @@ private fun PiNodeList(
 ) {
     Box {
         var showDialog by remember { mutableStateOf(false) }
-        var nodeId by remember { mutableIntStateOf(0) }
+        var selectedNode by remember { mutableStateOf<Node?>(null) }
 
         LazyColumn(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            items(items = nodeList, { it.id }) { item ->
-                PiNodeItem(
-                    item = item,
-                    onItemTap = {
-                        showDialog = true
-                        nodeId = it.id
-                                },
-                    selectedItem = { node, label -> selectedItem(node, label) },
-                )
+            // 安全なリストアクセスのためにサイズチェックを追加
+            if (nodeList.isNotEmpty()) {
+                items(
+                    items = nodeList,
+                    key = { node -> node.id }  // keyを明示的に設定
+                ) { item ->
+                    PiNodeItem(
+                        item = item,
+                        onItemTap = { node ->
+                            selectedNode = node
+                            showDialog = true
+                        },
+                        selectedItem = { node, label -> selectedItem(node, label) },
+                    )
+                }
             }
         }
-        if (showDialog) {
+
+        // ダイアログ表示の安全性を向上
+        if (showDialog && selectedNode != null) {
             NodeDetailDialog(
-                onDismissRequest = { showDialog = false },
-                item = nodeList[nodeId]
+                onDismissRequest = {
+                    showDialog = false
+                    selectedNode = null
+                },
+                item = selectedNode!!, // null チェック済み
+                onItemTap = { node -> // TODO
+                    selectedNode = node
+                },
+                selectedItem = { node, label -> selectedItem(node, label) },
             )
         }
     }
@@ -560,12 +575,18 @@ private fun SplitButton(
 fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
     item : Node,
+    onItemTap: (Node) -> Unit,
+    selectedItem: (Node, NodeLabel) -> Unit,
 ) {
     Spacer(modifier = Modifier.height(6.dp))
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-
+        PiNodeItem(
+            item = item,
+            onItemTap = onItemTap,
+            selectedItem = selectedItem
+        )
     }
 }
 
