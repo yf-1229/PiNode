@@ -38,6 +38,7 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -63,6 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -91,6 +93,7 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
@@ -125,7 +128,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -242,7 +244,7 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     nodeList: List<Node>,
-    onItemTap: (Int) -> Unit,
+    onItemTap: (Int) -> Unit, // TODO
     selectedItem: (Int, NodeLabel) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -262,7 +264,6 @@ fun HomeBody(
             Box {
                 PiNodeList(
                     nodeList = nodeList,
-                    onItemTap = { onItemTap(it.id) },
                     selectedItem = { node, label -> selectedItem(node.id, label) },
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -276,12 +277,15 @@ fun HomeBody(
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
-    onItemTap: (Node) -> Unit,
+    // onItemTap: (Node) -> Unit,
     selectedItem: (Node, NodeLabel) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Box {
+        var showDialog by remember { mutableStateOf(false) }
+        var nodeId by remember { mutableIntStateOf(0) }
+
         LazyColumn(
             modifier = modifier,
             contentPadding = contentPadding
@@ -289,19 +293,28 @@ private fun PiNodeList(
             items(items = nodeList, { it.id }) { item ->
                 PiNodeItem(
                     item = item,
+                    onItemTap = {
+                        showDialog = true
+                        nodeId = it.id
+                                },
                     selectedItem = { node, label -> selectedItem(node, label) },
                 )
             }
         }
-
+        if (showDialog) {
+            NodeDetailDialog(
+                onDismissRequest = { showDialog = false },
+                item = nodeList[nodeId]
+            )
+        }
     }
 }
 
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PiNodeItem(
     item: Node,
+    onItemTap: (Node) -> Unit,
     selectedItem: (Node, NodeLabel) -> Unit,
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
@@ -338,8 +351,6 @@ private fun PiNodeItem(
         formatter.format(item.deadline)
     }
 
-    var showDetails by remember { mutableStateOf(false) }
-
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = colorScheme.surface,
@@ -352,11 +363,7 @@ private fun PiNodeItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                if (showDetails) {
-                    showDetails = false
-                } else if (!showDetails) {
-                    showDetails = true
-                }
+                onItemTap(item)
             }
     ) {
         Column(modifier = Modifier
@@ -366,50 +373,37 @@ private fun PiNodeItem(
             // ここでRowを使って左右に分ける
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,  // 要素を左右に分ける
-                modifier = Modifier.fillMaxWidth()  // 幅いっぱいに広げる
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // 左側のステータスインジケーター
-                Row {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 6.dp, top = 6.dp)
-                            .size(20.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (item.label != null) {
-                                    colorResource(item.label.color)
-                                } else {
-                                    Color.Black
-                                }
-                            )
-                    )
-
-                    if (showDetails) {
-                        item.label?.let {
-                            Text(
-                                text = it.text,
-                                fontSize = 12.sp,
-                                color = Color.LightGray,
-                                modifier = Modifier
-                                    .padding(start = 6.dp)
-                            )
-                        }
-                    }
-                }
-
+                // ステータスインジケーター
+                Box(
+                    modifier = Modifier
+                        .padding(start = 6.dp, top = 6.dp)
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (item.label != null) {
+                                colorResource(item.label.color)
+                            } else {
+                                Color.Black
+                            }
+                        )
+                )
                 // SplitButton
-                Box(modifier = Modifier.wrapContentSize().height(40.dp)) {
+                Box(modifier = Modifier
+                    .wrapContentSize()
+                    .height(40.dp)) {
                     SplitButton(item = item, selectedItem = selectedItem)
                 }
             }
-            Text(
+            Text( // deadline
                 text = remainingTime.toString(),
                 color = Color.Gray,
                 fontSize = 16.sp,
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
+
+            Text( // title
                 text = item.title,
                 color = Color.White,
                 fontSize = 32.sp,
@@ -418,19 +412,7 @@ private fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
-
-            if (showDetails) {
-                Text(
-                    text = item.description,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(start = 16.dp),
-                    style = TextStyle.Default.copy(
-                        lineBreak = LineBreak.Heading
-                    )
-                )
                 // TODO Sub Todo List
-            }
         }
     }
 }
@@ -571,6 +553,19 @@ private fun SplitButton(
                 )
             },
         )
+    }
+}
+
+@Composable
+fun NodeDetailDialog(
+    onDismissRequest: () -> Unit,
+    item : Node,
+) {
+    Spacer(modifier = Modifier.height(6.dp))
+    Dialog(
+        onDismissRequest = onDismissRequest,
+    ) {
+
     }
 }
 
