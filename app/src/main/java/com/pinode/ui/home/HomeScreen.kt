@@ -388,7 +388,7 @@ private fun PiNodeItem(
                     if (showDetails) {
                         item.label?.let {
                             Text(
-                                text = "<-- ${it.text}",
+                                text = it.text,
                                 fontSize = 12.sp,
                                 color = Color.LightGray,
                                 modifier = Modifier
@@ -404,138 +404,8 @@ private fun PiNodeItem(
                         .wrapContentSize()
                         .height(40.dp),
                 ) {
-                    var checked by remember { mutableStateOf(false) }
-                    SplitButtonLayout(
-                        modifier = Modifier.height(40.dp),
-                        leadingButton = {
-                            SplitButtonDefaults.LeadingButton(
-                                onClick = {
-                                    // 同期的に状態を更新
-                                    selectedItem(item, NodeLabel.COMPLETED)
-                                },
-                                modifier = Modifier.height(40.dp)
-                            ) {
-                                Icon(
-                                    Icons.Filled.Check,
-                                    modifier = Modifier.size(16.dp),
-                                    contentDescription = "Localized description",
-                                )
-                                Spacer(Modifier.size(4.dp))
-                                Text("Complete", fontSize = 12.sp)
-                            }
-                        },
-                        trailingButton = {
-                            SplitButtonDefaults.TrailingButton(
-                                checked = checked,
-                                onCheckedChange = {
-                                    checked = it
-                                },
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .semantics {
-                                        stateDescription =
-                                            if (checked) "Expanded" else "Collapsed"
-                                        contentDescription = "Toggle Button"
-                                    },
-                            ) {
-                                val rotation: Float by animateFloatAsState(
-                                    targetValue = if (checked) 180f else 0f,
-                                    label = "Trailing Icon Rotation",
-                                )
-                                Icon(
-                                    Icons.Filled.KeyboardArrowDown,
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .graphicsLayer {
-                                            this.rotationZ = rotation
-                                        },
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        },
-                    )
-                    DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    "Working",
-                                    fontSize = 12.sp,
-                                    color = colorResource(NodeLabel.WORKING.color)
-                                )
-                            },
-                            onClick = {
-                                selectedItem(item, NodeLabel.WORKING)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowUpward,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    "Pause",
-                                    fontSize = 12.sp,
-                                    color = colorResource(NodeLabel.PAUSE.color)
-                                )
-                            },
-                            onClick = {
-                                selectedItem(item, NodeLabel.PAUSE)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.Pause,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    "Carry over",
-                                    fontSize = 12.sp,
-                                    color = colorResource(NodeLabel.CARRYOVER.color)
-                                )
-                            },
-                            onClick = {
-                                selectedItem(item, NodeLabel.CARRYOVER)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.CalendarMonth,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    "Fast",
-                                    fontSize = 12.sp,
-                                    color = colorResource(NodeLabel.FAST.color)
-                                )
-                            },
-                            onClick = {
-                                selectedItem(item, NodeLabel.FAST)
-                                checked = false // メニューを閉じる
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.FlashOn,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                        )
-                    }
+                    SplitButton(item = item, selectedItem = selectedItem)
+
                 }
             }
             Text(
@@ -570,6 +440,144 @@ private fun PiNodeItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun SplitButton(
+    item: Node, selectedItem: (Node, NodeLabel) -> Unit
+) {
+    var checked by remember { mutableStateOf(false) }
+    SplitButtonLayout(
+        modifier = Modifier.height(40.dp),
+        leadingButton = {
+            SplitButtonDefaults.LeadingButton(
+                onClick = {
+                    // 同期的に状態を更新
+                    selectedItem(item, NodeLabel.COMPLETED)
+                },
+                modifier = Modifier.height(40.dp)
+            ) {
+                Icon(
+                    Icons.Filled.Check,
+                    modifier = Modifier.size(16.dp),
+                    contentDescription = "Localized description",
+                )
+                Spacer(Modifier.size(4.dp))
+                Text("Complete", fontSize = 12.sp)
+            }
+        },
+        trailingButton = {
+            SplitButtonDefaults.TrailingButton(
+                checked = checked,
+                onCheckedChange = {
+                    checked = it
+                },
+                modifier = Modifier
+                    .height(40.dp)
+                    .semantics {
+                        stateDescription =
+                            if (checked) "Expanded" else "Collapsed"
+                        contentDescription = "Toggle Button"
+                    },
+            ) {
+                val rotation: Float by animateFloatAsState(
+                    targetValue = if (checked) 180f else 0f,
+                    label = "Trailing Icon Rotation",
+                )
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .graphicsLayer {
+                            this.rotationZ = rotation
+                        },
+                    contentDescription = "Localized description",
+                )
+            }
+        },
+    )
+    DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    "Working",
+                    fontSize = 12.sp,
+                    color = colorResource(NodeLabel.WORKING.color)
+                )
+            },
+            onClick = {
+                selectedItem(item, NodeLabel.WORKING)
+                checked = false // メニューを閉じる
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.ArrowUpward,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    "Pause",
+                    fontSize = 12.sp,
+                    color = colorResource(NodeLabel.PAUSE.color)
+                )
+            },
+            onClick = {
+                selectedItem(item, NodeLabel.PAUSE)
+                checked = false // メニューを閉じる
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.Pause,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    "Carry over",
+                    fontSize = 12.sp,
+                    color = colorResource(NodeLabel.CARRYOVER.color)
+                )
+            },
+            onClick = {
+                selectedItem(item, NodeLabel.CARRYOVER)
+                checked = false // メニューを閉じる
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.CalendarMonth,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    "Fast",
+                    fontSize = 12.sp,
+                    color = colorResource(NodeLabel.FAST.color)
+                )
+            },
+            onClick = {
+                selectedItem(item, NodeLabel.FAST)
+                checked = false // メニューを閉じる
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Outlined.FlashOn,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+        )
+    }
+}
 
 @Composable
 private fun DeleteConfirmationDialog(
