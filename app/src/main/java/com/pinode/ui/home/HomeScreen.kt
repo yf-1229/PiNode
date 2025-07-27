@@ -29,14 +29,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -319,7 +324,10 @@ private fun PiNodeList(
                 onItemTap = { node -> // TODO
                     selectedNode = node
                 },
-                selectedItem = { node, label -> selectedItem(node, label) },
+                selectedItem = { node, label ->
+                    selectedItem(node, label)
+                    showDialog = false
+                               },
             )
         }
     }
@@ -588,6 +596,17 @@ fun NodeDetailDialog(
             selectedItem = selectedItem
         )
     }
+}
+
+@Composable
+@ExperimentalMaterial3ExpressiveApi
+private fun DetailsButtonGroup() {
+    val options = listOf("Working", "Pause", "Carry Over", "Fast")
+    val unCheckedIcons =
+        listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
+    val checkedIcons =
+        listOf(Icons.Default.ArrowUpward, Icons.Default.Pause, Icons.Default.CalendarMonth, Icons.Default.Bolt)
+    var selectedIndex by remember { mutableIntStateOf(0) }
 }
 
 @Composable
