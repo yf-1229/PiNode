@@ -1,5 +1,6 @@
 package com.pinode.ui.home
 
+import android.telecom.Call.Details
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -44,11 +45,15 @@ import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ButtonGroupMenuState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
@@ -60,6 +65,8 @@ import androidx.compose.material3.SplitButtonDefaults
 import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.TopAppBarDefaults
@@ -87,9 +94,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
@@ -579,6 +588,7 @@ private fun SplitButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
@@ -586,17 +596,21 @@ fun NodeDetailDialog(
     onItemTap: (Node) -> Unit,
     selectedItem: (Node, NodeLabel) -> Unit,
 ) {
-    Spacer(modifier = Modifier.height(6.dp))
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        PiNodeItem(
-            item = item,
-            onItemTap = onItemTap,
-            selectedItem = selectedItem
-        )
+        Column {
+            PiNodeItem(
+                item = item,
+                onItemTap = onItemTap,
+                selectedItem = selectedItem
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            DetailsButtonGroup()
+        }
     }
 }
+
 
 @Composable
 @ExperimentalMaterial3ExpressiveApi
@@ -607,6 +621,32 @@ private fun DetailsButtonGroup() {
     val checkedIcons =
         listOf(Icons.Default.ArrowUpward, Icons.Default.Pause, Icons.Default.CalendarMonth, Icons.Default.Bolt)
     var selectedIndex by remember { mutableIntStateOf(0) }
+
+    Row(
+        Modifier.padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+    ) {
+        options.forEachIndexed { index, label ->
+            ToggleButton(
+                checked = selectedIndex == index,
+                onCheckedChange = { selectedIndex = index },
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { role = Role.RadioButton },
+                shapes =
+                when (index) {
+                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                    options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                },
+            ) {
+                Icon(
+                    if (selectedIndex == index) checkedIcons[index] else unCheckedIcons[index],
+                    contentDescription = "Localized description",
+                )
+            }
+        }
+    }
 }
 
 @Composable
