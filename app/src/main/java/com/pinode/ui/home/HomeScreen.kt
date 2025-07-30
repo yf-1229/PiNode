@@ -296,7 +296,6 @@ private fun PiNodeList(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            // 安全なリストアクセスのためにサイズチェックを追加
             if (nodeList.isNotEmpty()) {
                 items(
                     items = nodeList,
@@ -315,7 +314,7 @@ private fun PiNodeList(
             }
         }
 
-        // ダイアログ表示の安全性を向上
+        // null safety
         if (showDialog && selectedNode != null) {
             NodeDetailDialog(
                 onDismissRequest = {
