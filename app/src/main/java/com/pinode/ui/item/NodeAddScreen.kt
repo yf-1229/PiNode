@@ -1,7 +1,6 @@
 package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -51,7 +50,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
@@ -142,7 +141,7 @@ fun NodeAddBody(
             )
         }
 
-        val label = if (toDo) NodeLabel.DEFAULT else NodeLabel.NOTTODO
+        val label = if (toDo) NodeStatus.DEFAULT else NodeStatus.NOTTODO
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,

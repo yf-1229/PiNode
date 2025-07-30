@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -52,9 +49,8 @@ import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
-import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 
@@ -156,7 +152,7 @@ fun WhatNotToDoScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.label == NodeLabel.NOTTODO },
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)

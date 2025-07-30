@@ -1,6 +1,5 @@
 package com.pinode.ui.home
 
-import android.telecom.Call.Details
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,18 +40,13 @@ import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FlashOn
 import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ButtonGroupMenuState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
@@ -66,7 +59,6 @@ import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.TopAppBarDefaults
@@ -114,7 +106,7 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
 import com.pinode.ui.navigation.NavigationDestination
@@ -236,7 +228,7 @@ fun HomeScreen(
     ) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.label != NodeLabel.NOTTODO },
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
             onItemTap = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -259,7 +251,7 @@ fun HomeScreen(
 fun HomeBody(
     nodeList: List<Node>,
     onItemTap: (Int) -> Unit, // TODO
-    selectedItem: (Int, NodeLabel) -> Unit,
+    selectedItem: (Int, NodeStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -292,7 +284,7 @@ fun HomeBody(
 private fun PiNodeList(
     nodeList: List<Node>,
     // onItemTap: (Node) -> Unit,
-    selectedItem: (Node, NodeLabel) -> Unit,
+    selectedItem: (Node, NodeStatus) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -343,7 +335,7 @@ private fun PiNodeList(
 private fun PiNodeItem(
     item: Node,
     onItemTap: (Node) -> Unit,
-    selectedItem: (Node, NodeLabel) -> Unit,
+    selectedItem: (Node, NodeStatus) -> Unit,
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -411,8 +403,8 @@ private fun PiNodeItem(
                         .size(20.dp)
                         .clip(CircleShape)
                         .background(
-                            if (item.label != null) {
-                                colorResource(item.label.color)
+                            if (item.status != null) {
+                                colorResource(item.status.color)
                             } else {
                                 Color.Black
                             }
@@ -448,7 +440,7 @@ private fun PiNodeItem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SplitButton( // TODO change!!
-    item: Node, selectedItem: (Node, NodeLabel) -> Unit
+    item: Node, selectedItem: (Node, NodeStatus) -> Unit
 ) {
     var checked by remember { mutableStateOf(false) }
     SplitButtonLayout(
@@ -457,7 +449,7 @@ private fun SplitButton( // TODO change!!
             SplitButtonDefaults.LeadingButton(
                 onClick = {
                     // 同期的に状態を更新
-                    selectedItem(item, NodeLabel.COMPLETED)
+                    selectedItem(item, NodeStatus.COMPLETED)
                 },
                 modifier = Modifier.height(40.dp)
             ) {
@@ -506,11 +498,11 @@ private fun SplitButton( // TODO change!!
                 Text(
                     "Working",
                     fontSize = 12.sp,
-                    color = colorResource(NodeLabel.WORKING.color)
+                    color = colorResource(NodeStatus.WORKING.color)
                 )
             },
             onClick = {
-                selectedItem(item, NodeLabel.WORKING)
+                selectedItem(item, NodeStatus.WORKING)
                 checked = false // メニューを閉じる
             },
             leadingIcon = {
@@ -526,11 +518,11 @@ private fun SplitButton( // TODO change!!
                 Text(
                     "Pause",
                     fontSize = 12.sp,
-                    color = colorResource(NodeLabel.PAUSE.color)
+                    color = colorResource(NodeStatus.PAUSE.color)
                 )
             },
             onClick = {
-                selectedItem(item, NodeLabel.PAUSE)
+                selectedItem(item, NodeStatus.PAUSE)
                 checked = false // メニューを閉じる
             },
             leadingIcon = {
@@ -546,11 +538,11 @@ private fun SplitButton( // TODO change!!
                 Text(
                     "Carry over",
                     fontSize = 12.sp,
-                    color = colorResource(NodeLabel.CARRYOVER.color)
+                    color = colorResource(NodeStatus.CARRYOVER.color)
                 )
             },
             onClick = {
-                selectedItem(item, NodeLabel.CARRYOVER)
+                selectedItem(item, NodeStatus.CARRYOVER)
                 checked = false // メニューを閉じる
             },
             leadingIcon = {
@@ -566,11 +558,11 @@ private fun SplitButton( // TODO change!!
                 Text(
                     "Fast",
                     fontSize = 12.sp,
-                    color = colorResource(NodeLabel.FAST.color)
+                    color = colorResource(NodeStatus.FAST.color)
                 )
             },
             onClick = {
-                selectedItem(item, NodeLabel.FAST)
+                selectedItem(item, NodeStatus.FAST)
                 checked = false // メニューを閉じる
             },
             leadingIcon = {
@@ -589,7 +581,7 @@ private fun SplitButton( // TODO change!!
 fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
     item : Node,
-    selectedItem: (Node, NodeLabel) -> Unit,
+    selectedItem: (Node, NodeStatus) -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -609,7 +601,7 @@ fun NodeDetailDialog(
 
 @Composable
 @ExperimentalMaterial3ExpressiveApi
-private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeLabel) -> Unit) {
+private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeStatus) -> Unit) {
     val options = listOf("Working", "Pause", "Carry Over", "Fast")
     val unCheckedIcons =
         listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
@@ -627,11 +619,11 @@ private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeLabel) -> Un
                 onCheckedChange = {
                     selectedIndex = index
                     selectedItem(item, when (index) {
-                        0 -> NodeLabel.WORKING
-                        1 -> NodeLabel.PAUSE
-                        2 -> NodeLabel.CARRYOVER
-                        3 -> NodeLabel.FAST
-                        else -> NodeLabel.DEFAULT })
+                        0 -> NodeStatus.WORKING
+                        1 -> NodeStatus.PAUSE
+                        2 -> NodeStatus.CARRYOVER
+                        3 -> NodeStatus.FAST
+                        else -> NodeStatus.DEFAULT })
                     },
                 modifier = Modifier
                     .weight(1f)

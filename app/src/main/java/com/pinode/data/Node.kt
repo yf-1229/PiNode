@@ -19,14 +19,14 @@ data class Node(
     val id: Int = 0,
     val title: String,
     val description: String,
-    val label: NodeLabel?,
+    val status: NodeStatus?,
     val deadline: LocalDateTime?,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
 
 
-enum class NodeLabel(val color: Int, val text: String) {
+enum class NodeStatus(val color: Int, val text: String) {
     PAUSE(R.color.YELLOW, "Pause"),
     WORKING(R.color.GREEN, "Working"),
     FAST(R.color.BLUE, "Fast"),

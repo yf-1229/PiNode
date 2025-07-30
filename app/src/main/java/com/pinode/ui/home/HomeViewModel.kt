@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
 import com.pinode.ui.item.toNodeDetails
@@ -63,15 +63,15 @@ class HomeViewModel(
         )
 
 
-    fun changeNode(id: Int, label: NodeLabel?) {
+    fun changeNode(id: Int, label: NodeStatus?) {
         viewModelScope.launch {
             try {
                 // 現在のノードを取得
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
-                if (currentNode != null && label == NodeLabel.COMPLETED) {
+                if (currentNode != null && label == NodeStatus.COMPLETED) {
                     val updatedNode = currentNode.copy(
-                        label = label,
+                        status = label,
                         isCompleted = true
                     )
                     // 更新を保存
@@ -79,7 +79,7 @@ class HomeViewModel(
 
                 } else if (currentNode != null) {
                     val updatedNode = currentNode.copy(
-                        label = label,
+                        status = label,
                         isCompleted = false,
                     )
                     // 更新を保存

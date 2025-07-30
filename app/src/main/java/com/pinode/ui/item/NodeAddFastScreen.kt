@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
@@ -120,7 +119,7 @@ fun NodeAddFastBody(
                 val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
                 onNodeValueChange(nodeUiState.nodeDetails.copy(
                     deadline = deadlineTime,
-                    label = NodeLabel.FAST
+                    label = NodeStatus.FAST
                 ))
             },
             onValueChange = onNodeValueChange,
