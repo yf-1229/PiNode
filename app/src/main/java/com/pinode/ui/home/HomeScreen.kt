@@ -602,7 +602,9 @@ fun NodeDetailDialog(
 @Composable
 @ExperimentalMaterial3ExpressiveApi
 private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeStatus) -> Unit) {
-    val options = listOf("Working", "Pause", "Carry Over", "Fast")
+    val options = listOf(
+        NodeStatus.WORKING, NodeStatus.PAUSE, NodeStatus.CARRYOVER, NodeStatus.FAST
+    )
     val unCheckedIcons =
         listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
     val checkedIcons =
@@ -618,12 +620,7 @@ private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeStatus) -> U
                 checked = selectedIndex == index,
                 onCheckedChange = {
                     selectedIndex = index
-                    selectedItem(item, when (index) {
-                        0 -> NodeStatus.WORKING
-                        1 -> NodeStatus.PAUSE
-                        2 -> NodeStatus.CARRYOVER
-                        3 -> NodeStatus.FAST
-                        else -> NodeStatus.DEFAULT })
+                    selectedItem(item, options[index])
                     },
                 modifier = Modifier
                     .weight(1f)
