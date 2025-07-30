@@ -330,13 +330,9 @@ private fun PiNodeList(
                     selectedNode = null
                 },
                 item = selectedNode!!, // null チェック済み
-                onItemTap = { node -> // TODO
-                    selectedNode = node
-                },
                 selectedItem = { node, label ->
                     selectedItem(node, label)
-                    showDialog = false
-                               },
+                },
             )
         }
     }
@@ -593,7 +589,6 @@ private fun SplitButton( // TODO change!!
 fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
     item : Node,
-    onItemTap: (Node) -> Unit,
     selectedItem: (Node, NodeLabel) -> Unit,
 ) {
     Dialog(
@@ -602,11 +597,11 @@ fun NodeDetailDialog(
         Column {
             PiNodeItem(
                 item = item,
-                onItemTap = onItemTap,
+                onItemTap = {},
                 selectedItem = selectedItem
             )
             Spacer(modifier = Modifier.height(8.dp))
-            DetailsButtonGroup()
+            DetailsButtonGroup(item, selectedItem)
         }
     }
 }
@@ -614,7 +609,7 @@ fun NodeDetailDialog(
 
 @Composable
 @ExperimentalMaterial3ExpressiveApi
-private fun DetailsButtonGroup() {
+private fun DetailsButtonGroup(item: Node, selectedItem: (Node, NodeLabel) -> Unit) {
     val options = listOf("Working", "Pause", "Carry Over", "Fast")
     val unCheckedIcons =
         listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
@@ -629,7 +624,15 @@ private fun DetailsButtonGroup() {
         options.forEachIndexed { index, label ->
             ToggleButton(
                 checked = selectedIndex == index,
-                onCheckedChange = { selectedIndex = index },
+                onCheckedChange = {
+                    selectedIndex = index
+                    selectedItem(item, when (index) {
+                        0 -> NodeLabel.WORKING
+                        1 -> NodeLabel.PAUSE
+                        2 -> NodeLabel.CARRYOVER
+                        3 -> NodeLabel.FAST
+                        else -> NodeLabel.DEFAULT })
+                    },
                 modifier = Modifier
                     .weight(1f)
                     .semantics { role = Role.RadioButton },
