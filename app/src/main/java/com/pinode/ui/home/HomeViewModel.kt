@@ -71,7 +71,11 @@ class HomeViewModel(
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
                 if (currentNode != null) {
-                    val updatedNode = currentNode.copy(label = label)
+                    val updatedNode = currentNode.copy(
+                        label = label,
+                        isCompleted = true
+                    )
+
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
                 } else {
@@ -89,15 +93,7 @@ class HomeViewModel(
                 // 現在のノードを取得
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
-                if (currentNode != null && status == NodeStatus.COMPLETED) {
-                    val updatedNode = currentNode.copy(
-                        status = status,
-                        isCompleted = true
-                    )
-                    // 更新を保存
-                    nodesRepository.updateNode(updatedNode)
-
-                } else if (currentNode != null) {
+                if (currentNode != null) {
                     val updatedNode = currentNode.copy(
                         status = status,
                         isCompleted = false,

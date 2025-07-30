@@ -34,7 +34,6 @@ enum class NodeStatus(val color: Int, val text: String) {
     CARRYOVER(R.color.PURPLE, "Carry Over"),
     DEFAULT(R.color.teal_700, "Default"),
     NOTTODO(R.color.WHITE, "Not to do"),
-    COMPLETED(R.color.GRAY, "Completed")
 }
 
 enum class NodeLabel(val emoji: String) {
