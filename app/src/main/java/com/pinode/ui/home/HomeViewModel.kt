@@ -71,18 +71,12 @@ class HomeViewModel(
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
                 if (currentNode != null) {
-                    val updatedNode = currentNode.copy(
-                        label = label,
-                        isCompleted = true
-                    )
+                    val updatedNode = currentNode.copy(label = label)
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
-
                 } else {
                     Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
                 }
-
-
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to update reactions", e)
             }
