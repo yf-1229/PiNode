@@ -69,7 +69,6 @@ fun WhatNotToDoScreen(
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -150,20 +149,19 @@ fun WhatNotToDoScreen(
             BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
-        var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
-            onItemTap = { nodeId ->
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
+            selectedLabel = { nodeId, label ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
-                    showDialog = true
                 }
+                viewModel.changeNodeLabel(nodeId, label)
             },
-            selectedItem = { nodeId, label ->
+            selectedStatus = { nodeId, status ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                 }
-                viewModel.changeNode(nodeId, label)
+                viewModel.changeNodeStatus(nodeId, status)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding

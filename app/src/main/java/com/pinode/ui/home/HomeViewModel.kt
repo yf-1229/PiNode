@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
+import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import com.pinode.ui.item.NodeDetails
@@ -63,15 +64,40 @@ class HomeViewModel(
         )
 
 
-    fun changeNode(id: Int, label: NodeStatus?) {
+    fun changeNodeLabel(id: Int, label: NodeLabel?) {
         viewModelScope.launch {
             try {
                 // 現在のノードを取得
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
-                if (currentNode != null && label == NodeStatus.COMPLETED) {
+                if (currentNode != null) {
                     val updatedNode = currentNode.copy(
-                        status = label,
+                        label = label,
+                        isCompleted = true
+                    )
+                    // 更新を保存
+                    nodesRepository.updateNode(updatedNode)
+
+                } else {
+                    Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
+                }
+
+
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to update reactions", e)
+            }
+        }
+    }
+
+    fun changeNodeStatus(id: Int, status: NodeStatus?) {
+        viewModelScope.launch {
+            try {
+                // 現在のノードを取得
+                val currentNode = nodesRepository.getNodeStream(id).first()
+
+                if (currentNode != null && status == NodeStatus.COMPLETED) {
+                    val updatedNode = currentNode.copy(
+                        status = status,
                         isCompleted = true
                     )
                     // 更新を保存
@@ -79,7 +105,7 @@ class HomeViewModel(
 
                 } else if (currentNode != null) {
                     val updatedNode = currentNode.copy(
-                        status = label,
+                        status = status,
                         isCompleted = false,
                     )
                     // 更新を保存
@@ -95,6 +121,7 @@ class HomeViewModel(
             }
         }
     }
+
     suspend fun deleteNode(item: Node) {
         nodesRepository.deleteNode(item)
     }

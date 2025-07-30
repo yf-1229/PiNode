@@ -1,9 +1,6 @@
 package com.pinode.ui.home
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,8 +18,8 @@ import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
-import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 
@@ -40,7 +37,6 @@ fun ScrapScreen(
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -57,20 +53,19 @@ fun ScrapScreen(
             BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
-        var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { it.isCompleted },
-            onItemTap = { nodeId ->
+            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
+            selectedLabel = { nodeId, label ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
-                    showDialog = true
                 }
+                viewModel.changeNodeLabel(nodeId, label)
             },
-            selectedItem = { nodeId, label ->
+            selectedStatus = { nodeId, status ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                 }
-                viewModel.changeNode(nodeId, label)
+                viewModel.changeNodeStatus(nodeId, status)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding

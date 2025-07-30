@@ -141,14 +141,14 @@ fun NodeAddBody(
             )
         }
 
-        val label = if (toDo) NodeStatus.DEFAULT else NodeStatus.NOTTODO
+        val status = if (toDo) NodeStatus.DEFAULT else NodeStatus.NOTTODO
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
             deadline = { selectedDeadline: LocalDateTime? ->
                 deadline = selectedDeadline
                 onNodeValueChange(nodeUiState.nodeDetails.copy(
-                    label = label,
+                    status = status,
                     deadline = selectedDeadline
                 ))
             },

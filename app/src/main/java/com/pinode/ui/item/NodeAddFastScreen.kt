@@ -119,7 +119,7 @@ fun NodeAddFastBody(
                 val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
                 onNodeValueChange(nodeUiState.nodeDetails.copy(
                     deadline = deadlineTime,
-                    label = NodeStatus.FAST
+                    status = NodeStatus.FAST
                 ))
             },
             onValueChange = onNodeValueChange,
