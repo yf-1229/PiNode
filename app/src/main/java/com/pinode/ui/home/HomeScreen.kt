@@ -357,14 +357,14 @@ private fun PiNodeItem(
     } ?: Duration.ZERO
 
     val remainingTime = if (deadline == null) {
-        "No Deadline" // 期限なし
-    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
+        "" // 期限なし
+    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)){
         duration.toMinutes()
     } else if (duration == Duration.ZERO) {
-        "JUST!!"
+        "0"
     } else if (deadline < LocalDateTime.now()) {
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        "-${formatter.format(item.deadline)}-"
+        "/${formatter.format(item.deadline)}/"
     } else {
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
         formatter.format(item.deadline)
