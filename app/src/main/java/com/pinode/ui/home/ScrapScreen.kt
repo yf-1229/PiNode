@@ -55,11 +55,14 @@ fun ScrapScreen(
     ) { innerPadding ->
         HomeBody(
             nodeList = homeUiState.nodeList.filter { it.isCompleted },
-            selectedLabel = { nodeId, label ->
+            completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                 }
-                viewModel.changeNodeLabel(nodeId, label)
+                viewModel.completeNode(nodeId)
+            },
+            editStatus = { nodeId ->
+                navigateToNodeEdit(nodeId)
             },
             selectedStatus = { nodeId, status ->
                 coroutineScope.launch {

@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -105,7 +106,6 @@ import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
@@ -228,11 +228,14 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeBody(
             nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
-            selectedLabel = { nodeId, label ->
+            completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                 }
-                viewModel.changeNodeLabel(nodeId, label)
+                viewModel.completeNode(nodeId)
+            },
+            editStatus = { nodeId ->
+                navigateToNodeEdit(nodeId)
             },
             selectedStatus = { nodeId, status ->
                 coroutineScope.launch {
@@ -249,7 +252,8 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     nodeList: List<Node>,
-    selectedLabel: (Int, NodeLabel) -> Unit,
+    completeItem: (Int) -> Unit,
+    editStatus: (Int) -> Unit,
     selectedStatus: (Int, NodeStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -269,7 +273,8 @@ fun HomeBody(
             Box {
                 PiNodeList(
                     nodeList = nodeList,
-                    selectedLabel = { node, label -> selectedLabel(node.id, label)},
+                    completeItem = { node -> completeItem(node.id)},
+                    editStatus = { node -> editStatus(node.id) },
                     selectedStatus = { node, status -> selectedStatus(node.id, status)},
                     contentPadding = contentPadding,
                     modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -283,7 +288,8 @@ fun HomeBody(
 @Composable
 private fun PiNodeList(
     nodeList: List<Node>,
-    selectedLabel: (Node, NodeLabel) -> Unit,
+    completeItem: (Node) -> Unit,
+    editStatus: (Node) -> Unit,
     selectedStatus: (Node, NodeStatus) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -307,7 +313,8 @@ private fun PiNodeList(
                             selectedNode = node
                             showDialog = true
                         },
-                        selectedLabel = { node, label -> selectedLabel(node, label) },
+                        completeItem = { node -> completeItem(node)},
+                        editStatus = { node -> editStatus(node) },
                         showDialog = showDialog
                     )
                 }
@@ -333,7 +340,8 @@ private fun PiNodeList(
 private fun PiNodeItem(
     item: Node,
     onItemTap: (Node) -> Unit,
-    selectedLabel: (Node, NodeLabel) -> Unit,
+    completeItem: (Node) -> Unit,
+    editStatus: (Node) -> Unit,
     showDialog: Boolean,
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
@@ -359,7 +367,7 @@ private fun PiNodeItem(
     val remainingTime = if (deadline == null) {
         "" // 期限なし
     } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)){
-        // last 1 hourd
+        // last 1 hour
         duration.toMinutes()
     } else if (duration == Duration.ZERO) {
         // out of deadline
@@ -427,7 +435,8 @@ private fun PiNodeItem(
                     .wrapContentSize()
                     .height(40.dp)
                 ) {
-                    if(!showDialog) { SplitButton(item = item, selectedLabel = selectedLabel) }
+                    if(!showDialog) {
+                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus) }
                 }
             }
             Text( // deadline
@@ -453,7 +462,7 @@ private fun PiNodeItem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SplitButton(
-    item: Node, selectedLabel: (Node, NodeLabel) -> Unit
+    item: Node, completeItem: (Node) -> Unit, editStatus: (Node) -> Unit
 ) {
     var checked by remember { mutableStateOf(false) }
     SplitButtonLayout(
@@ -462,7 +471,7 @@ private fun SplitButton(
             SplitButtonDefaults.LeadingButton(
                 onClick = {
                     // 同期的に状態を更新
-                    selectedLabel(item, NodeLabel.PARTYPOPPER)
+                    completeItem(item)
                 },
                 modifier = Modifier.height(40.dp)
             ) {
@@ -505,13 +514,15 @@ private fun SplitButton(
             }
         },
     )
-    DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
+    DropdownMenu(
+        expanded = checked,
+        onDismissRequest = { checked = false },
+        modifier = Modifier.clip(RoundedCornerShape(6.dp))
+    ) {
         DropdownMenuItem(
-            text = {
-                Text(NodeLabel.GOOD.emoji)
-            },
+            text = { Text("Edit")},
             onClick = {
-                selectedLabel(item, NodeLabel.GOOD)
+                editStatus(item)
                 checked = false // メニューを閉じる
             },
         )
@@ -532,7 +543,8 @@ fun NodeDetailDialog(
             PiNodeItem(
                 item = item,
                 onItemTap = {},
-                selectedLabel = { _, _ -> },
+                completeItem = {},
+                editStatus = {},
                 showDialog = true
             )
             Spacer(modifier = Modifier.height(8.dp))

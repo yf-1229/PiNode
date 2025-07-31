@@ -151,11 +151,14 @@ fun WhatNotToDoScreen(
     ) { innerPadding ->
         HomeBody(
             nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
-            selectedLabel = { nodeId, label ->
+            completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
                 }
-                viewModel.changeNodeLabel(nodeId, label)
+                viewModel.completeNode(nodeId)
+            },
+            editStatus = { nodeId ->
+                navigateToNodeEdit(nodeId)
             },
             selectedStatus = { nodeId, status ->
                 coroutineScope.launch {

@@ -21,7 +21,7 @@ data class Node(
     val description: String,
     val status: NodeStatus?,
     val deadline: LocalDateTime?,
-    val label: NodeLabel?,
+    val label: Boolean,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
@@ -36,14 +36,6 @@ enum class NodeStatus(val color: Int, val text: String) {
     NOTTODO(R.color.WHITE, "Not to do"),
 }
 
-enum class NodeLabel(val emoji: String) {
-    GOOD("\uD83D\uDC4D"),
-    BAD("👎"),
-    SMILE("😊"),
-    LOVE("❤️"),
-    ROCKET("🚀"),
-    PARTYPOPPER("\uD83C\uDF89")
-}
 
 
 @Dao

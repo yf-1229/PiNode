@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import java.time.LocalDateTime
@@ -48,7 +47,7 @@ data class NodeDetails(
     val description: String = "",
     val status: NodeStatus? = NodeStatus.DEFAULT,
     val deadline: LocalDateTime? = null,
-    val label: NodeLabel? = null,
+    val label: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
