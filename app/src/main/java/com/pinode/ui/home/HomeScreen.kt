@@ -496,21 +496,11 @@ private fun SplitButton(
     DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
         DropdownMenuItem(
             text = {
-                Text(
-                    "Working",
-                    fontSize = 12.sp,
-                )
+                Text(NodeLabel.GOOD.emoji)
             },
             onClick = {
                 selectedLabel(item, NodeLabel.GOOD)
                 checked = false // メニューを閉じる
-            },
-            leadingIcon = {
-                Icon(
-                    Icons.Outlined.ArrowUpward,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
             },
         )
     }
