@@ -359,13 +359,25 @@ private fun PiNodeItem(
     val remainingTime = if (deadline == null) {
         "" // 期限なし
     } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)){
+        // last 1 hourd
         duration.toMinutes()
     } else if (duration == Duration.ZERO) {
+        // out of deadline
         "0"
     } else if (deadline < LocalDateTime.now()) {
-        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        "/${formatter.format(item.deadline)}/"
+        // out of deadline
+        val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+        "-${formatter.format(item.deadline)}-"
+    } else if (deadline.year > LocalDateTime.now().year) {
+        // others year
+        val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+        formatter.format(item.deadline)
+    } else if (deadline.month == LocalDateTime.now().month && deadline.dayOfMonth == LocalDateTime.now().dayOfMonth) {
+        // today
+        val formatter = DateTimeFormatter.ofPattern("H:mm")
+        formatter.format(item.deadline)
     } else {
+        // this year
         val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
         formatter.format(item.deadline)
     }
