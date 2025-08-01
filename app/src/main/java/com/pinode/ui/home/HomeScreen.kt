@@ -330,6 +330,10 @@ private fun PiNodeList(
                 },
                 item = selectedNode!!, // null safety
                 selectedStatus = { node, status -> selectedStatus(node, status) },
+                editStatus = {
+                    node -> editStatus(node)
+                    showDialog = false
+                }
             )
         }
     }
@@ -343,6 +347,7 @@ private fun PiNodeItem(
     completeItem: (Node) -> Unit,
     editStatus: (Node) -> Unit,
     showDialog: Boolean,
+    modifier: Modifier = Modifier
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
@@ -432,8 +437,8 @@ private fun PiNodeItem(
                 // SplitButton
                 Box(
                     modifier = Modifier
-                    .wrapContentSize()
-                    .height(40.dp)
+                        .wrapContentSize()
+                        .height(40.dp)
                 ) {
                     if(!showDialog) {
                         SplitButton(item = item, completeItem = completeItem, editStatus = editStatus) }
@@ -535,6 +540,7 @@ fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
     item : Node,
     selectedStatus: (Node, NodeStatus) -> Unit,
+    editStatus: (Node) -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -542,10 +548,10 @@ fun NodeDetailDialog(
         Column {
             PiNodeItem(
                 item = item,
-                onItemTap = {},
+                onItemTap = { node -> editStatus(node) },
                 completeItem = {},
                 editStatus = {},
-                showDialog = true
+                showDialog = true,
             )
             Spacer(modifier = Modifier.height(8.dp))
             DetailsButtonGroup(item, selectedStatus)
