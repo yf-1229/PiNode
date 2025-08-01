@@ -128,7 +128,7 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     navigateToNodeAddFast: () -> Unit,
     navigateToNodeAdd: (Boolean) -> Unit,
-    navigateToNodeEdit: (Int) -> Unit,
+    navigateToNodeEdit: (Int) -> Unit, // ← ここで編集画面への遷移関数を受け取る
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
@@ -235,6 +235,7 @@ fun HomeScreen(
                 viewModel.completeNode(nodeId)
             },
             editStatus = { nodeId ->
+                // 編集ボタン押下時にNodeEditScreenへ遷移
                 navigateToNodeEdit(nodeId)
             },
             selectedStatus = { nodeId, status ->
@@ -341,7 +342,7 @@ private fun PiNodeList(
 
 
 @Composable
-private fun PiNodeItem(
+fun PiNodeItem(
     item: Node,
     onItemTap: (Node) -> Unit,
     completeItem: (Node) -> Unit,
@@ -536,7 +537,7 @@ private fun SplitButton(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NodeDetailDialog(
+private fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
     item : Node,
     selectedStatus: (Node, NodeStatus) -> Unit,

@@ -38,7 +38,7 @@ class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewMode
 
 data class NodeUiState(
     val nodeDetails: NodeDetails = NodeDetails(),
-    val isEntryValid: Boolean = false
+    val isEntryValid: Boolean = false,
 )
 
 data class NodeDetails(
