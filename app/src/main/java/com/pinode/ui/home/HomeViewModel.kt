@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
-import com.pinode.ui.item.NodeDetails
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first

@@ -18,11 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -30,7 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.ScrapDestination
 import com.pinode.ui.home.WhatNotToDoDestination
-import com.pinode.ui.home.WhatNotToDoScreen
 import com.pinode.ui.navigation.PiNodeNavHost
 
 
