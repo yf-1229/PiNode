@@ -3,6 +3,7 @@ package com.pinode.ui.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -77,7 +78,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -97,6 +100,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -116,27 +120,25 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
 object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.today_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
     navigateToNodeAddFast: () -> Unit,
     navigateToNodeAdd: (Boolean) -> Unit,
-    navigateToNodeEdit: (Int) -> Unit, // ← ここで編集画面への遷移関数を受け取る
+    navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -147,13 +149,14 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            val listState = rememberLazyListState()
             val items = listOf(
                 Icons.Default.Bolt to "Fast Add",
                 Icons.Default.Add to "Add"
             )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
+            var checkedProgress by remember { mutableStateOf(0f) }
+
             BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
             FloatingActionButtonMenu(
                 expanded = fabMenuExpanded,
@@ -170,13 +173,12 @@ fun HomeScreen(
                                 alignment = Alignment.BottomEnd
                             ),
                         checked = fabMenuExpanded,
-                        onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }
-                    ) {
-                        val imageVector by remember {
-                            derivedStateOf {
-                                if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
-                            }
+                        onCheckedChange = {
+                            fabMenuExpanded = !fabMenuExpanded
+                            checkedProgress = if (fabMenuExpanded) 1f else 0f
                         }
+                    ) {
+                        val imageVector = if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
                         Icon(
                             painter = rememberVectorPainter(imageVector),
                             contentDescription = null,
@@ -188,6 +190,7 @@ fun HomeScreen(
                 items.forEachIndexed { i, item ->
                     FloatingActionButtonMenuItem(
                         onClick = {
+                            fabMenuExpanded = false
                             if (i == 0) {
                                 navigateToNodeAddFast()
                             } else if (i == 1) {
@@ -218,16 +221,15 @@ fun HomeScreen(
                                         )
                                 }
                             }
-                        )
+                    )
                 }
             }
         },
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        }
+        bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
+            incompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
+            completedNodeList = homeUiState.nodeList.filter { it.isCompleted },
             completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -235,7 +237,6 @@ fun HomeScreen(
                 viewModel.completeNode(nodeId)
             },
             editStatus = { nodeId ->
-                // 編集ボタン押下時にNodeEditScreenへ遷移
                 navigateToNodeEdit(nodeId)
             },
             selectedStatus = { nodeId, status ->
@@ -252,43 +253,40 @@ fun HomeScreen(
 
 @Composable
 fun HomeBody(
-    nodeList: List<Node>,
+    incompleteNodeList: List<Node>,
+    completedNodeList: List<Node>,
     completeItem: (Int) -> Unit,
     editStatus: (Int) -> Unit,
     selectedStatus: (Int, NodeStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        modifier = modifier,
-    ) {
-        if (nodeList.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_node_description),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(contentPadding),
-            )
-        } else {
-            Box {
-                PiNodeList(
-                    nodeList = nodeList,
-                    completeItem = { node -> completeItem(node.id)},
-                    editStatus = { node -> editStatus(node.id) },
-                    selectedStatus = { node, status -> selectedStatus(node.id, status)},
-                    contentPadding = contentPadding,
-                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
-                )
-            }
-        }
+    if (incompleteNodeList.isEmpty() && completedNodeList.isEmpty()) {
+        Text(
+            text = stringResource(R.string.no_node_description),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        )
+    } else {
+        PiNodeList(
+            incompleteNodeList = incompleteNodeList,
+            completedNodeList = completedNodeList,
+            completeItem = { node -> completeItem(node.id) },
+            editStatus = { node -> editStatus(node.id) },
+            selectedStatus = { node, status -> selectedStatus(node.id, status) },
+            contentPadding = contentPadding,
+            modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+        )
     }
 }
 
-
 @Composable
 private fun PiNodeList(
-    nodeList: List<Node>,
+    incompleteNodeList: List<Node>,
+    completedNodeList: List<Node>,
     completeItem: (Node) -> Unit,
     editStatus: (Node) -> Unit,
     selectedStatus: (Node, NodeStatus) -> Unit,
@@ -303,10 +301,50 @@ private fun PiNodeList(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            if (nodeList.isNotEmpty()) {
+            // 未完了タスクを表示
+            items(
+                items = incompleteNodeList,
+                key = { node -> "incomplete_${node.id}" }
+            ) { item ->
+                PiNodeItem(
+                    item = item,
+                    onItemTap = { node ->
+                        selectedNode = node
+                        showDialog = true
+                    },
+                    completeItem = { node -> completeItem(node) },
+                    editStatus = { node -> editStatus(node) },
+                    showDialog = false // Only the dialog content PiNodeItem gets showDialog=true
+                )
+            }
+
+            // 完了済みタスクがある場合のみ破線と完了済みタスクを表示
+            if (completedNodeList.isNotEmpty()) {
+                // 破線区切り
+                item(key = "divider") {
+                    Column {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 5f), 0f)
+                            drawLine(
+                                color = Color.Gray,
+                                start = Offset(0f, size.height / 2),
+                                end = Offset(size.width, size.height / 2),
+                                pathEffect = pathEffect,
+                                strokeWidth = 2.dp.toPx()
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
                 items(
-                    items = nodeList,
-                    key = { node -> node.id }  // keyを明示的に設定
+                    items = completedNodeList,
+                    key = { node -> "completed_${node.id}" }
                 ) { item ->
                     PiNodeItem(
                         item = item,
@@ -314,32 +352,25 @@ private fun PiNodeList(
                             selectedNode = node
                             showDialog = true
                         },
-                        completeItem = { node -> completeItem(node)},
+                        completeItem = { node -> completeItem(node) },
                         editStatus = { node -> editStatus(node) },
-                        showDialog = showDialog
+                        showDialog = false
                     )
                 }
             }
         }
 
-        // null safety
+        // ダイアログ表示
         if (showDialog && selectedNode != null) {
             NodeDetailDialog(
-                onDismissRequest = {
-                    showDialog = false
-                    selectedNode = null
-                },
-                item = selectedNode!!, // null safety
-                selectedStatus = { node, status -> selectedStatus(node, status) },
-                editStatus = {
-                    node -> editStatus(node)
-                    showDialog = false
-                }
+                onDismissRequest = { showDialog = false },
+                item = selectedNode!!,
+                selectedStatus = selectedStatus,
+                editStatus = editStatus
             )
         }
     }
 }
-
 
 @Composable
 fun PiNodeItem(
@@ -355,7 +386,7 @@ fun PiNodeItem(
 
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
-        while(true) {
+        while (true) {
             delay(100)
             currentTime = DateTimeCtrl().getNow()
         }
@@ -372,9 +403,9 @@ fun PiNodeItem(
 
     val remainingTime = if (deadline == null) {
         "" // 期限なし
-    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)){
+    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)) {
         // last 1 hour
-        duration.toMinutes()
+        duration.toMinutes().toString()
     } else if (duration == Duration.ZERO) {
         // out of deadline
         "0"
@@ -411,9 +442,10 @@ fun PiNodeItem(
                 onItemTap(item)
             }
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(6.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(6.dp)
         ) {
             // ここでRowを使って左右に分ける
             Row(
@@ -441,8 +473,9 @@ fun PiNodeItem(
                         .wrapContentSize()
                         .height(40.dp)
                 ) {
-                    if(!showDialog) {
-                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus) }
+                    if (!showDialog) {
+                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus)
+                    }
                 }
             }
             Text( // deadline
@@ -460,7 +493,7 @@ fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
-                // TODO Sub Todo List
+            // TODO Sub Todo List
         }
     }
 }
@@ -526,7 +559,7 @@ private fun SplitButton(
         modifier = Modifier.clip(RoundedCornerShape(6.dp))
     ) {
         DropdownMenuItem(
-            text = { Text("Edit")},
+            text = { Text("Edit") },
             onClick = {
                 editStatus(item)
                 checked = false // メニューを閉じる
@@ -537,9 +570,9 @@ private fun SplitButton(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun NodeDetailDialog(
+fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
-    item : Node,
+    item: Node,
     selectedStatus: (Node, NodeStatus) -> Unit,
     editStatus: (Node) -> Unit,
 ) {
@@ -560,9 +593,8 @@ private fun NodeDetailDialog(
     }
 }
 
-
 @Composable
-@ExperimentalMaterial3ExpressiveApi
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
     val options = listOf(
         NodeStatus.WORKING, NodeStatus.PAUSE, NodeStatus.CARRYOVER, NodeStatus.FAST
@@ -570,7 +602,7 @@ private fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) ->
     val unCheckedIcons =
         listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
     val checkedIcons =
-        listOf(Icons.Default.ArrowUpward, Icons.Default.Pause, Icons.Default.CalendarMonth, Icons.Default.Bolt)
+        listOf(Icons.Filled.ArrowUpward, Icons.Filled.Pause, Icons.Filled.CalendarMonth, Icons.Filled.Bolt)
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     Row(
@@ -583,7 +615,7 @@ private fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) ->
                 onCheckedChange = {
                     selectedIndex = index
                     selectedStatus(item, options[index])
-                    },
+                },
                 modifier = Modifier
                     .weight(1f)
                     .semantics { role = Role.RadioButton },
@@ -607,7 +639,8 @@ private fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) ->
 private fun DeleteConfirmationDialog(
     onDeleteConfirm: () -> Unit, onDeleteCancel: () -> Unit, modifier: Modifier = Modifier
 ) {
-    AlertDialog(onDismissRequest = { /* Do nothing */ },
+    AlertDialog(
+        onDismissRequest = { /* Do nothing */ },
         title = { Text(stringResource(R.string.attention)) },
         text = { Text(stringResource(R.string.delete_question)) },
         modifier = modifier,
@@ -621,5 +654,61 @@ private fun DeleteConfirmationDialog(
                 Text(text = stringResource(R.string.yes))
             }
         }
+    )
+}
+
+@Preview
+@Composable
+fun HomeBodyPreview() {
+    HomeBody(
+        incompleteNodeList = listOf(
+            Node(
+                id = 1,
+                title = "test1",
+                description = "",
+                status = NodeStatus.DEFAULT,
+                deadline = null,
+                label = true,
+                isCompleted = false,
+                isDeleted = false
+            ),
+            Node(
+                id = 2,
+                title = "test2",
+                description = "",
+                status = NodeStatus.DEFAULT,
+                deadline = null,
+                label = true,
+                isCompleted = false,
+                isDeleted = false
+            ),
+        ),
+        completedNodeList = listOf(
+            Node(
+                id = 3,
+                title = "test3",
+                description = "",
+                status = NodeStatus.DEFAULT,
+                deadline = null,
+                label = true,
+                isCompleted = false,
+                isDeleted = false
+            ),
+            Node(
+                id = 4,
+                title = "test4",
+                description = "",
+                status = NodeStatus.DEFAULT,
+                deadline = null,
+                label = true,
+                isCompleted = false,
+                isDeleted = false
+            ),
+        ),
+        completeItem = {},
+        editStatus = TODO(),
+        selectedStatus = TODO(),
+        modifier = TODO(),
+        contentPadding = TODO()
     )
 }

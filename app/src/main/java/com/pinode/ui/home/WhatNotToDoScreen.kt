@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import com.pinode.BottomNavigationBar
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
@@ -73,6 +74,11 @@ fun WhatNotToDoScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
 
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedNode by remember { mutableStateOf<Node?>(null) }
+    val listState = rememberLazyListState()
+    var checkedProgress by remember { mutableStateOf(0f) }
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -82,9 +88,7 @@ fun WhatNotToDoScreen(
             )
         },
         floatingActionButton = {
-            val listState = rememberLazyListState()
-            val item =
-                Icons.Default.Add to "Add"
+            val item = Icons.Default.Add to "Add"
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
             BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
@@ -103,13 +107,12 @@ fun WhatNotToDoScreen(
                                 alignment = Alignment.BottomEnd
                             ),
                         checked = fabMenuExpanded,
-                        onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }
-                    ) {
-                        val imageVector by remember {
-                            derivedStateOf {
-                                if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
-                            }
+                        onCheckedChange = {
+                            fabMenuExpanded = !fabMenuExpanded
+                            checkedProgress = if (fabMenuExpanded) 1f else 0f
                         }
+                    ) {
+                        val imageVector = if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
                         Icon(
                             painter = rememberVectorPainter(imageVector),
                             contentDescription = null,
@@ -119,7 +122,10 @@ fun WhatNotToDoScreen(
                 },
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { navigateToNodeAdd(false) },
+                    onClick = {
+                        fabMenuExpanded = false
+                        navigateToNodeAdd(false)
+                    },
                     containerColor = MaterialTheme.colorScheme.primary,
                     icon = { Icon(item.first, contentDescription = null) },
                     text = { Text(text = item.second) },
@@ -150,24 +156,33 @@ fun WhatNotToDoScreen(
         }
     ) { innerPadding ->
         HomeBody(
-            nodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
+            incompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
+            completedNodeList = homeUiState.nodeList.filter { it.isCompleted && it.status == NodeStatus.NOTTODO },
             completeItem = { nodeId ->
                 coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId)
+                    viewModel.completeNode(nodeId)
                 }
-                viewModel.completeNode(nodeId)
             },
-            editStatus = { nodeId ->
-                navigateToNodeEdit(nodeId)
-            },
-            selectedStatus = { nodeId, status ->
-                coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId)
-                }
-                viewModel.changeNodeStatus(nodeId, status)
-            },
+            editStatus = { nodeId -> navigateToNodeEdit(nodeId) },
+            selectedStatus = { nodeId, status -> coroutineScope.launch { viewModel.changeNodeStatus(nodeId, status) } },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
+
+        if (showDialog && selectedNode != null) {
+            NodeDetailDialog(
+                onDismissRequest = {
+                    showDialog = false
+                    selectedNode = null
+                },
+                item = selectedNode!!,
+                selectedStatus = { node, status ->
+                    coroutineScope.launch {
+                        viewModel.changeNodeStatus(node.id, status)
+                    }
+                },
+                editStatus = { node -> navigateToNodeEdit(node.id) },
+            )
+        }
     }
 }
