@@ -1,9 +1,19 @@
 package com.pinode.ui.item
 
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pinode.PiNodeTopAppBar
 import com.pinode.R
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
@@ -17,6 +27,7 @@ object NodeEditDestination : NavigationDestination {
     val routeWithArgs = "$route/{$nodeIdArg}"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NodeEditScreen(
     navigateBack: () -> Unit,
@@ -27,18 +38,33 @@ fun NodeEditScreen(
     val nodeUiState = viewModel.nodeUiState
     val coroutineScope = rememberCoroutineScope()
 
-    // NodeAddScreenのUIを流用して編集画面を構成
-    NodeAddBody(
-        nodeUiState = nodeUiState,
-        onNodeValueChange = viewModel::updateUiState,
-        onSaveClick = {
-            coroutineScope.launch {
-                viewModel.updateNode()
-                navigateBack()
-            }
-        },
-        toDo = true, // TODO ?
-        modifier = Modifier
-    )
+    Scaffold(
+        topBar = {
+            PiNodeTopAppBar(
+                canNavigateBack = true,
+                navigateUp = onNavigateUp
+            )
+        }
+    ) { innerPadding ->
+        NodeAddBody(
+            nodeUiState = viewModel.nodeUiState,
+            onNodeValueChange = viewModel::updateUiState,
+            onSaveClick = {
+                coroutineScope.launch {
+                    viewModel.updateNode()
+                    navigateBack()
+                }
+            },
+            toDo = true, // TODO add toDo to data class - Node -
+            modifier = Modifier
+                .padding(
+                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                    top = innerPadding.calculateTopPadding(),
+                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                )
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+        )
+    }
 }
 
