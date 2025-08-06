@@ -46,23 +46,26 @@ fun ScrapScreen(
             BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = "Scrap Screen has been integrated into Home Screen",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 24.dp)
-            )
-            Text(
-                text = "Please use the 'Show Completed' button on the Home screen to view completed tasks.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
+        HomeBody(
+            incompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
+            completedNodeList = homeUiState.nodeList.filter { it.isCompleted },
+            completeItem = { nodeId ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.completeNode(nodeId)
+            },
+            editStatus = { nodeId ->
+                navigateToNodeEdit(nodeId)
+            },
+            selectedStatus = { nodeId, status ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.changeNodeStatus(nodeId, status)
+            },
+            modifier = modifier.fillMaxSize(),
+            contentPadding = innerPadding
             )
         }
     }
