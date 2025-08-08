@@ -22,5 +22,5 @@
     <string name="complete">Complete</string>
     <string name="today_title">Home</string>
     <string name="three_title">Three</string>
-    <string name="scrap_title">Scrap</string>
+    <string name="from_tomorrow_title">Future</string>
 </resources>

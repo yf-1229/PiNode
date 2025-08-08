@@ -12,10 +12,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.pinode.ui.home.FromTomorrowDestination
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
-import com.pinode.ui.home.ScrapDestination
-import com.pinode.ui.home.ScrapScreen
+import com.pinode.ui.home.FromTomorrowScreen
 import com.pinode.ui.home.WhatNotToDoDestination
 import com.pinode.ui.home.WhatNotToDoScreen
 import com.pinode.ui.item.NodeAddDestination
@@ -68,11 +68,11 @@ fun PiNodeNavHost(
             }
 
             composable(
-                "homeScreen/${ScrapDestination.route}",
+                "homeScreen/${FromTomorrowDestination.route}",
                 enterTransition = { fadeIn(animationSpec = tween(200)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) }
             ) {
-                ScrapScreen(
+                FromTomorrowScreen(
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController
                 )
