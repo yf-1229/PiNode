@@ -24,8 +24,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.pinode.ui.home.FromTomorrowDestination
 import com.pinode.ui.home.HomeDestination
-import com.pinode.ui.home.ScrapDestination
 import com.pinode.ui.home.WhatNotToDoDestination
 import com.pinode.ui.navigation.PiNodeNavHost
 
@@ -67,7 +67,7 @@ fun BottomNavigationBar(navController: NavController) {
     val navigationItems = remember {
         listOf(
             Triple("Home", "homeScreen/${HomeDestination.route}", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
-            Triple("Scrap", "homeScreen/${ScrapDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star)),
+            Triple("From Tomorrow", "homeScreen/${FromTomorrowDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star)),
             Triple("NotToDo", "homeScreen/${WhatNotToDoDestination.route}", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
         )
     }

@@ -117,6 +117,7 @@ import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -228,8 +229,16 @@ fun HomeScreen(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
         HomeBody(
-            incompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status != NodeStatus.NOTTODO },
-            completedNodeList = homeUiState.nodeList.filter { it.isCompleted },
+            incompleteNodeList = homeUiState.nodeList.filter {
+                it.deadline?.toLocalDate()?.let { deadline ->
+                    deadline <= LocalDate.now()
+                } == true && !it.isCompleted && it.status != NodeStatus.NOTTODO
+            },
+            completedNodeList = homeUiState.nodeList.filter {
+                it.deadline?.toLocalDate()?.let { deadline ->
+                    deadline <= LocalDate.now()
+                } == true && it.isCompleted
+            },
             completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
