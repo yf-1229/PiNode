@@ -31,11 +31,18 @@ data class Node(
 )
 
 
-enum class NodeStatus(var color: Int){ // Node's color
-    RED(R.color.RED),
-    YELLOW(R.color.YELLOW),
-    GREEN(R.color.GREEN),
-    GRAY(R.color.GRAY)
+enum class NodeStatus(var color: Int, val priority: Int){ // Node's color and priority for sorting
+    EMERGENCY(R.color.RED, 1),
+    FAST(R.color.YELLOW, 2),
+    WORKING(R.color.GREEN, 3),
+    PAUSE(R.color.YELLOW, 4),
+    DEFAULT(R.color.GREEN, 5),
+    CARRYOVER(R.color.GRAY, 6),
+    // Keep legacy statuses for backward compatibility
+    RED(R.color.RED, 1),
+    YELLOW(R.color.YELLOW, 2),
+    GREEN(R.color.GREEN, 5),
+    GRAY(R.color.GRAY, 6)
 }
 
 enum class NodeLabel(var color: Int) {
