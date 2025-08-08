@@ -45,7 +45,7 @@ data class NodeDetails(
     val id: Int = 0,
     val title: String = "",
     val description: String = "",
-    val status: NodeStatus? = NodeStatus.DEFAULT,
+    val status: NodeStatus = NodeStatus.DEFAULT,
     val deadline: LocalDateTime? = null,
     val label: Boolean = false,
     val isCompleted: Boolean = false,

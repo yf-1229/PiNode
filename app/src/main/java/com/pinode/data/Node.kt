@@ -20,7 +20,7 @@ data class Node(
     val id: Int = 0,
     val title: String,
     val description: String,
-    val status: NodeStatus?,
+    val status: NodeStatus,
     val deadline: LocalDateTime?,
     val label: Boolean,
     var isCompleted: Boolean,
@@ -28,13 +28,13 @@ data class Node(
 )
 
 
-enum class NodeStatus(val color: Int, val text: String) {
-    PAUSE(R.color.YELLOW, "Pause"),
-    WORKING(R.color.GREEN, "Working"),
-    FAST(R.color.BLUE, "Fast"),
-    CARRYOVER(R.color.PURPLE, "Carry Over"),
-    DEFAULT(R.color.teal_700, "Default"),
-    NOTTODO(R.color.WHITE, "Not to do"),
+enum class NodeStatus(val color: Int, val text: String, val priority: Int) {
+    PAUSE(R.color.YELLOW, "Pause", 3),
+    WORKING(R.color.GREEN, "Working", 2),
+    FAST(R.color.BLUE, "Fast", 1),
+    CARRYOVER(R.color.PURPLE, "Carry Over", 5),
+    DEFAULT(R.color.teal_700, "Default", 4),
+    NOTTODO(R.color.WHITE, "Not to do", 6),
 }
 
 

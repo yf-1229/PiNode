@@ -61,7 +61,7 @@ class HomeViewModel(
         }
     }
 
-    fun changeNodeStatus(id: Int, status: NodeStatus?) {
+    fun changeNodeStatus(id: Int, status: NodeStatus) {
         viewModelScope.launch {
             try {
                 // 現在のノードを取得
