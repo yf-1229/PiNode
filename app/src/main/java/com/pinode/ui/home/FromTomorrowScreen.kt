@@ -20,7 +20,6 @@ import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 object FromTomorrowDestination : NavigationDestination {
     override val route = "fromTomorrow"

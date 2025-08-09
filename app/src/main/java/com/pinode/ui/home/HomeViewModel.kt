@@ -23,7 +23,6 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val nodeIdKey = "node_id"
-    private val nodeId = savedStateHandle.getStateFlow<Int?>(nodeIdKey, null) // null が初期値
 
     // nodeIdを更新するメソッド
     fun updateNodeId(id: Int) {
