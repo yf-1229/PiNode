@@ -35,6 +35,7 @@ enum class NodeStatus(val color: Int, val text: String, val priority: Int) {
     CARRYOVER(R.color.PURPLE, "Carry Over", 5),
     DEFAULT(R.color.teal_700, "Default", 4),
     NOTTODO(R.color.WHITE, "Not to do", 6),
+    COMPLETED(R.color.GRAY, "Completed", 7)
 }
 
 

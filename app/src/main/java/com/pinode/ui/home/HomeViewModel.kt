@@ -48,7 +48,7 @@ class HomeViewModel(
                 val currentNode = nodesRepository.getNodeStream(id).first()
 
                 if (currentNode != null) {
-                    val updatedNode = currentNode.copy(isCompleted = true)
+                    val updatedNode = currentNode.copy(status = NodeStatus.COMPLETED, isCompleted = true)
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
 
