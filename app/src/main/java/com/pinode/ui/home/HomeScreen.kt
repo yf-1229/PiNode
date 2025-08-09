@@ -1,5 +1,9 @@
 package com.pinode.ui.home
 
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -93,6 +97,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -312,6 +317,9 @@ private fun PiNodeList(
         var showDialog by remember { mutableStateOf(false) }
         var selectedNode by remember { mutableStateOf<Node?>(null) }
 
+        val context = LocalContext.current
+        val vibrator = context.getSystemService(Vibrator::class.java)
+
         LazyColumn(
             modifier = modifier,
             contentPadding = contentPadding
@@ -368,7 +376,11 @@ private fun PiNodeList(
                             selectedNode = node
                             showDialog = true
                         },
-                        completeItem = { node -> completeItem(node) },
+                        completeItem = {
+                            node -> completeItem(node)
+                            vibrator.vibrate(
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            ) },
                         editStatus = { node -> editStatus(node) },
                         showDialog = false
                     )
@@ -690,6 +702,9 @@ fun NodeDetailDialog(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
+    val context = LocalContext.current
+    val vibrator = context.getSystemService(Vibrator::class.java)
+
     val options = listOf(
         NodeStatus.WORKING, NodeStatus.PAUSE, NodeStatus.CARRYOVER, NodeStatus.FAST
     )
@@ -709,6 +724,9 @@ fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
                 onCheckedChange = {
                     selectedIndex = index
                     selectedStatus(item, options[index])
+                    vibrator.vibrate(
+                        VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                    )
                 },
                 modifier = Modifier
                     .weight(1f)
