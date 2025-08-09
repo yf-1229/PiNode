@@ -549,11 +549,7 @@ fun PiNodeItem(
                         .size(20.dp)
                         .clip(CircleShape)
                         .background(
-                            if (item.status != null) {
-                                colorResource(item.status.color)
-                            } else {
-                                Color.Black
-                            }
+                            colorResource(item.status.color)
                         )
                 )
                 // SplitButton
