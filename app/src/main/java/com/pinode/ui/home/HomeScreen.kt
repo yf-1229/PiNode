@@ -1,9 +1,18 @@
 package com.pinode.ui.home
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -288,6 +297,7 @@ fun HomeBody(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PiNodeList(
     incompleteNodeList: List<Node>,
@@ -311,21 +321,61 @@ private fun PiNodeList(
                 items = incompleteNodeList,
                 key = { node -> "incomplete_${node.id}" }
             ) { item ->
-                PiNodeItem(
-                    item = item,
-                    onItemTap = { node ->
-                        selectedNode = node
-                        showDialog = true
-                    },
-                    completeItem = { node -> completeItem(node) },
-                    editStatus = { node -> editStatus(node) },
-                    showDialog = false // Only the dialog content PiNodeItem gets showDialog=true
-                )
+                AnimatedVisibility(
+                    visible = true,
+                    enter = slideInVertically(
+                        initialOffsetY = { it },
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ) + fadeIn(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ),
+                    exit = slideOutVertically(
+                        targetOffsetY = { -it },
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ) + fadeOut(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ),
+                    modifier = Modifier.animateItem(
+                        fadeInSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        fadeOutSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        placementSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+                ) {
+                    PiNodeItem(
+                        item = item,
+                        onItemTap = { node ->
+                            selectedNode = node
+                            showDialog = true
+                        },
+                        completeItem = { node -> completeItem(node) },
+                        editStatus = { node -> editStatus(node) },
+                        showDialog = false
+                    )
+                }
             }
 
-            // 完了済みタスクがある場合のみ破線と完了済みタスクを表示
             if (completedNodeList.isNotEmpty()) {
-                // 破線区切り
                 item(key = "divider") {
                     Column {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -351,21 +401,38 @@ private fun PiNodeList(
                     items = completedNodeList,
                     key = { node -> "completed_${node.id}" }
                 ) { item ->
-                    PiNodeItem(
-                        item = item,
-                        onItemTap = { node ->
-                            selectedNode = node
-                            showDialog = true
-                        },
-                        completeItem = { node -> completeItem(node) },
-                        editStatus = { node -> editStatus(node) },
-                        showDialog = false
-                    )
+                    AnimatedVisibility(
+                        visible = true,
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            fadeOutSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            placementSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            )
+                        )
+                    ) {
+                        PiNodeItem(
+                            item = item,
+                            onItemTap = { node ->
+                                selectedNode = node
+                                showDialog = true
+                            },
+                            completeItem = { node -> completeItem(node) },
+                            editStatus = { node -> editStatus(node) },
+                            showDialog = false
+                        )
+                    }
                 }
             }
         }
 
-        // ダイアログ表示
         if (showDialog && selectedNode != null) {
             NodeDetailDialog(
                 onDismissRequest = { showDialog = false },
@@ -406,30 +473,38 @@ fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-    val remainingTime = if (deadline == null) {
-        "" // 期限なし
-    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(1)) {
-        // last 1 hour
-        duration.toMinutes().toString()
-    } else if (duration == Duration.ZERO) {
-        // out of deadline
-        "0"
-    } else if (deadline < LocalDateTime.now()) {
-        // out of deadline
-        val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
-        "-${formatter.format(item.deadline)}-"
-    } else if (deadline.year > LocalDateTime.now().year) {
-        // others year
-        val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
-        formatter.format(item.deadline)
-    } else if (deadline.month == LocalDateTime.now().month && deadline.dayOfMonth == LocalDateTime.now().dayOfMonth) {
-        // today
-        val formatter = DateTimeFormatter.ofPattern("H:mm")
-        formatter.format(item.deadline)
-    } else {
-        // this year
-        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        formatter.format(item.deadline)
+    val remainingTime = when {
+        deadline == null -> {
+            "" // 期限なし
+        }
+        deadline > LocalDateTime.now() && duration <= Duration.ofHours(1) -> {
+            // last 1 hour
+            duration.toMinutes().toString()
+        }
+        duration == Duration.ZERO -> {
+            // out of deadline
+            "0"
+        }
+        deadline < LocalDateTime.now() -> {
+            // out of deadline
+            val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+            "-${formatter.format(item.deadline)}-"
+        }
+        deadline.year > LocalDateTime.now().year -> {
+            // others year
+            val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+            formatter.format(item.deadline)
+        }
+        deadline.month == LocalDateTime.now().month && deadline.dayOfMonth == LocalDateTime.now().dayOfMonth -> {
+            // today
+            val formatter = DateTimeFormatter.ofPattern("H:mm")
+            formatter.format(item.deadline)
+        }
+        else -> {
+            // this year
+            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+            formatter.format(item.deadline)
+        }
     }
 
     OutlinedCard(
@@ -488,7 +563,6 @@ fun PiNodeItem(
                 color = Color.Gray,
                 fontSize = 16.sp,
             )
-
             Text( // title
                 text = item.title,
                 color = Color.White,
@@ -516,6 +590,7 @@ private fun SplitButton(
                 onClick = {
                     // 同期的に状態を更新
                     completeItem(item)
+
                 },
                 modifier = Modifier.height(40.dp)
             ) {
@@ -573,7 +648,7 @@ private fun SplitButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 @Composable
 fun NodeDetailDialog(
     onDismissRequest: () -> Unit,
@@ -581,26 +656,40 @@ fun NodeDetailDialog(
     selectedStatus: (Node, NodeStatus) -> Unit,
     editStatus: (Node) -> Unit,
 ) {
-    Dialog(
-        onDismissRequest = onDismissRequest,
+    val visible by remember { mutableStateOf(true) }
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+        exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 })
     ) {
-        Column {
-            PiNodeItem(
-                item = item,
-                onItemTap = { node -> editStatus(node) },
-                completeItem = {},
-                editStatus = {},
-                showDialog = true,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            DetailsButtonGroup(item, selectedStatus)
+        Box(
+            modifier = Modifier
+                .animateEnterExit(
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it })
+                )
+        ) {
+            Dialog(onDismissRequest = onDismissRequest) {
+                Column {
+                    PiNodeItem(
+                        item = item,
+                        onItemTap = { node -> editStatus(node) },
+                        completeItem = {},
+                        editStatus = {},
+                        showDialog = true,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DetailsButtonGroup(item, selectedStatus)
+                }
+            }
         }
     }
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
+@Composable
+fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
     val options = listOf(
         NodeStatus.WORKING, NodeStatus.PAUSE, NodeStatus.CARRYOVER, NodeStatus.FAST
     )
