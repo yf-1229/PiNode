@@ -51,7 +51,7 @@ fun FromTomorrowScreen(
         }
     ) { innerPadding ->
         HomeBody(
-            incompleteNodeList = homeUiState.nodeList.filter {
+            inCompleteNodeList = homeUiState.nodeList.filter {
                 it.deadline?.toLocalDate()?.let { deadline ->
                     deadline > LocalDate.now()
                 } == true && !it.isCompleted && it.status != NodeStatus.NOTTODO

@@ -13,7 +13,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -240,7 +239,7 @@ fun HomeScreen(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
         HomeBody(
-            incompleteNodeList = homeUiState.nodeList.filter {
+            inCompleteNodeList = homeUiState.nodeList.filter {
                 (it.deadline?.toLocalDate()?.let { date -> date <= LocalDate.now() } ?: true) && !it.isCompleted && it.status != NodeStatus.NOTTODO
             },
             completedNodeList = homeUiState.nodeList.filter {
@@ -269,7 +268,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeBody(
-    incompleteNodeList: List<Node>,
+    inCompleteNodeList: List<Node>,
     completedNodeList: List<Node>,
     completeItem: (Int) -> Unit,
     editStatus: (Int) -> Unit,
@@ -277,7 +276,7 @@ fun HomeBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    if (incompleteNodeList.isEmpty() && completedNodeList.isEmpty()) {
+    if (inCompleteNodeList.isEmpty() && completedNodeList.isEmpty()) {
         Text(
             text = stringResource(R.string.no_node_description),
             textAlign = TextAlign.Center,
@@ -288,7 +287,7 @@ fun HomeBody(
         )
     } else {
         PiNodeList(
-            incompleteNodeList = incompleteNodeList,
+            incompleteNodeList = inCompleteNodeList,
             completedNodeList = completedNodeList,
             completeItem = { node -> completeItem(node.id) },
             editStatus = { node -> editStatus(node.id) },
@@ -299,7 +298,6 @@ fun HomeBody(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PiNodeList(
     incompleteNodeList: List<Node>,
@@ -716,7 +714,7 @@ fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
                 checked = selectedIndex == index,
                 onCheckedChange = {
                     selectedIndex = index
-                    selectedStatus(item, options[index])
+                    selectedStatus(item, label)
                     vibrator.vibrate(
                         VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                     )
@@ -766,7 +764,7 @@ private fun DeleteConfirmationDialog(
 @Composable
 fun HomeBodyPreview() {
     HomeBody(
-        incompleteNodeList = listOf(
+        inCompleteNodeList = listOf(
             Node(
                 id = 1,
                 title = "test1",
@@ -796,7 +794,7 @@ fun HomeBodyPreview() {
                 status = NodeStatus.DEFAULT,
                 deadline = null,
                 label = true,
-                isCompleted = false,
+                isCompleted = true,
                 isDeleted = false
             ),
             Node(
@@ -806,7 +804,7 @@ fun HomeBodyPreview() {
                 status = NodeStatus.DEFAULT,
                 deadline = null,
                 label = true,
-                isCompleted = false,
+                isCompleted = true,
                 isDeleted = false
             ),
         ),
