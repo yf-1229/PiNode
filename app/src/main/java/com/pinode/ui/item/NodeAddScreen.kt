@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -315,7 +316,7 @@ fun TimePickerChip(
         },
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.schedule_24),
+                Icons.Default.AccessTime,
                 contentDescription = "DayPicker",
                 Modifier.size(AssistChipDefaults.IconSize),
             )

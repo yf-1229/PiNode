@@ -44,11 +44,15 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonGroupDefaults
@@ -643,6 +647,15 @@ private fun SplitButton(
     ) {
         DropdownMenuItem(
             text = { Text("Edit") },
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null)},
+            onClick = {
+                editStatus(item)
+                checked = false // メニューを閉じる
+            },
+        )
+        DropdownMenuItem(
+            text = { Text("Delete") },
+            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
             onClick = {
                 editStatus(item)
                 checked = false // メニューを閉じる
