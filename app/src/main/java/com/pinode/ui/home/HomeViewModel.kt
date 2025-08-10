@@ -85,8 +85,28 @@ class HomeViewModel(
         }
     }
 
-    suspend fun deleteNode(item: Node) {
-        nodesRepository.deleteNode(item)
+    fun deleteNode(id: Int) {
+        viewModelScope.launch {
+            try {
+                // 現在のノードを取得
+                val currentNode = nodesRepository.getNodeStream(id).first()
+
+                if (currentNode != null) {
+                    val updatedNode = currentNode.copy(
+                        isDeleted = true
+                    )
+                    // 更新を保存
+                    nodesRepository.updateNode(updatedNode)
+
+                } else {
+                    Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
+                }
+
+
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to update reactions", e)
+            }
+        }
     }
 
     companion object {

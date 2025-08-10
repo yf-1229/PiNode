@@ -164,6 +164,12 @@ fun WhatNotToDoScreen(
                 }
             },
             editStatus = { nodeId -> navigateToNodeEdit(nodeId) },
+            deleteItem = { nodeId ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.deleteNode(nodeId)
+            },
             selectedStatus = { nodeId, status -> coroutineScope.launch { viewModel.changeNodeStatus(nodeId, status) } },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding

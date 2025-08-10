@@ -258,6 +258,12 @@ fun HomeScreen(
             editStatus = { nodeId ->
                 navigateToNodeEdit(nodeId)
             },
+            deleteItem = { nodeId ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.deleteNode(nodeId)
+            },
             selectedStatus = { nodeId, status ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
@@ -276,6 +282,7 @@ fun HomeBody(
     completedNodeList: List<Node>,
     completeItem: (Int) -> Unit,
     editStatus: (Int) -> Unit,
+    deleteItem: (Int) -> Unit,
     selectedStatus: (Int, NodeStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -295,6 +302,7 @@ fun HomeBody(
             completedNodeList = completedNodeList,
             completeItem = { node -> completeItem(node.id) },
             editStatus = { node -> editStatus(node.id) },
+            deleteItem = { node -> deleteItem(node.id)},
             selectedStatus = { node, status -> selectedStatus(node.id, status) },
             contentPadding = contentPadding,
             modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -308,6 +316,7 @@ private fun PiNodeList(
     completedNodeList: List<Node>,
     completeItem: (Node) -> Unit,
     editStatus: (Node) -> Unit,
+    deleteItem: (Node) -> Unit,
     selectedStatus: (Node, NodeStatus) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -381,6 +390,7 @@ private fun PiNodeList(
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             ) },
                         editStatus = { node -> editStatus(node) },
+                        deleteItem = { node -> deleteItem(node)},
                         showDialog = false
                     )
                 }
@@ -437,6 +447,7 @@ private fun PiNodeList(
                             },
                             completeItem = { node -> completeItem(node) },
                             editStatus = { node -> editStatus(node) },
+                            deleteItem = { node -> deleteItem(node)},
                             showDialog = false
                         )
                     }
@@ -461,6 +472,7 @@ fun PiNodeItem(
     onItemTap: (Node) -> Unit,
     completeItem: (Node) -> Unit,
     editStatus: (Node) -> Unit,
+    deleteItem: (Node) -> Unit,
     showDialog: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -561,7 +573,7 @@ fun PiNodeItem(
                         .height(40.dp)
                 ) {
                     if (!showDialog) {
-                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus)
+                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus, deleteItem = deleteItem)
                     }
                 }
             }
@@ -587,7 +599,7 @@ fun PiNodeItem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SplitButton(
-    item: Node, completeItem: (Node) -> Unit, editStatus: (Node) -> Unit
+    item: Node, completeItem: (Node) -> Unit, editStatus: (Node) -> Unit, deleteItem: (Node) -> Unit,
 ) {
     var checked by remember { mutableStateOf(false) }
     SplitButtonLayout(
@@ -657,7 +669,7 @@ private fun SplitButton(
             text = { Text("Delete") },
             leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
             onClick = {
-                editStatus(item)
+                deleteItem(item)
                 checked = false // メニューを閉じる
             },
         )
@@ -693,6 +705,7 @@ fun NodeDetailDialog(
                         onItemTap = { node -> editStatus(node) },
                         completeItem = {},
                         editStatus = {},
+                        deleteItem = {},
                         showDialog = true,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -770,61 +783,5 @@ private fun DeleteConfirmationDialog(
                 Text(text = stringResource(R.string.yes))
             }
         }
-    )
-}
-
-@Preview
-@Composable
-fun HomeBodyPreview() {
-    HomeBody(
-        inCompleteNodeList = listOf(
-            Node(
-                id = 1,
-                title = "test1",
-                description = "",
-                status = NodeStatus.DEFAULT,
-                deadline = null,
-                label = true,
-                isCompleted = false,
-                isDeleted = false
-            ),
-            Node(
-                id = 2,
-                title = "test2",
-                description = "",
-                status = NodeStatus.DEFAULT,
-                deadline = null,
-                label = true,
-                isCompleted = false,
-                isDeleted = false
-            ),
-        ),
-        completedNodeList = listOf(
-            Node(
-                id = 3,
-                title = "test3",
-                description = "",
-                status = NodeStatus.DEFAULT,
-                deadline = null,
-                label = true,
-                isCompleted = true,
-                isDeleted = false
-            ),
-            Node(
-                id = 4,
-                title = "test4",
-                description = "",
-                status = NodeStatus.DEFAULT,
-                deadline = null,
-                label = true,
-                isCompleted = true,
-                isDeleted = false
-            ),
-        ),
-        completeItem = {},
-        editStatus = TODO(),
-        selectedStatus = TODO(),
-        modifier = TODO(),
-        contentPadding = TODO()
     )
 }
