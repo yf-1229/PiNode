@@ -11,13 +11,10 @@
     <string name="edit_node_title">Edit Node</string>
     <string name="node_title_req">Node Name*</string>
     <string name="node_description_req">Node Description</string>
+    <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="node_details">Details</string>
-    <string name="in_stock">%d in stock</string>
-    <string name="quantity_req">Quantity in Stock*</string>
     <string name="save_action">Save</string>
-    <string name="sell">Sell</string>
-    <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
     <string name="complete">Complete</string>
     <string name="today_title">Home</string>

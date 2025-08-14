@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">PiNode</string>
+    <string name="attention">警告</string>
+    <string name="back_button">戻る</string>
+    <string name="delete">削除</string>
+    <string name="delete_question">削除しますか?</string>
+    <string name="no_node_description">今日のタスクをすべて完了させました!</string>
+    <string name="node">Node</string>
+    <string name="node_detail_title">Node Details</string>
+    <string name="node_entry_title">Nodeを追加</string>
+    <string name="edit_node_title">Nodeを編集</string>
+    <string name="node_title_req">Node Name*</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="node_details">Details</string>
+    <string name="save_action">保存</string>
+    <string name="required_fields">*入力が必要なフィールド</string>
+    <string name="complete">完了</string>
+    <string name="today_title">今日</string>
+    <string name="not_to_do_title">やらないこと</string>
+    <string name="from_tomorrow_title">明日以降</string>
+
+</resources>
