@@ -610,7 +610,6 @@ private fun SplitButton(
                 onClick = {
                     // 同期的に状態を更新
                     completeItem(item)
-
                 },
                 modifier = Modifier.height(40.dp)
             ) {
@@ -653,6 +652,8 @@ private fun SplitButton(
             }
         },
     )
+
+    var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
     DropdownMenu(
         expanded = checked,
         onDismissRequest = { checked = false },
@@ -662,18 +663,26 @@ private fun SplitButton(
             text = { Text("Edit") },
             leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null)},
             onClick = {
-                editStatus(item)
                 checked = false // メニューを閉じる
+                editStatus(item)
             },
         )
         DropdownMenuItem(
             text = { Text("Delete") },
             leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
-            onClick = {
-                deleteItem(item)
-                checked = false // メニューを閉じる
-            },
+            onClick = { deleteConfirmationRequired = true },
         )
+        if (deleteConfirmationRequired) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmationRequired = false
+                    checked = false
+                    deleteItem(item)
+                },
+                onDeleteCancel = { deleteConfirmationRequired = false },
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            )
+        }
     }
 }
 
@@ -763,7 +772,7 @@ fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
             }
         }
     }
-} // TODO add edit and delete button
+}
 
 @Composable
 private fun DeleteConfirmationDialog(
