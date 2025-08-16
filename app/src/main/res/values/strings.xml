@@ -19,7 +19,7 @@
     <string name="node_description_req">Description*</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="save_action">Save</string>
     <string name="required_fields">*required fields</string>

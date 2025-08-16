@@ -19,7 +19,7 @@
     <string name="node_description_req">説明*</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="save_action">保存</string>
     <string name="required_fields">*入力が必要なフィールド</string>
