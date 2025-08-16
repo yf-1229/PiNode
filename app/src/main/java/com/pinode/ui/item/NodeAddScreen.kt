@@ -64,12 +64,12 @@ import java.time.ZoneId
 
 object NodeAddDestination : NavigationDestination {
     override val route = "node_add"
-    override val titleRes = R.string.node_entry_title
+    override val titleRes = R.string.node_add_title
 }
 
 object NodeAddNotToDoDestination : NavigationDestination {
     override val route = "node_add_not"
-    override val titleRes = R.string.node_entry_title // TODO
+    override val titleRes = R.string.node_add_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,14 +127,14 @@ fun NodeAddBody(
         var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
         
         if (toDo) {
-            Text("What to do?",
+            Text(stringResource(R.string.what_to_do),
                 fontSize = 60.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
                     lineBreak = LineBreak.Heading
                 )
             )
         } else {
-            Text("What not to do?",
+            Text(stringResource(R.string.what_not_to_do),
                 fontSize = 50.sp, fontFamily = FontFamily.Serif,
                 style = TextStyle.Default.copy(
                     lineBreak = LineBreak.Heading
@@ -241,7 +241,7 @@ fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DatePickerChip(
     selectedDateChange: (LocalDate?) -> Unit
@@ -257,7 +257,7 @@ fun DatePickerChip(
             if (selectedDateState != null) {
                 Text(selectedDateState.toString())
             } else {
-                Text("Date")
+                Text(stringResource(R.string.date_picker))
             }
         },
         leadingIcon = {
@@ -279,13 +279,13 @@ fun DatePickerChip(
                     showModal = false
                 }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showModal = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         ) {
@@ -293,9 +293,6 @@ fun DatePickerChip(
         }
     }
 }
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -311,7 +308,7 @@ fun TimePickerChip(
             if (selectedTimeState != null) {
                 Text(selectedTimeState.toString())
             } else {
-                Text("Time")
+                Text(stringResource(R.string.time_picker))
             }
         },
         leadingIcon = {
@@ -336,7 +333,7 @@ fun TimePickerChip(
                         state = timePickerState,
                     )
                     Button(onClick = { showDial = false }) {
-                        Text("Dismiss picker")
+                        Text(stringResource(R.string.cancel))
                     }
                     Button(onClick = {
                         selectedTimeChange(
@@ -353,7 +350,7 @@ fun TimePickerChip(
                         )
                         showDial = false
                     }) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             }

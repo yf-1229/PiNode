@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
@@ -57,7 +58,7 @@ import kotlinx.coroutines.launch
 
 object WhatNotToDoDestination : NavigationDestination {
     override val route = "nottodo"
-    override val titleRes = R.string.three_title
+    override val titleRes = R.string.not_to_do_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -88,7 +89,7 @@ fun WhatNotToDoScreen(
             )
         },
         floatingActionButton = {
-            val item = Icons.Default.Add to "Add"
+            val item = Icons.Default.Add to stringResource(R.string.node_add_title)
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
             BackHandler(fabMenuExpanded) { fabMenuExpanded = false }

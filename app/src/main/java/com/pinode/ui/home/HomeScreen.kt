@@ -165,8 +165,8 @@ fun HomeScreen(
         },
         floatingActionButton = {
             val items = listOf(
-                Icons.Default.Bolt to "Fast Add",
-                Icons.Default.Add to "Add"
+                Icons.Default.Bolt to stringResource(R.string.node_add_fast_title),
+                Icons.Default.Add to  stringResource(R.string.node_add_title),
             )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
@@ -619,7 +619,7 @@ private fun SplitButton(
                     contentDescription = "Localized description",
                 )
                 Spacer(Modifier.size(4.dp))
-                Text("Complete", fontSize = 12.sp)
+                Text(stringResource(R.string.complete), fontSize = 12.sp)
             }
         },
         trailingButton = {
@@ -660,7 +660,7 @@ private fun SplitButton(
         modifier = Modifier.clip(RoundedCornerShape(6.dp))
     ) {
         DropdownMenuItem(
-            text = { Text("Edit") },
+            text = { Text(stringResource(R.string.edit_node_title)) },
             leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null)},
             onClick = {
                 checked = false // メニューを閉じる
@@ -668,7 +668,7 @@ private fun SplitButton(
             },
         )
         DropdownMenuItem(
-            text = { Text("Delete") },
+            text = { Text(stringResource(R.string.delete_node_title)) },
             leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
             onClick = { deleteConfirmationRequired = true },
         )

@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 object NodeAddFastDestination : NavigationDestination {
     override val route = "node_add_fast"
-    override val titleRes = R.string.node_entry_title
+    override val titleRes = R.string.node_add_fast_title
 }
 
 // 共通のオプションリストを定数として定義
@@ -104,7 +104,8 @@ fun NodeAddFastBody(
         // 初期値を正しくTIME_OPTIONS[0]に設定
         var selectedMinutes by rememberSaveable { mutableIntStateOf(0) }
 
-        Text("Fast!!",
+        Text(
+            stringResource(R.string.fast),
             fontSize = 60.sp, fontFamily = FontFamily.Serif,
             style = TextStyle.Default.copy(
                 lineBreak = LineBreak.Heading
