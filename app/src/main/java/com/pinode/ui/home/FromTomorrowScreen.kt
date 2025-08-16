@@ -54,12 +54,12 @@ fun FromTomorrowScreen(
             inCompleteNodeList = homeUiState.nodeList.filter {
                 it.deadline?.toLocalDate()?.let { deadline ->
                     deadline > LocalDate.now()
-                } == true && !it.isCompleted && it.status != NodeStatus.NOTTODO
+                } == true && !it.isCompleted && it.status != NodeStatus.NOTTODO && !it.isDeleted
             },
             completedNodeList = homeUiState.nodeList.filter {
                 it.deadline?.toLocalDate()?.let { deadline ->
                     deadline > LocalDate.now()
-                } == true && it.isCompleted
+                } == true && it.isCompleted && !it.isDeleted
             },
             completeItem = { nodeId ->
                 coroutineScope.launch {

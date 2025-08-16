@@ -244,10 +244,11 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeBody(
             inCompleteNodeList = homeUiState.nodeList.filter {
-                (it.deadline?.toLocalDate()?.let { date -> date <= LocalDate.now() } ?: true) && !it.isCompleted && it.status != NodeStatus.NOTTODO
+                (it.deadline?.toLocalDate()?.let { date ->
+                    date <= LocalDate.now() } ?: true) && !it.isCompleted && it.status != NodeStatus.NOTTODO && !it.isDeleted
             },
             completedNodeList = homeUiState.nodeList.filter {
-                (it.deadline?.toLocalDate()?.let { date -> date <= LocalDate.now() } ?: true) && it.isCompleted
+                (it.deadline?.toLocalDate()?.let { date -> date <= LocalDate.now() } ?: true) && it.isCompleted && !it.isDeleted
             },
             completeItem = { nodeId ->
                 coroutineScope.launch {

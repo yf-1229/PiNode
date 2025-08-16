@@ -156,8 +156,8 @@ fun WhatNotToDoScreen(
         }
     ) { innerPadding ->
         HomeBody(
-            inCompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO },
-            completedNodeList = homeUiState.nodeList.filter { it.isCompleted && it.status == NodeStatus.NOTTODO },
+            inCompleteNodeList = homeUiState.nodeList.filter { !it.isCompleted && it.status == NodeStatus.NOTTODO && !it.isDeleted },
+            completedNodeList = homeUiState.nodeList.filter { it.isCompleted && it.status == NodeStatus.NOTTODO && !it.isDeleted },
             completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.completeNode(nodeId)
