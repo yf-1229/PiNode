@@ -7,8 +7,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,21 +18,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.pinode.ui.home.FromTomorrowDestination
 import com.pinode.ui.home.HomeDestination
-import com.pinode.ui.home.HomeScreen
+import com.pinode.ui.home.WhatNotToDoDestination
 import com.pinode.ui.navigation.PiNodeNavHost
 
 
@@ -70,40 +62,42 @@ fun PiNodeTopAppBar(
 
 
 @Composable
-fun BottomNavigationBar(
-    navController: NavController,
-) {
-    var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf(
-        stringResource(HomeDestination.titleRes), "Yesterday", "Scrap"
-    )
-    val itemsDestination = listOf(
-        HomeDestination.route, "yesterday", "scrap"
-    )
-    val selectedIcons = listOf(Icons.Filled.Home, Icons.Filled.Favorite, Icons.Filled.Star)
-    val unselectedIcons =
-        listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
+fun BottomNavigationBar(navController: NavController) {
+    // 定数を remember で最適化
+    val navigationItems = remember {
+        listOf(
+            Triple("Home", "homeScreen/${HomeDestination.route}", Pair(Icons.Filled.Home, Icons.Outlined.Home)),
+            Triple("From Tomorrow", "homeScreen/${FromTomorrowDestination.route}", Pair(Icons.Filled.Star, Icons.Outlined.Star)),
+            Triple("NotToDo", "homeScreen/${WhatNotToDoDestination.route}", Pair(Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)),
+        )
+    }
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar {
-        items.forEachIndexed { index, item ->
+        navigationItems.forEach { (title, route, icons) ->
             NavigationBarItem(
                 icon = {
                     Icon(
-                        if (selectedItem == index) selectedIcons[index] else unselectedIcons[index],
-                        contentDescription = item
+                        if (currentRoute == route) icons.first else icons.second,
+                        contentDescription = title
                     )
                 },
-                label = { Text(item) },
-                selected = selectedItem == index,
+                label = { Text(title) },
+                selected = currentRoute == route,
                 onClick = {
-                    selectedItem = index
-                    navController.navigate("homeScreen/${itemsDestination[index]}") {
-                        launchSingleTop = true // TODO
-                        restoreState = true // TODO
+                    if (currentRoute != route) {
+                        navController.navigate(route) {
+                            popUpTo("homeScreen") {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 }
             )
         }
     }
 }
-

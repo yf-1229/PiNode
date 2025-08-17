@@ -1,11 +1,20 @@
 package com.pinode.ui.home
 
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.activity.compose.BackHandler
-import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,21 +35,25 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,15 +61,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SplitButtonDefaults
 import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.TopAppBarDefaults
@@ -66,6 +80,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -74,24 +89,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -106,14 +124,13 @@ import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.item.DateTimeCtrl
-import com.pinode.ui.item.toNode
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -121,21 +138,19 @@ object HomeDestination : NavigationDestination {
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
     navigateToNodeAddFast: () -> Unit,
-    navigateToNodeAdd: () -> Unit,
+    navigateToNodeAdd: (Boolean) -> Unit,
     navigateToNodeEdit: (Int) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -146,13 +161,14 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            val listState = rememberLazyListState()
             val items = listOf(
-                Icons.Default.Bolt to "Fast Add",
-                Icons.Default.Add to "Add"
+                Icons.Default.Bolt to stringResource(R.string.node_add_fast_title),
+                Icons.Default.Add to  stringResource(R.string.node_add_title),
             )
             val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
             var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
+            var checkedProgress by remember { mutableStateOf(0f) }
+
             BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
             FloatingActionButtonMenu(
                 expanded = fabMenuExpanded,
@@ -169,13 +185,12 @@ fun HomeScreen(
                                 alignment = Alignment.BottomEnd
                             ),
                         checked = fabMenuExpanded,
-                        onCheckedChange = { fabMenuExpanded = !fabMenuExpanded }
-                    ) {
-                        val imageVector by remember {
-                            derivedStateOf {
-                                if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
-                            }
+                        onCheckedChange = {
+                            fabMenuExpanded = !fabMenuExpanded
+                            checkedProgress = if (fabMenuExpanded) 1f else 0f
                         }
+                    ) {
+                        val imageVector = if (checkedProgress > 0.5f) Icons.Filled.Close else Icons.Filled.Add
                         Icon(
                             painter = rememberVectorPainter(imageVector),
                             contentDescription = null,
@@ -187,13 +202,14 @@ fun HomeScreen(
                 items.forEachIndexed { i, item ->
                     FloatingActionButtonMenuItem(
                         onClick = {
+                            fabMenuExpanded = false
                             if (i == 0) {
                                 navigateToNodeAddFast()
                             } else if (i == 1) {
-                                navigateToNodeAdd()
+                                navigateToNodeAdd(true)
                             }
                         },
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = colorScheme.primary,
                         icon = { Icon(item.first, contentDescription = null) },
                         text = { Text(text = item.second) },
                         modifier = Modifier
@@ -217,134 +233,253 @@ fun HomeScreen(
                                         )
                                 }
                             }
-                        )
+                    )
                 }
             }
         },
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        }
+        bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
-        var showDialog by remember { mutableStateOf(false) }
         HomeBody(
-            nodeList = homeUiState.nodeList,
-            onItemTap = { nodeId ->
+            inCompleteNodeList = homeUiState.nodeList.filter {
+                (it.deadline?.toLocalDate()?.let { date ->
+                    date <= LocalDate.now() } ?: true) && !it.isCompleted && it.status != NodeStatus.NOTTODO && !it.isDeleted
+            },
+            completedNodeList = homeUiState.nodeList.filter {
+                (it.deadline?.toLocalDate()?.let { date -> date <= LocalDate.now() } ?: true) && it.isCompleted && !it.isDeleted
+            },
+            completeItem = { nodeId ->
                 coroutineScope.launch {
                     viewModel.updateNodeId(nodeId)
-                    showDialog = true
                 }
+                viewModel.completeNode(nodeId)
             },
-            onItemPress = { nodeId ->
+            editStatus = { nodeId ->
+                navigateToNodeEdit(nodeId)
+            },
+            deleteItem = { nodeId ->
                 coroutineScope.launch {
-                    viewModel.updateNodeId(nodeId) // update NodeId
+                    viewModel.updateNodeId(nodeId)
                 }
+                viewModel.deleteNode(nodeId)
             },
-            selectedReactions = { reactions ->
-                viewModel.completeNode(reactions) // update node.reactions
+            selectedStatus = { nodeId, status ->
+                coroutineScope.launch {
+                    viewModel.updateNodeId(nodeId)
+                }
+                viewModel.changeNodeStatus(nodeId, status)
             },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
-        if (showDialog) {
-            NodeDetailsDialog(
-                item = uiState.nodeDetails.toNode(),
-                onDismissRequest = { showDialog = false },
-                onEdit = {
-                    navigateToNodeEdit(uiState.nodeDetails.id)
-                    showDialog = false
-                         },
-                onDelete = {
-                    coroutineScope.launch {
-                        viewModel.deleteNode()
-                        showDialog = false
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
-        }
     }
 }
 
 @Composable
-private fun HomeBody(
-    nodeList: List<Node>,
-    onItemTap: (Int) -> Unit,
-    onItemPress: (Int) -> Unit,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+fun HomeBody(
+    inCompleteNodeList: List<Node>,
+    completedNodeList: List<Node>,
+    completeItem: (Int) -> Unit,
+    editStatus: (Int) -> Unit,
+    deleteItem: (Int) -> Unit,
+    selectedStatus: (Int, NodeStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        modifier = modifier,
-    ) {
-        if (nodeList.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_node_description),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(contentPadding),
-            )
-        } else {
-            Box {
-                PiNodeList(
-                    nodeList = nodeList,
-                    onItemTap = { onItemTap(it.id)},
-                    onItemPress = { onItemPress(it.id) },
-                    selectedReactions = { selectedReactions(it) },
-                    contentPadding = contentPadding,
-                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
-                )
-            }
-        }
+    if (inCompleteNodeList.isEmpty() && completedNodeList.isEmpty()) {
+        Text(
+            text = stringResource(R.string.no_node_description),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        )
+    } else {
+        PiNodeList(
+            incompleteNodeList = inCompleteNodeList,
+            completedNodeList = completedNodeList,
+            completeItem = { node -> completeItem(node.id) },
+            editStatus = { node -> editStatus(node.id) },
+            deleteItem = { node -> deleteItem(node.id)},
+            selectedStatus = { node, status -> selectedStatus(node.id, status) },
+            contentPadding = contentPadding,
+            modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+        )
     }
 }
 
-
 @Composable
 private fun PiNodeList(
-    nodeList: List<Node>,
-    onItemTap: (Node) -> Unit?,
-    onItemPress: (Node) -> Unit?,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?,
+    incompleteNodeList: List<Node>,
+    completedNodeList: List<Node>,
+    completeItem: (Node) -> Unit,
+    editStatus: (Node) -> Unit,
+    deleteItem: (Node) -> Unit,
+    selectedStatus: (Node, NodeStatus) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Box {
+        var showDialog by remember { mutableStateOf(false) }
+        var selectedNode by remember { mutableStateOf<Node?>(null) }
+
+        val context = LocalContext.current
+        val vibrator = context.getSystemService(Vibrator::class.java)
+
         LazyColumn(
             modifier = modifier,
             contentPadding = contentPadding
         ) {
-            items(items = nodeList, { it.id }) { item ->
-                PiNodeItem(
-                    item = item,
-                    onTap = { onItemTap(item) },
-                    onPress = {onItemPress(item)},
-                    selectedReactions = { selectedReactions(it) }
-                )
+            // 未完了タスクを表示
+            items(
+                items = incompleteNodeList,
+                key = { node -> "incomplete_${node.id}" }
+            ) { item ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = slideInVertically(
+                        initialOffsetY = { it },
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ) + fadeIn(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ),
+                    exit = slideOutVertically(
+                        targetOffsetY = { -it },
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ) + fadeOut(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    ),
+                    modifier = Modifier.animateItem(
+                        fadeInSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        fadeOutSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        placementSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+                ) {
+                    PiNodeItem(
+                        item = item,
+                        onItemTap = { node ->
+                            selectedNode = node
+                            showDialog = true
+                        },
+                        completeItem = {
+                            node -> completeItem(node)
+                            vibrator.vibrate(
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            ) },
+                        editStatus = { node -> editStatus(node) },
+                        deleteItem = { node -> deleteItem(node)},
+                        showDialog = false
+                    )
+                }
+            }
+
+            if (completedNodeList.isNotEmpty()) {
+                item(key = "divider") {
+                    Column {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 5f), 0f)
+                            drawLine(
+                                color = Color.Gray,
+                                start = Offset(0f, size.height / 2),
+                                end = Offset(size.width, size.height / 2),
+                                pathEffect = pathEffect,
+                                strokeWidth = 2.dp.toPx()
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+                items(
+                    items = completedNodeList,
+                    key = { node -> "completed_${node.id}" }
+                ) { item ->
+                    AnimatedVisibility(
+                        visible = true,
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            fadeOutSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            placementSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            )
+                        )
+                    ) {
+                        PiNodeItem(
+                            item = item,
+                            onItemTap = { node ->
+                                selectedNode = node
+                                showDialog = true
+                            },
+                            completeItem = { node -> completeItem(node) },
+                            editStatus = { node -> editStatus(node) },
+                            deleteItem = { node -> deleteItem(node)},
+                            showDialog = false
+                        )
+                    }
+                }
             }
         }
 
+        if (showDialog && selectedNode != null) {
+            NodeDetailDialog(
+                onDismissRequest = { showDialog = false },
+                item = selectedNode!!,
+                selectedStatus = selectedStatus,
+                editStatus = editStatus
+            )
+        }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun PiNodeItem(
+fun PiNodeItem(
     item: Node,
-    onTap: () -> Unit?,
-    onPress: () -> Unit?,
-    selectedReactions: (MutableMap<String, Int>?) -> Unit?
+    onItemTap: (Node) -> Unit,
+    completeItem: (Node) -> Unit,
+    editStatus: (Node) -> Unit,
+    deleteItem: (Node) -> Unit,
+    showDialog: Boolean,
+    modifier: Modifier = Modifier
 ) {
     // 状態を使用して現在時刻を保持し、更新可能にする
     var currentTime by remember { mutableStateOf(DateTimeCtrl().getNow()) }
 
     // 一定間隔で時間を更新
     LaunchedEffect(key1 = Unit) {
-        while(true) {
+        while (true) {
             delay(100)
             currentTime = DateTimeCtrl().getNow()
         }
@@ -359,149 +494,93 @@ private fun PiNodeItem(
         }
     } ?: Duration.ZERO
 
-    if (!item.isCompleted && item.priority) {
-        item.status = NodeStatus.RED
-    } else if (!item.isCompleted) {
-        item.status = NodeStatus.GREEN
-    } else {
-        item.status = NodeStatus.GRAY
+    val remainingTime = when {
+        deadline == null -> {
+            "" // 期限なし
+        }
+        deadline > LocalDateTime.now() && duration <= Duration.ofHours(1) -> {
+            // last 1 hour
+            duration.toMinutes().toString()
+        }
+        duration == Duration.ZERO -> {
+            // out of deadline
+            "0"
+        }
+        deadline < LocalDateTime.now() -> {
+            // out of deadline
+            val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+            "-${formatter.format(item.deadline)}-"
+        }
+        deadline.year > LocalDateTime.now().year -> {
+            // others year
+            val formatter = DateTimeFormatter.ofPattern("yyyy M/d H:mm")
+            formatter.format(item.deadline)
+        }
+        deadline.month == LocalDateTime.now().month && deadline.dayOfMonth == LocalDateTime.now().dayOfMonth -> {
+            // today
+            val formatter = DateTimeFormatter.ofPattern("H:mm")
+            formatter.format(item.deadline)
+        }
+        else -> {
+            // this year
+            val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
+            formatter.format(item.deadline)
+        }
     }
 
-    val remainingTime = if (deadline == null) {
-        "No Deadline" // 期限なし
-    } else if (deadline > LocalDateTime.now() && duration <= Duration.ofHours(2)){
-        duration.toMinutes()
-    } else if (duration == Duration.ZERO) {
-        "JUST!!"
-    } else if (deadline < LocalDateTime.now()) {
-        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        "TimeOUT-${formatter.format(item.deadline)}"
-    } else {
-        val formatter = DateTimeFormatter.ofPattern("M/d H:mm")
-        formatter.format(item.deadline)
-    }
-
-
-    Box(
+    OutlinedCard(
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, Color.White),
         modifier = Modifier
+            .padding(bottom = 6.dp)
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                onTap() // TODO
+                onItemTap(item)
             }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .pointerInput(item.id) {
-                    detectTapGestures(
-                        onLongPress = { } // TODO
-                    )
-                }
+                .padding(6.dp)
         ) {
-            HorizontalDivider(thickness = (0.7).dp)
-            Spacer(modifier = Modifier.height(8.dp))
             // ここでRowを使って左右に分ける
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,  // 要素を左右に分ける
-                modifier = Modifier.fillMaxWidth()  // 幅いっぱいに広げる
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // 左側のステータスインジケーター
+                // ステータスインジケーター
                 Box(
                     modifier = Modifier
+                        .padding(start = 6.dp, top = 6.dp)
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(colorResource(item.status.color))
+                        .background(
+                            colorResource(item.status.color)
+                        )
                 )
-
-                // 右側のSplitButton
+                // SplitButton
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
                         .height(40.dp)
                 ) {
-                    var checked by remember { mutableStateOf(false) }
-
-                    SplitButtonLayout(
-                        modifier = Modifier.height(40.dp),
-                        leadingButton = {
-                            SplitButtonDefaults.LeadingButton(
-                                onClick = { },
-                                modifier = Modifier.height(40.dp)
-                            ) {
-                                Icon(
-                                    Icons.Filled.Edit,
-                                    modifier = Modifier.size(16.dp),
-                                    contentDescription = "Localized description",
-                                )
-                                Spacer(Modifier.size(4.dp))
-                                Text("My Button", fontSize = 12.sp)
-                            }
-                        },
-                        trailingButton = {
-                            SplitButtonDefaults.TrailingButton(
-                                checked = checked,
-                                onCheckedChange = { checked = it },
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .semantics {
-                                        stateDescription = if (checked) "Expanded" else "Collapsed"
-                                        contentDescription = "Toggle Button"
-                                    },
-                            ) {
-                                val rotation: Float by animateFloatAsState(
-                                    targetValue = if (checked) 180f else 0f,
-                                    label = "Trailing Icon Rotation",
-                                )
-                                Icon(
-                                    Icons.Filled.KeyboardArrowDown,
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .graphicsLayer {
-                                            this.rotationZ = rotation
-                                        },
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        },
-                    )
-                    DropdownMenu(expanded = checked, onDismissRequest = { checked = false }) {
-                        DropdownMenuItem(
-                            text = { Text("Working", fontSize = 12.sp) },
-                            onClick = { /* Handle edit! */ },
-                            leadingIcon = { Icon(Icons.Outlined.ArrowUpward, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Pause", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.Pause, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Carry over", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Complete", fontSize = 12.sp) },
-                            onClick = { /* Handle settings! */ },
-                            leadingIcon = { Icon(Icons.Outlined.DoneOutline, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
+                    if (!showDialog) {
+                        SplitButton(item = item, completeItem = completeItem, editStatus = editStatus, deleteItem = deleteItem)
                     }
                 }
             }
-
-            // 残りのテキスト要素（以前と同じ）
-            Text(
+            Text( // deadline
                 text = remainingTime.toString(),
                 color = Color.Gray,
                 fontSize = 16.sp,
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
+            Text( // title
                 text = item.title,
                 color = Color.White,
                 fontSize = 32.sp,
@@ -510,121 +589,194 @@ private fun PiNodeItem(
                     lineBreak = LineBreak.Heading
                 )
             )
+            // TODO Sub Todo List
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NodeDetailsDialog(
-    item: Node,
-    onDismissRequest: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+private fun SplitButton(
+    item: Node, completeItem: (Node) -> Unit, editStatus: (Node) -> Unit, deleteItem: (Node) -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
-
-        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-
-        Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(32.dp)
-        ) {
-            NodeDetails(
-                node = item, modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedButton(
-                onClick = { onEdit() },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
+    var checked by remember { mutableStateOf(false) }
+    SplitButtonLayout(
+        modifier = Modifier.height(40.dp),
+        leadingButton = {
+            SplitButtonDefaults.LeadingButton(
+                onClick = {
+                    // 同期的に状態を更新
+                    completeItem(item)
+                },
+                modifier = Modifier.height(40.dp)
             ) {
-                Text(stringResource(R.string.edit_node_title))
+                Icon(
+                    Icons.Filled.Check,
+                    modifier = Modifier.size(16.dp),
+                    contentDescription = "Localized description",
+                )
+                Spacer(Modifier.size(4.dp))
+                Text(stringResource(R.string.complete), fontSize = 12.sp)
             }
-            OutlinedButton(
-                onClick = { deleteConfirmationRequired = true },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.delete))
-            }
-            if (deleteConfirmationRequired) {
-                DeleteConfirmationDialog(
-                    onDeleteConfirm = {
-                        deleteConfirmationRequired = false
-                        onDelete()
+        },
+        trailingButton = {
+            SplitButtonDefaults.TrailingButton(
+                checked = checked,
+                onCheckedChange = {
+                    checked = it
+                },
+                modifier = Modifier
+                    .height(40.dp)
+                    .semantics {
+                        stateDescription =
+                            if (checked) "Expanded" else "Collapsed"
+                        contentDescription = "Toggle Button"
                     },
-                    onDeleteCancel = { deleteConfirmationRequired = false },
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            ) {
+                val rotation: Float by animateFloatAsState(
+                    targetValue = if (checked) 180f else 0f,
+                    label = "Trailing Icon Rotation",
                 )
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .graphicsLayer {
+                            this.rotationZ = rotation
+                        },
+                    contentDescription = "Localized description",
+                )
+            }
+        },
+    )
+
+    var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+    DropdownMenu(
+        expanded = checked,
+        onDismissRequest = { checked = false },
+        modifier = Modifier.clip(RoundedCornerShape(6.dp))
+    ) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.edit_node_title)) },
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null)},
+            onClick = {
+                checked = false // メニューを閉じる
+                editStatus(item)
+            },
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.delete_node_title)) },
+            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
+            onClick = { deleteConfirmationRequired = true },
+        )
+        if (deleteConfirmationRequired) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmationRequired = false
+                    checked = false
+                    deleteItem(item)
+                },
+                onDeleteCancel = { deleteConfirmationRequired = false },
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            )
+        }
+    }
+}
+
+
+@Composable
+fun NodeDetailDialog(
+    onDismissRequest: () -> Unit,
+    item: Node,
+    selectedStatus: (Node, NodeStatus) -> Unit,
+    editStatus: (Node) -> Unit,
+) {
+    val visible by remember { mutableStateOf(true) }
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+        exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 })
+    ) {
+        Box(
+            modifier = Modifier
+                .animateEnterExit(
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it })
+                )
+        ) {
+            Dialog(onDismissRequest = onDismissRequest) {
+                Column {
+                    PiNodeItem(
+                        item = item,
+                        onItemTap = { node -> editStatus(node) },
+                        completeItem = {},
+                        editStatus = {},
+                        deleteItem = {},
+                        showDialog = true,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DetailsButtonGroup(item, selectedStatus)
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NodeDetails(
-    node: Node, modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+fun DetailsButtonGroup(item: Node, selectedStatus: (Node, NodeStatus) -> Unit) {
+    val context = LocalContext.current
+    val vibrator = context.getSystemService(Vibrator::class.java)
+
+    val options = listOf(
+        NodeStatus.WORKING, NodeStatus.PAUSE, NodeStatus.CARRYOVER, NodeStatus.FAST
+    )
+    val unCheckedIcons =
+        listOf(Icons.Outlined.ArrowUpward, Icons.Outlined.Pause, Icons.Outlined.CalendarMonth, Icons.Outlined.Bolt)
+    val checkedIcons =
+        listOf(Icons.Filled.ArrowUpward, Icons.Filled.Pause, Icons.Filled.CalendarMonth, Icons.Filled.Bolt)
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    Row(
+        Modifier.padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            NodeDetailsRow(
-                labelResID = R.string.node,
-                itemDetail = node.title,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
+        options.forEachIndexed { index, label ->
+            ToggleButton(
+                checked = selectedIndex == index,
+                onCheckedChange = {
+                    selectedIndex = index
+                    selectedStatus(item, label)
+                    vibrator.vibrate(
+                        VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                     )
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { role = Role.RadioButton },
+                shapes =
+                when (index) {
+                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                    options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                },
+            ) {
+                Icon(
+                    if (selectedIndex == index) checkedIcons[index] else unCheckedIcons[index],
+                    contentDescription = "Localized description",
                 )
-            )
-            NodeDetailsRow(
-                labelResID = R.string.node_description_req,
-                itemDetail = node.description,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
+            }
         }
-
     }
 }
-
-
-@Composable
-private fun NodeDetailsRow(
-    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier) {
-        Text(text = stringResource(labelResID), fontSize = 20.sp)
-        Spacer(modifier = Modifier.weight(2f))
-        Text(text = itemDetail, fontWeight = FontWeight.Bold, fontSize = 30.sp)
-    }
-}
-
 
 @Composable
 private fun DeleteConfirmationDialog(
     onDeleteConfirm: () -> Unit, onDeleteCancel: () -> Unit, modifier: Modifier = Modifier
 ) {
-    AlertDialog(onDismissRequest = { /* Do nothing */ },
+    AlertDialog(
+        onDismissRequest = { /* Do nothing */ },
         title = { Text(stringResource(R.string.attention)) },
         text = { Text(stringResource(R.string.delete_question)) },
         modifier = modifier,
@@ -640,37 +792,3 @@ private fun DeleteConfirmationDialog(
         }
     )
 }
-
-
-//@Preview
-//@Composable
-//fun PreviewHomeBody() {
-//    val dateTimeCtrl = DateTimeCtrl()
-//    PiNodeTheme {
-//        HomeBody(listOf(
-//            Node(
-//                1,
-//                NodeStatus.RED,
-//                "Test1",
-//                "test",
-//                label = NodeLabel.PINK,
-//                deadline = dateTimeCtrl.getDeadlineByMinutes(5),
-//                priority = false,
-//                isCompleted = false,
-//                isDeleted = false
-//            ),
-//            Node(
-//                2,
-//                NodeStatus.RED,
-//                "Test2",
-//                "test2",
-//                label = NodeLabel.PINK,
-//                deadline = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = 50),
-//                priority = false,
-//                isCompleted = false,
-//                isDeleted = false
-//            ),
-//        ), onItemTap = {}, onItemPress = {})
-//    }
-//}
-

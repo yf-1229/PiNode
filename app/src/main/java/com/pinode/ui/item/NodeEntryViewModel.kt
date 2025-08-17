@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.pinode.data.Node
-import com.pinode.data.NodeLabel
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
 import java.time.LocalDateTime
@@ -39,18 +38,16 @@ class NodeEntryViewModel(private val nodesRepository: NodesRepository): ViewMode
 
 data class NodeUiState(
     val nodeDetails: NodeDetails = NodeDetails(),
-    val isEntryValid: Boolean = false
+    val isEntryValid: Boolean = false,
 )
 
 data class NodeDetails(
     val id: Int = 0,
-    val status: NodeStatus = NodeStatus.GREEN,
     val title: String = "",
     val description: String = "",
-    val label: NodeLabel? = null,
+    val status: NodeStatus = NodeStatus.DEFAULT,
     val deadline: LocalDateTime? = null,
-    val priority: Boolean = false,
-    var reactions: MutableMap<String, Int>? = null,
+    val label: Boolean = false,
     val isCompleted: Boolean = false,
     val isDeleted: Boolean = false,
 )
@@ -59,13 +56,11 @@ data class NodeDetails(
 
 fun NodeDetails.toNode(): Node = Node(
     id = id,
-    status = status,
     title = title,
     description = description,
-    label = label,
+    status = status,
     deadline = deadline,
-    priority = priority,
-    reactions = reactions,
+    label = label,
     isCompleted = isCompleted,
     isDeleted = isDeleted,
 )
@@ -78,13 +73,11 @@ fun Node.toNodeUiState(isEntryValid: Boolean = false): NodeUiState = NodeUiState
 
 fun Node.toNodeDetails(): NodeDetails = NodeDetails(
     id = id,
-    status = status,
     title = title,
     description = description,
-    label = label,
+    status = status,
     deadline = deadline,
-    priority = priority,
-    reactions = reactions,
+    label = label,
     isCompleted = isCompleted,
-    isDeleted = isDeleted
+    isDeleted = isDeleted,
 )

@@ -2,6 +2,7 @@ package com.pinode.ui.item
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
-import com.pinode.ui.navigation.NavigationDestination
-import com.pinode.ui.AppViewModelProvider
-import kotlinx.coroutines.launch
 import com.pinode.R
+import com.pinode.ui.AppViewModelProvider
+import com.pinode.ui.navigation.NavigationDestination
+import kotlinx.coroutines.launch
 
 
 object NodeEditDestination : NavigationDestination {
@@ -34,17 +35,18 @@ fun NodeEditScreen(
     modifier: Modifier = Modifier,
     viewModel: NodeEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val nodeUiState = viewModel.nodeUiState
     val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             PiNodeTopAppBar(
                 canNavigateBack = true,
                 navigateUp = onNavigateUp
             )
-        },
-        modifier = modifier
+        }
     ) { innerPadding ->
-        NodeAddFastBody(
+        NodeAddBody(
             nodeUiState = viewModel.nodeUiState,
             onNodeValueChange = viewModel::updateUiState,
             onSaveClick = {
@@ -53,6 +55,7 @@ fun NodeEditScreen(
                     navigateBack()
                 }
             },
+            toDo = true, // TODO add toDo to data class - Node -
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -60,6 +63,8 @@ fun NodeEditScreen(
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                 )
                 .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
         )
     }
 }
+

@@ -1,6 +1,5 @@
 package com.pinode.ui.item
 
-import android.app.Dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -21,7 +21,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,34 +35,41 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.util.Locale
 
 
 object NodeAddDestination : NavigationDestination {
     override val route = "node_add"
-    override val titleRes = R.string.node_entry_title
+    override val titleRes = R.string.node_add_title
 }
 
+object NodeAddNotToDoDestination : NavigationDestination {
+    override val route = "node_add_not"
+    override val titleRes = R.string.node_add_title
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,6 +77,7 @@ fun NodeAddScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
+    toDo: Boolean, 
     viewModel: NodeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -91,6 +98,7 @@ fun NodeAddScreen(
                     navigateBack()
                 }
             },
+            toDo = toDo,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -108,6 +116,7 @@ fun NodeAddBody(
     nodeUiState: NodeUiState,
     onNodeValueChange: (NodeDetails) -> Unit,
     onSaveClick: () -> Unit,
+    toDo: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -115,18 +124,33 @@ fun NodeAddBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         var deadline by remember { mutableStateOf<LocalDateTime?>(null) }
-        // 初期値として選択されたミニッツに応じてdeadlineを設定
-        remember {
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadline))
-            true // Rememberブロックに値を返す
+        
+        if (toDo) {
+            Text(stringResource(R.string.what_to_do),
+                fontSize = 60.sp, fontFamily = FontFamily.Serif,
+                style = TextStyle.Default.copy(
+                    lineBreak = LineBreak.Heading
+                )
+            )
+        } else {
+            Text(stringResource(R.string.what_not_to_do),
+                fontSize = 50.sp, fontFamily = FontFamily.Serif,
+                style = TextStyle.Default.copy(
+                    lineBreak = LineBreak.Heading
+                )
+            )
         }
 
+        val status = if (toDo) NodeStatus.DEFAULT else NodeStatus.NOTTODO
         NodeAddInputForm(
             nodeDetails = nodeUiState.nodeDetails,
             onValueChange = onNodeValueChange,
             deadline = { selectedDeadline: LocalDateTime? ->
                 deadline = selectedDeadline
-                onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = selectedDeadline))
+                onNodeValueChange(nodeUiState.nodeDetails.copy(
+                    status = status,
+                    deadline = selectedDeadline
+                ))
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -180,24 +204,6 @@ fun NodeAddInputForm(
             enabled = enabled,
             singleLine = true
         )
-
-        var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(priority = checked))
-        IconToggleButton(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        ) {
-            if (checked) {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
-                )
-            } else {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
-                )
-            }
-        }
-
         PickerChip(deadline = deadline)
     }
 }
@@ -205,8 +211,8 @@ fun NodeAddInputForm(
 
 @Composable
 fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    var selectedDate by rememberSaveable { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by rememberSaveable { mutableStateOf<LocalTime?>(null) }
 
     Row(modifier = Modifier.padding(horizontal =12.dp)) {
         DatePickerChip(
@@ -217,22 +223,24 @@ fun PickerChip(deadline: (LocalDateTime?) -> Unit) {
         )
     }
 
-    if (selectedTime == null && selectedDate == null) {
-        deadline(null) // 期限なし
-    } else if (selectedTime != null) {
-        selectedDate?.let { date ->
-            val selectedDeadline: LocalDateTime = date.atTime(selectedTime)
+    when {
+        selectedDate != null && selectedTime != null -> {
+            val selectedDeadline = selectedDate!!.atTime(selectedTime)
             deadline(selectedDeadline)
         }
-    } else if (selectedTime == null) {
-        selectedDate?.let { date ->
-            val selectedDeadlineAllDay: LocalDateTime = date.atTime(23, 59, 59)
-            deadline(selectedDeadlineAllDay)
+        selectedDate != null && selectedTime == null -> {
+            val selectedDeadlineWithDay = selectedDate!!.atTime(23, 59, 59)
+            deadline(selectedDeadlineWithDay)
         }
+        selectedDate == null && selectedTime != null -> {
+            val selectedDeadlineWithTime = selectedTime!!.atDate(LocalDate.now())
+            deadline(selectedDeadlineWithTime)
+        }
+        else -> deadline(null)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DatePickerChip(
     selectedDateChange: (LocalDate?) -> Unit
@@ -248,7 +256,7 @@ fun DatePickerChip(
             if (selectedDateState != null) {
                 Text(selectedDateState.toString())
             } else {
-                Text("Date")
+                Text(stringResource(R.string.date_picker))
             }
         },
         leadingIcon = {
@@ -270,13 +278,13 @@ fun DatePickerChip(
                     showModal = false
                 }
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showModal = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         ) {
@@ -284,9 +292,6 @@ fun DatePickerChip(
         }
     }
 }
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -302,12 +307,12 @@ fun TimePickerChip(
             if (selectedTimeState != null) {
                 Text(selectedTimeState.toString())
             } else {
-                Text("Time")
+                Text(stringResource(R.string.time_picker))
             }
         },
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.schedule_24),
+                Icons.Default.AccessTime,
                 contentDescription = "DayPicker",
                 Modifier.size(AssistChipDefaults.IconSize),
             )
@@ -327,7 +332,7 @@ fun TimePickerChip(
                         state = timePickerState,
                     )
                     Button(onClick = { showDial = false }) {
-                        Text("Dismiss picker")
+                        Text(stringResource(R.string.cancel))
                     }
                     Button(onClick = {
                         selectedTimeChange(
@@ -344,7 +349,7 @@ fun TimePickerChip(
                         )
                         showDial = false
                     }) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             }
