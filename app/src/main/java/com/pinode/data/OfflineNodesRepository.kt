@@ -1,9 +1,13 @@
 package com.pinode.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class OfflineNodesRepository(private val nodeDao: NodeDao) : NodesRepository {
-    override fun getAllNodesStream(): Flow<List<Node>> = nodeDao.getAllItems()
+    override fun getAllNodesStream(): Flow<List<Node>> = 
+        nodeDao.getAllItems().map { nodes ->
+            nodes.sortedWith(compareBy<Node> { it.status.priority }.thenBy { it.title })
+        }
 
     override fun getNodeStream(id: Int): Flow<Node?> = nodeDao.getNode(id)
 
