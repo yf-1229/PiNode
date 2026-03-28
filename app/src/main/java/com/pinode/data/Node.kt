@@ -1,6 +1,6 @@
 package com.pinode.data
 
-import androidx.room.ColumnInfo
+
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -18,35 +18,26 @@ import java.time.LocalDateTime
 data class Node(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    var status: NodeStatus,
     val title: String,
     val description: String,
-    val label: NodeLabel?,
+    val status: NodeStatus,
     val deadline: LocalDateTime?,
-    val priority: Boolean,
-    @ColumnInfo(name = "reactions")
-    var reactions: MutableMap<String, Int>?,
+    val label: Boolean,
     var isCompleted: Boolean,
     val isDeleted: Boolean,
 )
 
 
-enum class NodeStatus(var color: Int){ // Node's color
-    RED(R.color.RED),
-    YELLOW(R.color.YELLOW),
-    GREEN(R.color.GREEN),
-    GRAY(R.color.GRAY)
+enum class NodeStatus(val color: Int, val text: String, val priority: Int) {
+    PAUSE(R.color.YELLOW, "Pause", 3),
+    WORKING(R.color.GREEN, "Working", 2),
+    FAST(R.color.BLUE, "Fast", 1),
+    CARRYOVER(R.color.PURPLE, "Carry Over", 5),
+    DEFAULT(R.color.teal_700, "Default", 4),
+    NOTTODO(R.color.WHITE, "Not to do", 6),
+    COMPLETED(R.color.GRAY, "Completed", 7)
 }
 
-enum class NodeLabel(var color: Int) {
-    CIRCLE(R.color.RED),
-    TRIANGLE(R.color.ORANGE),
-    YELLOW(R.color.YELLOW),
-    GREEN(R.color.GREEN),
-    FAST(R.color.BLUE),
-    PURPLE(R.color.PURPLE),
-    PINK(R.color.PINK)
-}
 
 
 @Dao
@@ -65,5 +56,4 @@ interface NodeDao {
 
     @Query("SELECT * from nodes ORDER BY title ASC")
     fun getAllItems(): Flow<List<Node>>
-
 }

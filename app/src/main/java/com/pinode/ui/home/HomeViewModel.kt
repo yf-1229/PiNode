@@ -7,15 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.pinode.data.Node
 import com.pinode.data.NodeStatus
 import com.pinode.data.NodesRepository
-import com.pinode.ui.item.NodeDetails
-import com.pinode.ui.item.toNode
-import com.pinode.ui.item.toNodeDetails
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,7 +23,6 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val nodeIdKey = "node_id"
-    private val nodeId = savedStateHandle.getStateFlow<Int?>(nodeIdKey, null) // null が初期値
 
     // nodeIdを更新するメソッド
     fun updateNodeId(id: Int) {
@@ -47,38 +40,40 @@ class HomeViewModel(
                 initialValue = HomeUiState()
             )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<UiState> = nodeId
-        .filterNotNull()
-        .flatMapLatest { id ->
-            nodesRepository.getNodeStream(id)
-                .filterNotNull()
-                .map { node ->
-                    UiState(nodeDetails = node.toNodeDetails())
-                }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = UiState()
-        )
-
-
-    fun completeNode(reactions: MutableMap<String, Int>?) {
-        val nodeId = uiState.value.nodeDetails.id
+    fun completeNode(id: Int) {
         viewModelScope.launch {
             try {
                 // 現在のノードを取得
-                val currentNode = nodesRepository.getNodeStream(nodeId).first()
+                val currentNode = nodesRepository.getNodeStream(id).first()
 
-                // リアクションのみを更新（完了状態は変更しない）
+                if (currentNode != null) {
+                    val updatedNode = currentNode.copy(status = NodeStatus.COMPLETED, isCompleted = true)
+                    // 更新を保存
+                    nodesRepository.updateNode(updatedNode)
+
+                } else {
+                    Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to update reactions", e)
+            }
+        }
+    }
+
+    fun changeNodeStatus(id: Int, status: NodeStatus) {
+        viewModelScope.launch {
+            try {
+                // 現在のノードを取得
+                val currentNode = nodesRepository.getNodeStream(id).first()
+
                 if (currentNode != null) {
                     val updatedNode = currentNode.copy(
-                        reactions = reactions,
-                        isCompleted = true
+                        status = status,
+                        isCompleted = false,
                     )
                     // 更新を保存
                     nodesRepository.updateNode(updatedNode)
+
                 } else {
                     Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
                 }
@@ -89,8 +84,29 @@ class HomeViewModel(
             }
         }
     }
-    suspend fun deleteNode() {
-        nodesRepository.deleteNode(uiState.value.nodeDetails.toNode())
+
+    fun deleteNode(id: Int) {
+        viewModelScope.launch {
+            try {
+                // 現在のノードを取得
+                val currentNode = nodesRepository.getNodeStream(id).first()
+
+                if (currentNode != null) {
+                    val updatedNode = currentNode.copy(
+                        isDeleted = true
+                    )
+                    // 更新を保存
+                    nodesRepository.updateNode(updatedNode)
+
+                } else {
+                    Log.e("HomeViewModel", "Failed to retrieve currentNode: Node is null")
+                }
+
+
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to update reactions", e)
+            }
+        }
     }
 
     companion object {
@@ -104,8 +120,4 @@ class HomeViewModel(
  */
 data class HomeUiState(
     val nodeList: List<Node> = listOf()
-)
-
-data class UiState(
-    val nodeDetails: NodeDetails = NodeDetails()
 )

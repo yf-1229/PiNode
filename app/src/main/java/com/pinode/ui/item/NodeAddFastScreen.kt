@@ -10,8 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -23,21 +21,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pinode.PiNodeTopAppBar
 import com.pinode.R
-import com.pinode.data.NodeLabel
+import com.pinode.data.NodeStatus
 import com.pinode.ui.AppViewModelProvider
 import com.pinode.ui.navigation.NavigationDestination
 import com.pinode.ui.theme.PiNodeTheme
@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 object NodeAddFastDestination : NavigationDestination {
     override val route = "node_add_fast"
-    override val titleRes = R.string.node_entry_title
+    override val titleRes = R.string.node_add_fast_title
 }
 
 // 共通のオプションリストを定数として定義
@@ -102,15 +102,15 @@ fun NodeAddFastBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
     ) {
         // 初期値を正しくTIME_OPTIONS[0]に設定
-        var selectedMinutes by remember { mutableIntStateOf(0) }
+        var selectedMinutes by rememberSaveable { mutableIntStateOf(0) }
 
-        // 初期値として選択されたミニッツに応じてdeadlineを設定
-        remember {
-            val dateTimeCtrl = DateTimeCtrl()
-            val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = selectedMinutes.toLong())
-            onNodeValueChange(nodeUiState.nodeDetails.copy(deadline = deadlineTime))
-            true // Rememberブロックに値を返す
-        }
+        Text(
+            stringResource(R.string.fast),
+            fontSize = 60.sp, fontFamily = FontFamily.Serif,
+            style = TextStyle.Default.copy(
+                lineBreak = LineBreak.Heading
+            )
+        )
 
         NodeAddFastInputForm(
             nodeDetails = nodeUiState.nodeDetails,
@@ -120,7 +120,7 @@ fun NodeAddFastBody(
                 val deadlineTime = dateTimeCtrl.getDeadlineByMinutes(selectedMinutes = minutes.toLong())
                 onNodeValueChange(nodeUiState.nodeDetails.copy(
                     deadline = deadlineTime,
-                    label = NodeLabel.FAST
+                    status = NodeStatus.FAST
                 ))
             },
             onValueChange = onNodeValueChange,
@@ -177,27 +177,9 @@ fun NodeAddFastInputForm(
             enabled = enabled,
             singleLine = true
         )
-        
-        var checked by remember { mutableStateOf(false) }
-        onValueChange(nodeDetails.copy(priority = checked))
-        IconToggleButton(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        ) {
-            if (checked) {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_checked), contentDescription = "Localized description",
-                )
-            } else {
-                Icon(
-                    painterResource(R.drawable.priority_high_24dp_000000_fill0_wght400_grad0_opsz24), contentDescription = "Localized description"
-                )
-            }
-        }
-
 
         // 初期選択インデックスを0に設定（TIME_OPTIONS[0]の位置）
-        var selectedIndex by remember { mutableIntStateOf(0) }
+        var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
         // 時間選択UI
         SingleChoiceSegmentedButtonRow (

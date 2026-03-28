@@ -1,5 +1,8 @@
 package com.pinode.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,14 +12,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.pinode.ui.home.FromTomorrowDestination
 import com.pinode.ui.home.HomeDestination
 import com.pinode.ui.home.HomeScreen
+import com.pinode.ui.home.FromTomorrowScreen
+import com.pinode.ui.home.WhatNotToDoDestination
+import com.pinode.ui.home.WhatNotToDoScreen
 import com.pinode.ui.item.NodeAddDestination
 import com.pinode.ui.item.NodeAddFastDestination
 import com.pinode.ui.item.NodeAddFastScreen
+import com.pinode.ui.item.NodeAddNotToDoDestination
 import com.pinode.ui.item.NodeAddScreen
 import com.pinode.ui.item.NodeEditDestination
 import com.pinode.ui.item.NodeEditScreen
+
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,19 +42,42 @@ fun PiNodeNavHost(
         modifier = modifier
     ) {
         navigation(startDestination = "homeScreen/${HomeDestination.route}", route = "homeScreen") {
-            composable("homeScreen/${HomeDestination.route}") {
-                HomeScreen( // Home -> Today
+            composable(
+                "homeScreen/${HomeDestination.route}",
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) }
+            ) {
+                HomeScreen(
                     navigateToNodeAddFast = { navController.navigate(NodeAddFastDestination.route) },
                     navigateToNodeAdd = { navController.navigate(NodeAddDestination.route) },
                     navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
                     navController = navController
                 )
             }
-            composable("afterTomorrow") {
 
+            composable(
+                "homeScreen/${WhatNotToDoDestination.route}",
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) }
+            ) {
+                WhatNotToDoScreen(
+                    navigateToNodeAdd = { navController.navigate(NodeAddNotToDoDestination.route) },
+                    navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
+                    navController = navController
+                )
+            }
+
+            composable(
+                "homeScreen/${FromTomorrowDestination.route}",
+                enterTransition = { fadeIn(animationSpec = tween(200)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) }
+            ) {
+                FromTomorrowScreen(
+                    navigateToNodeEdit = { navController.navigate("${NodeEditDestination.route}/$it") },
+                    navController = navController
+                )
             }
         }
-        // NodeEntry
         composable(route = NodeAddFastDestination.route) {
             NodeAddFastScreen(
                 navigateBack = { navController.popBackStack() },
@@ -53,9 +88,19 @@ fun PiNodeNavHost(
         composable(route = NodeAddDestination.route) {
             NodeAddScreen(
                 navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
+                toDo = true
             )
         }
+
+        composable(route = NodeAddNotToDoDestination.route) {
+            NodeAddScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() },
+                toDo = false
+            )
+        }
+
 
         composable( // NodeEdit
             route = NodeEditDestination.routeWithArgs,
